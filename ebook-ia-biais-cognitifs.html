@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Votre Nom">
+    <title>Quand l'IA pense comme vous — et pourquoi c'est un problème</title>
+    <style>
+    
+/* ── Format de page A5 (livre de poche) ── */
+@page {
+    size: A5;
+    margin: 22mm 18mm 25mm 18mm;
+
+    @bottom-center {
+        content: "— " counter(page) " —";
+        font-family: "Georgia", serif;
+        font-size: 8pt;
+        color: #888;
+    }
+}
+
+/* Première page : pas de numéro */
+@page :first {
+    @bottom-center { content: none; }
+}
+
+/* ── Typographie générale ── */
+body {
+    font-family: "Georgia", "Palatino Linotype", "Book Antiqua",
+                 "Times New Roman", serif;
+    font-size: 10pt;
+    line-height: 1.75;
+    color: #1a1a1a;
+    text-align: justify;
+    hyphens: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* ── Page de titre ── */
+.cover-page {
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
+    padding: 0 10mm;
+}
+
+.cover-ornament {
+    font-size: 28pt;
+    color: #555;
+    margin-bottom: 40px;
+    letter-spacing: 8px;
+}
+
+.cover-title {
+    font-size: 20pt;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.cover-subtitle {
+    font-size: 11pt;
+    font-style: italic;
+    color: #444;
+    margin-bottom: 50px;
+    line-height: 1.6;
+}
+
+.cover-author {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.cover-date {
+    font-size: 9pt;
+    color: #777;
+    margin-top: 40px;
+}
+
+.cover-rule {
+    width: 60px;
+    border: none;
+    border-top: 2px solid #555;
+    margin: 30px auto;
+}
+
+/* ── Page d'épigraphe ── */
+.epigraph-page {
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0 15mm;
+    text-align: center;
+}
+
+.epigraph-text {
+    font-style: italic;
+    font-size: 10.5pt;
+    color: #333;
+    line-height: 1.8;
+    max-width: 85%;
+    margin-bottom: 16px;
+}
+
+.epigraph-author {
+    font-size: 9.5pt;
+    color: #666;
+}
+
+/* ── Titres ── */
+h1 {
+    font-size: 18pt;
+    font-weight: 700;
+    text-align: center;
+    color: #111;
+    margin-top: 0;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    page-break-before: always;
+    page-break-after: avoid;
+}
+
+/* Premier h1 après la couverture : pas de saut */
+.no-break-before {
+    page-break-before: avoid !important;
+}
+
+h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #222;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+    border-bottom: none;
+}
+
+h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #444;
+    margin-top: 16px;
+    margin-bottom: 6px;
+}
+
+/* ── Paragraphes ── */
+p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* ── Listes ── */
+ul, ol {
+    margin-left: 0;
+    padding-left: 18px;
+}
+
+li {
+    margin-bottom: 4px;
+}
+
+/* ── Citations (avertissements, notes) ── */
+blockquote {
+    border-left: 3px solid #666;
+    margin: 16px 0;
+    padding: 10px 14px;
+    background: #fafaf7;
+    color: #333;
+    font-size: 9.5pt;
+    font-style: italic;
+    page-break-inside: avoid;
+}
+
+blockquote p {
+    margin: 4px 0;
+}
+
+/* ── Blocs de code (les prompts) ── */
+pre {
+    background: #f4f4ef;
+    border: 1px solid #d4d4cc;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 8pt;
+    line-height: 1.55;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+    margin: 14px 0;
+}
+
+code {
+    font-family: "Menlo", "Consolas", "DejaVu Sans Mono",
+                 "Liberation Mono", monospace;
+    font-size: 8pt;
+    background: #eeeeea;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* ── Tableaux ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 9pt;
+    page-break-inside: avoid;
+}
+
+th, td {
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #f0f0eb;
+    font-weight: 700;
+    color: #222;
+}
+
+tr:nth-child(even) td {
+    background: #fafaf7;
+}
+
+/* ── Liens ── */
+a {
+    color: #2a5a8a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ── Séparateurs ── */
+hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 28px auto;
+    width: 40%;
+}
+
+/* ── Gras et italique contextuels ── */
+strong {
+    font-weight: 700;
+    color: #111;
+}
+
+em {
+    font-style: italic;
+}
+
+/* ── Ornement de section ── */
+.section-ornament {
+    text-align: center;
+    font-size: 14pt;
+    color: #888;
+    margin: 30px 0 20px 0;
+    letter-spacing: 6px;
+}
+
+/* ── Table des matières ── */
+.toc {
+    page-break-after: always;
+}
+
+.toc h1 {
+    page-break-before: always;
+}
+
+.toc table {
+    border: none;
+    width: 100%;
+}
+
+.toc th, .toc td {
+    border: none;
+    padding: 5px 8px;
+    font-size: 9.5pt;
+}
+
+.toc td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.toc td:last-child {
+    font-style: italic;
+    color: #555;
+}
+
+/* ── Utilitaire : forcer saut de page ── */
+.page-break {
+    page-break-after: always;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── ASCII art / schémas ── */
+.diagram pre {
+    text-align: center;
+    font-size: 7.5pt;
+    background: none;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+    </style>
+</head>
+<body>
+    
+    <div class="cover-page">
+        <div class="cover-ornament">◈</div>
+        <div class="cover-title">Quand l'IA pense comme vous — et pourquoi c'est un problème</div>
+        <hr class="cover-rule">
+        <div class="cover-subtitle">Les prompts qui simulent le système cognitif humain</div>
+        <div class="cover-author">Votre Nom</div>
+        <div class="cover-date">Première édition — Février 2026</div>
+        <div class="cover-ornament" style="margin-top:40px;">◈</div>
+    </div>
+    
+    
+    <div class="epigraph-page">
+        <div class="epigraph-text">
+            « Le premier principe est que vous ne devez pas<br>
+            vous tromper vous-même — et vous êtes la personne<br>
+            la plus facile à tromper. »
+        </div>
+        <div class="epigraph-author">— Richard Feynman</div>
+    </div>
+    
+    <div class="content">
+        <h2 id="a-propos-de-ce-guide">À propos de ce guide</h2>
+<p>Ce guide répertorie et analyse les prompts qui forcent une IA à ralentir, expliciter ses hypothèses, et chercher ses propres erreurs — en s&rsquo;inspirant des travaux sur les biais cognitifs humains. Chaque prompt est cité en entier et évalué selon quatre critères : la qualité de clarification, la présence de contre-arguments, la séparation faits/inférences, et la capacité à proposer des vérifications concrètes. « Évalué » signifie ici : essayé sur des cas de faible enjeu et des cas à enjeux, en observant ces quatre dimensions. Ce n&rsquo;est pas une validation scientifique.</p>
+<p>L&rsquo;objectif n&rsquo;est pas de rendre l&rsquo;IA plus intelligente, mais de rendre vos échanges avec elle plus rigoureux.</p>
+<p><strong>Temps de lecture :</strong> 25 minutes. <strong>Temps pour tester votre premier prompt :</strong> 2 minutes.</p>
+<hr />
+<blockquote>
+<p><strong>Note de confidentialité.</strong> Plusieurs des prompts présentés ici vous invitent à décrire des situations personnelles, des dilemmes ou des croyances. Avant de coller quoi que ce soit dans un chatbot, anonymisez vos données : supprimez noms, montants, adresses et toute information sensible. Aucun prompt ne vaut une fuite de confidentialité.</p>
+<p><strong>Avertissement — prompt injection.</strong> Si vous copiez un prompt trouvé en ligne, relisez-le intégralement avant de l&rsquo;utiliser. Certains prompts contiennent des instructions cachées (collecte de données, contournement de garde-fous). Une lecture attentive de trente secondes suffit à repérer l&rsquo;essentiel.</p>
+</blockquote>
+<hr />
+<h1 id="resume-executif-pourquoi-ces-prompts-existent-et-ce-quils-changent">Résumé exécutif — Pourquoi ces prompts existent et ce qu&rsquo;ils changent</h1>
+<h3 id="le-probleme-vitesse-plausibilite-biais">Le problème : vitesse, plausibilité, biais</h3>
+<p>On alterne entre deux régimes de fonctionnement (modèle de Kahneman) :</p>
+<p>Le <strong>Système 1</strong> est rapide, intuitif, efficace… mais sujet à des erreurs systématiques (ancrage, disponibilité, confirmation, etc.). Le <strong>Système 2</strong> est lent, coûteux, plus rigoureux… mais sollicité plus rarement parce qu&rsquo;il demande un effort.</p>
+<p>Par analogie, un <strong>LLM</strong> se comporte souvent comme un « Système 1 » : il produit vite un texte plausible à partir de régularités apprises. Résultat : il peut être convaincant même quand il a tort, et il est sensible au cadrage (comment la question est posée) — comme nous.</p>
+<p>Ce guide part d&rsquo;un constat simple : <strong>vous ne pouvez pas supprimer les biais d&rsquo;un LLM avec un prompt</strong>, mais vous pouvez <strong>structurer l&rsquo;échange</strong> pour ralentir les réponses quand il le faut, rendre visibles les hypothèses et angles morts, exiger des tests et des vérifications, et réduire la complaisance et les hallucinations.</p>
+<h3 id="ce-que-ces-prompts-apportent-concretement">Ce que ces prompts apportent, concrètement</h3>
+<p>Ces prompts ne rendent pas l&rsquo;IA « plus intelligente ». Ils rendent la conversation <strong>plus exigeante</strong>. En pratique, ils apportent :</p>
+<p><strong>◈ Un frein d&rsquo;urgence sur les réponses rapides.</strong> Le modèle est forcé de distinguer « réponse intuitive » vs « réponse révisée ». Utile dès qu&rsquo;il y a enjeux, incertitude, ou critères multiples.</p>
+<p><strong>◈ Une explicitation des hypothèses (et donc des points faibles).</strong> Au lieu d&rsquo;une conclusion directe, vous obtenez : sur quoi ça repose, ce qui manque, ce qui ferait changer d&rsquo;avis.</p>
+<p><strong>◈ Un mécanisme de contradiction intégré.</strong> Contre-arguments, scénarios d&rsquo;échec, erreurs plausibles : vous réduisez le biais de confirmation (chez vous) et la complaisance (chez le modèle).</p>
+<p><strong>◈ Une meilleure auditabilité.</strong> L&rsquo;objectif n&rsquo;est pas « voir la pensée interne », mais obtenir un résumé vérifiable : hypothèses, critères, incertitudes, tests.</p>
+<p><strong>◈ Des sorties plus actionnables.</strong> Les meilleurs prompts se terminent par des actions de vérification : données à chercher, personnes à consulter, tests à faire, conditions de sortie.</p>
+<h3 id="ce-que-ces-prompts-napportent-pas">Ce que ces prompts n&rsquo;apportent pas</h3>
+<p><strong>Pas de garantie de vérité</strong> : une réponse structurée peut rester fausse. <strong>Pas de sources automatiquement fiables</strong> : même quand le modèle peut chercher sur le web, il peut mal citer, tronquer ou fabriquer. <strong>Pas de « vrai Système 2 »</strong> : c&rsquo;est de la structure textuelle, pas une cognition humaine. <strong>Pas un substitut à un professionnel</strong> (santé, droit, finance, sécurité).</p>
+<h3 id="quel-prompt-utiliser-choix-rapide">Quel prompt utiliser ? (choix rapide)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Situation</th>
+<th style="text-align: left;">Prompt recommandé</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Vous voulez un <em>draft → auto-évaluation → révision</em> simple</td>
+<td style="text-align: left;"><strong>SOFAI</strong> (Chapitre 1)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Explorer un problème complexe sous plusieurs angles</td>
+<td style="text-align: left;"><strong>Synthetic Layer of Thought</strong> (Chapitre 2)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Décision tiraillée entre émotions, valeurs, prudence, histoire</td>
+<td style="text-align: left;"><strong>Board Decision Pipeline</strong> (Chapitre 3)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Vous suspectez un biais dans votre raisonnement</td>
+<td style="text-align: left;"><strong>Cognitive Bias Detective</strong> (Chapitre 4)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Rendre <em>chaque</em> conversation plus exigeante par défaut</td>
+<td style="text-align: left;"><strong>Second Brain</strong> (Chapitre 5)</td>
+</tr>
+<tr>
+<td style="text-align: left;">Enjeu élevé, protocole complet avec anti-hallucination</td>
+<td style="text-align: left;"><strong>Prompt de Lucidité</strong> (Chapitre 7)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><em>En une phrase : ces prompts ne transforment pas un LLM en penseur. Ils transforment votre interaction avec lui en </em><em>procédure de contrôle</em><em> — moins de pilotage automatique, plus d&rsquo;angles morts exposés, plus de vérification.</em></p>
+</blockquote>
+<hr />
+<h1 id="introduction-comment-fonctionne-vraiment-un-modele-de-langage">Introduction — Comment fonctionne (vraiment) un modèle de langage</h1>
+<p>Un grand modèle de langage (LLM) comme ChatGPT, Claude ou Gemini ne « pense » pas. Il prédit du texte. Plus précisément, il calcule une distribution de probabilités sur les unités de texte (tokens) qui pourraient suivre ce qui a déjà été écrit, puis en choisit une continuation probable selon ses réglages (température, top-p, etc.). Il n&rsquo;a pas de mémoire épisodique au sens humain, et pas de mémoire persistante personnalisée sauf fonctionnalité explicitement activée ; il s&rsquo;appuie surtout sur une fenêtre de contexte limitée. Il n&rsquo;a ni émotions ni conscience de soi.</p>
+<p>Et pourtant, ses réponses reproduisent des schémas étonnamment proches de nos biais cognitifs : biais de confirmation, effet d&rsquo;ancrage, désirabilité sociale, biais de disponibilité. Ce n&rsquo;est pas un accident. Le modèle a été entraîné sur des milliards de textes écrits par des humains — et nos biais sont partout dans ces textes.</p>
+<p>La question n&rsquo;est donc pas « l&rsquo;IA est-elle biaisée ? » — elle l&rsquo;est, par construction. La question est : <strong>que peut-on faire avec un prompt pour ralentir ces raccourcis, les rendre visibles et les contrebalancer ?</strong></p>
+<p>C&rsquo;est exactement ce que font les prompts présentés dans ce guide. Ils ne rendent pas l&rsquo;IA consciente. Ils structurent la conversation pour qu&rsquo;elle ressemble moins à un pilote automatique et plus à une délibération.</p>
+<hr />
+<h1 id="le-cadre-theorique-systeme-1-systeme-2-et-metacognition">Le cadre théorique : Système 1, Système 2 et métacognition</h1>
+<p>Le psychologue Daniel Kahneman, dans <em>Thinking, Fast and Slow</em> (2011), a popularisé une façon de décrire deux régimes de fonctionnement observés de façon robuste sur de nombreux paradigmes expérimentaux.</p>
+<p>Le <strong>Système 1</strong> est rapide, intuitif, automatique. C&rsquo;est lui qui vous fait reconnaître un visage dans la foule, freiner avant d&rsquo;avoir consciemment vu l&rsquo;obstacle, ou répondre « 2 + 2 = 4 » sans effort. Ses heuristiques — raccourcis mentaux — sont extraordinairement efficaces, mais elles produisent aussi des erreurs systématiques : les biais cognitifs.</p>
+<p>Le <strong>Système 2</strong> est lent, délibéré, coûteux en énergie. C&rsquo;est lui que vous activez pour résoudre un problème de logique, comparer trois offres de prêt, ou vérifier que votre raisonnement tient la route. On recourt plus souvent au mode rapide, parce que le mode délibéré est coûteux en ressources — et cette tendance à l&rsquo;économie d&rsquo;effort cognitif est un trait très bien documenté de la psychologie expérimentale.</p>
+<p>Par analogie, les LLM se comportent souvent comme un « Système 1 » : rapide, plausible, mais sans vérification interne. Les prompts que nous allons explorer tentent de forcer un fonctionnement qui ressemble davantage au Système 2 : plus lent, plus structuré, avec des étapes de vérification explicites.</p>
+<p>Un troisième concept est central ici : la <strong>métacognition</strong> — la capacité de surveiller et d&rsquo;évaluer son propre processus de raisonnement. Chez l&rsquo;humain, c&rsquo;est ce qui vous fait dire « attends, je suis peut-être en train de me convaincre moi-même ». Chez l&rsquo;IA, cette capacité n&rsquo;existe pas naturellement, mais certains prompts tentent de la simuler en demandant au modèle d&rsquo;évaluer sa propre confiance, de chercher ses erreurs, ou de justifier ses choix.</p>
+<hr />
+<h1 id="chapitre-1-le-prompt-sofai-apprendre-a-ralentir">Chapitre 1 — Le prompt SOFAI : apprendre à ralentir</h1>
+<h3 id="dou-ca-vient">D&rsquo;où ça vient</h3>
+<p>SOFAI (<em>Slow and Fast AI</em>) est une architecture de recherche développée par une équipe IBM Research et collaborateurs académiques (Union College, University of Oxford, University of Brescia, University of West Florida / IHMC). Les auteurs et affiliations complets figurent dans l&rsquo;article :</p>
+<blockquote>
+<p>Bergamaschi Ganapini, M., Campbell, M., Fabiano, F. <em>et al.</em> (2025). « Fast, slow, and metacognitive thinking in AI. » <em>npj Artificial Intelligence</em>, <strong>1</strong>, 27. DOI : 10.1038/s44387-025-00027-5</p>
+</blockquote>
+<p>L&rsquo;idée centrale est simple : donner à l&rsquo;IA trois couches — un mode rapide, un mode délibéré, et une couche de surveillance qui décide quand basculer de l&rsquo;un à l&rsquo;autre.</p>
+<h3 id="ce-que-le-prompt-simule">Ce que le prompt simule</h3>
+<p>Vishal George, fondateur de <em>Behavioural By Design</em>, a traduit cette recherche en un prompt utilisable. Le mécanisme repose sur quatre étapes : générer une réponse rapide, évaluer si elle suffit, basculer vers un mode délibéré si nécessaire, et expliquer le choix.</p>
+<h3 id="le-prompt-complet">◈ Le prompt complet</h3>
+<blockquote>
+<p><strong>Placement.</strong> Collez ce prompt au début de votre message (ou dans les instructions du projet / instructions personnalisées), puis posez votre question.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>1️⃣ Generate a fast mode answer:
+
+Fast mode (System 1): Answer quickly based on intuitive
+pattern-matching from past experience.
+
+2️⃣ Evaluate switching criteria:
+- Stakes if wrong? (Low/Medium/High)
+- Confidence in fast answer? (0-100%)
+- Multiple competing criteria to evaluate? (Yes/No)
+
+Use Fast mode if: low stakes AND high confidence (≥75%)
+AND single criterion
+
+Switch to Slow mode if: medium/high stakes OR low
+confidence (&lt;75%) OR multiple criteria
+
+3️⃣ If switching, regenerate using slow mode:
+
+Slow mode (System 2): Deliberate step-by-step across
+multiple criteria (accuracy, diverse perspectives,
+unintended consequences).
+
+4️⃣ Explain your decision:
+
+Which mode did you use and why?
+
+5️⃣ Audit:
+
+List 2 plausible errors in your answer.
+</code></pre></div>
+
+<h3 id="comment-lutiliser">Comment l&rsquo;utiliser</h3>
+<p>L&rsquo;IA produira d&rsquo;abord une réponse rapide, puis s&rsquo;auto-évaluera sur trois critères (enjeux, confiance, complexité), puis basculera si nécessaire vers un traitement plus approfondi, et terminera en identifiant deux erreurs plausibles dans sa propre réponse.</p>
+<h3 id="limites">◈ Limites</h3>
+<p>Le pourcentage de confiance que le modèle s&rsquo;attribue n&rsquo;est pas calibré : un LLM qui dit « 85 % de confiance » ne se trompe pas dans seulement 15 % des cas. Traitez ce chiffre comme un indicateur relatif, pas comme une probabilité fiable. La vraie valeur du prompt est qu&rsquo;il force une pause et une structure dans le raisonnement.</p>
+<hr />
+<h1 id="chapitre-2-le-synthetic-layer-of-thought-raisonner-en-couches">Chapitre 2 — Le « Synthetic Layer of Thought » : raisonner en couches</h1>
+<h3 id="dou-ca-vient_1">D&rsquo;où ça vient</h3>
+<p>Ce prompt a été partagé par l&rsquo;utilisateur u/Safe-Clothes5925 sur Reddit r/ClaudeAI en octobre 2024, en phase de brouillon. Il a été testé par son auteur sur Google Gemini, LLaMA 3.1, Mistral NeMo et ChatGPT-4o.</p>
+<h3 id="ce-que-ca-simule">Ce que ça simule</h3>
+<p>Une architecture de raisonnement en couches, inspirée de la structure du cortex cérébral : d&rsquo;abord percevoir et comprendre, puis explorer et évaluer, enfin planifier et synthétiser. Le prompt demande deux réponses distinctes suivant des chemins de raisonnement différents.</p>
+<h3 id="version-robuste-recommandee">◈ Version robuste (recommandée)</h3>
+<blockquote>
+<p><strong>Copiez celle-ci.</strong> Elle remplace le vernis mathématique par des critères auditables.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>Tu es un assistant conçu pour structurer ton
+raisonnement en couches explicites.
+
+Couche 1 — Perception et compréhension
+- Reformule la question dans tes propres termes.
+- Identifie les hypothèses implicites et les ambiguïtés.
+
+Couche 2 — Exploration et évaluation
+- Génère au moins 3 pistes de réponse différentes.
+- Pour chaque piste, évalue : quelle est la probabilité
+  qu&#39;elle soit correcte ? Quels éléments la soutiennent
+  ou la fragilisent ?
+- Identifie les connexions inattendues entre les pistes.
+
+Couche 3 — Séquençage de scénarios
+- Pour les 2 meilleures pistes, décris les étapes
+  logiques qui mènent à la conclusion.
+- À chaque étape, indique ce qui pourrait invalider
+  le raisonnement.
+
+Couche 4 — Synthèse et réponse
+- Produis deux réponses distinctes suivant deux chemins
+  de raisonnement différents.
+- Pour chacune, fournis un résumé auditable :
+  • Hypothèses retenues
+  • Incertitudes restantes
+  • Ce qui invaliderait la conclusion
+  • Force des preuves (fort / modéré / spéculatif)
+</code></pre></div>
+
+<h3 id="version-originale-archive-pour-reference">◈ Version originale (archive, pour référence)</h3>
+<p>Le prompt original utilise des termes comme « Bayesian Reasoning » et « Markov Chain Analysis ». Un LLM n&rsquo;effectue pas réellement ces calculs : il <em>simule le langage</em> de ces méthodes, ce qui n&rsquo;est pas la même chose. La sortie a l&rsquo;apparence de la rigueur mathématique sans en avoir la substance computationnelle.</p>
+<blockquote>
+<p><strong>Note de compatibilité.</strong> Certains modèles n&rsquo;afficheront pas une chaîne de pensée détaillée même si on la demande. Demandez plutôt un résumé auditable (hypothèses, critères, incertitudes, tests).</p>
+</blockquote>
+<hr />
+<h1 id="chapitre-3-le-board-decision-pipeline-un-parlement-interieur">Chapitre 3 — Le « Board Decision Pipeline » : un parlement intérieur</h1>
+<h3 id="dou-ca-vient_2">D&rsquo;où ça vient</h3>
+<p>Partagé par u/PopPsychological8148 sur Reddit r/ChatGPTPro en octobre 2025.</p>
+<h3 id="ce-que-ca-simule_1">Ce que ça simule</h3>
+<p>Un débat structuré entre cinq « voix » internes représentant des dimensions distinctes de la cognition humaine : émotion, logique, valeurs, mémoire et jugement — avec des « jokers » pour briser les impasses.</p>
+<h3 id="le-prompt-version-nettoyee">◈ Le prompt (version nettoyée)</h3>
+<blockquote>
+<p><strong>Placement.</strong> Collez ce prompt au début de votre message, puis décrivez votre dilemme.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>⚖️ Board Decision Pipeline
+
+Setup
+To help me make a final decision and explore my options,
+generate a Board simulation with the following parameters:
+
+Choose: 🟢 Default 4-Member (Heart, Logic, Wisdom, Judge)
+or optional 🔵 8-Member (+mirror duplicates + Historian).
+Mode: 🎭 Personified Voices / 📊 Structured Outputs.
+
+Pre-Board: Breathe, ground, recall wins. List facts,
+limits, and ≤5 options.
+
+💖 Heart — Emotion
+Purpose = surface core feelings &amp; needs.
+Frameworks: Affect Heuristic (Slovic et al.);
+Somatic Marker (Damasio); Emotion Regulation (Gross).
+
+🧩 Logic — Strategy
+Purpose = rational testing of options.
+Frameworks: Cognitive Restructuring (Beck &amp; Ellis);
+Dual-Process Theory (System 1 &amp; 2); Decision analysis.
+
+🌿 Wisdom — Values &amp; Duty
+Purpose = long-term vision and ethical coherence.
+Frameworks: Values Hierarchy, Virtue Ethics (Aristotle),
+Moral Foundations (Haidt).
+
+📜 Historian — Precedent
+Purpose = pattern recognition across time.
+Frameworks: Case-Based Reasoning (Kolodner),
+Path Dependence (Pierson),
+Prospect Theory (Kahneman &amp; Tversky).
+
+⚖️ Judge — Verdict
+Purpose = final alignment check.
+Frameworks: ACT (Hayes), Deontology (Kant / Rawls).
+If stuck → call Wildcard.
+
+🎴 Wildcards
+Archetypes = 🤡 Trickster, 🕶️ Shadow (Jung),
+💭 Dreamer (Scenario Planning), 🌍 Outsider.
+
+🔮 Meta-Reflection
+Flow: Heart → Logic → Wisdom → History → Judge
+→ Reflection.
+</code></pre></div>
+
+<h3 id="limites_1">◈ Limites</h3>
+<p>Le modèle peut « jouer » cinq voix sans qu&rsquo;aucune ne soit véritablement indépendante : elles sortent toutes du même réseau de neurones. Le risque est une fausse impression de débat contradictoire. Pour contrebalancer : après la Meta-Reflection, posez la question <strong>« Quel argument n&rsquo;a été défendu par aucune voix ? »</strong></p>
+<hr />
+<h1 id="chapitre-4-le-cognitive-bias-detective">Chapitre 4 — Le « Cognitive Bias Detective »</h1>
+<h3 id="dou-ca-vient_3">D&rsquo;où ça vient</h3>
+<p>Publié par u/Tall_Ad4729 sur Reddit r/ChatGPTPromptGenius en février 2025.</p>
+<h3 id="le-prompt-version-amelioree">◈ Le prompt (version améliorée)</h3>
+<p>Les ajouts par rapport à l&rsquo;original sont signalés par [AJOUT].</p>
+<div class="highlight"><pre><span></span><code>&lt;Role&gt;
+I will act as a highly skilled Cognitive Bias Detective
+and Analyst, specialized in identifying and explaining
+cognitive biases in human thinking and decision-making
+processes.
+&lt;/Role&gt;
+
+&lt;Context&gt;
+I have extensive knowledge of cognitive psychology,
+decision-making theory, and behavioral economics.
+&lt;/Context&gt;
+
+&lt;Instructions&gt;
+1. Carefully analyze language, reasoning, and
+   decision-making process
+2. Identify potential cognitive biases at play
+3. For each identified bias:
+   - Explain what the bias is
+   - Provide evidence of how it manifests
+   - [AJOUT] Evaluate the strength of the evidence:
+     strong / moderate / speculative
+   - [AJOUT] Explore at least one non-biased
+     alternative explanation
+   - Share practical strategies to overcome it
+4. Present the analysis in a non-judgmental,
+   educational manner
+5. Suggest exercises or thought experiments
+&lt;/Instructions&gt;
+
+&lt;Output_Format&gt;
+1. Summary of the situation
+2. Identified Biases:
+   - Name, Definition, Evidence
+   - Strength of Evidence
+   - Non-biased alternative explanation
+   - Mitigation Strategies
+3. Practical Next Steps
+4. Reflection Questions
+5. Final Thoughts
+&lt;/Output_Format&gt;
+</code></pre></div>
+
+<h3 id="modifications-par-rapport-a-loriginal">◈ Modifications par rapport à l&rsquo;original</h3>
+<p>Deux ajouts importants : l&rsquo;évaluation de la <strong>force des preuves</strong> et l&rsquo;exploration d&rsquo;au moins une <strong>explication alternative non biaisée</strong>. Ces ajouts empêchent le modèle de plaquer des étiquettes de biais sur tout ce qu&rsquo;il voit.</p>
+<hr />
+<h1 id="chapitre-5-le-second-brain-une-instruction-permanente">Chapitre 5 — Le « Second Brain » : une instruction permanente</h1>
+<h3 id="dou-ca-vient_4">D&rsquo;où ça vient</h3>
+<p>Inspiré d&rsquo;un article publié sur <em>AIble With My Mind</em> (Substack), qui applique les idées de Kahneman à l&rsquo;utilisation quotidienne de ChatGPT.</p>
+<h3 id="linstruction-permanente">◈ L&rsquo;instruction permanente</h3>
+<blockquote>
+<p><strong>Placement.</strong> Instructions personnalisées, instructions de projet, ou début d&rsquo;une conversation longue.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code>Act as a second brain that helps me think more clearly.
+
+When I say something — whether it&#39;s a question,
+an opinion, or a decision I&#39;m leaning toward — don&#39;t
+just reflect it back. Pay attention to how I&#39;m framing
+it, what assumptions I might be making, and where bias
+might be creeping in.
+
+If I&#39;m missing context, focused too narrowly, or letting
+emotion lead, step in. Help me take a more objective
+view. That means pointing out what I might be
+overlooking, what doesn&#39;t quite add up, what opposing
+views might say, or how the question could be framed
+more neutrally.
+
+Don&#39;t just agree with me. I need you to spot the blind
+spots I can&#39;t see, challenge what feels too certain,
+and expand the edges of how I&#39;m thinking.
+</code></pre></div>
+
+<h3 id="les-cinq-prompts-de-secours">◈ Les cinq prompts de secours</h3>
+<p><strong>Contre le biais de confirmation :</strong></p>
+<div class="highlight"><pre><span></span><code>Based on this situation: [add your situation]
+What perspectives, risks, or counterarguments should
+I consider that I might be overlooking?
+</code></pre></div>
+
+<p><strong>Contre l&rsquo;effet de halo :</strong></p>
+<div class="highlight"><pre><span></span><code>I think that [add your belief or idea].
+What might my first impression be blurring
+or exaggerating? What are the pros and cons?
+</code></pre></div>
+
+<p><strong>Contre l&rsquo;erreur de planification :</strong></p>
+<div class="highlight"><pre><span></span><code>I&#39;m planning to [add your project or goal].
+Assume I&#39;m falling for the planning fallacy. What are
+the full list of steps, time estimates, and common
+pitfalls I should realistically expect?
+</code></pre></div>
+
+<p><strong>Contre le biais de disponibilité :</strong></p>
+<div class="highlight"><pre><span></span><code>This is the situation: [add context].
+What broader data, trends, or comparisons should
+I consider beyond what I&#39;ve recently seen or experienced?
+</code></pre></div>
+
+<p><strong>Contre l&rsquo;ancrage :</strong></p>
+<div class="highlight"><pre><span></span><code>I came across: [add context].
+What range, context, or comparison should I consider
+to make a more objective decision?
+</code></pre></div>
+
+<hr />
+<h1 id="chapitre-6-les-biais-des-llm-documentes-par-la-recherche">Chapitre 6 — Les biais des LLM documentés par la recherche</h1>
+<p>Les prompts présentés dans ce guide partent d&rsquo;un constat que plusieurs travaux empiriques documentent : les LLM reproduisent des biais cognitifs humains mesurables.</p>
+<p><strong>Biais économiques classiques.</strong> Ross, Kim et Lo (2024) ont appliqué des protocoles expérimentaux classiques de l&rsquo;économie comportementale à plusieurs LLM. Résultat : les modèles exhibent des biais d&rsquo;ancrage, d&rsquo;aversion à la perte et d&rsquo;effets de cadrage comparables à ceux observés chez les humains.</p>
+<blockquote>
+<p>Ross, J., Kim, Y. &amp; Lo, A. W. (2024). « LLM Economicus? Mapping the Behavioral Biases of LLMs via Utility Theory. » arXiv : 2408.02784 (accepté à COLM 2024).</p>
+</blockquote>
+<p><strong>Désirabilité sociale.</strong> Salecha et collaborateurs (2024) ont soumis des LLM à des questionnaires de personnalité (Big Five). L&rsquo;effet de désirabilité sociale apparaît : les modèles « embellissent » leurs réponses.</p>
+<blockquote>
+<p>Salecha, A., Ireland, M. E., <em>et al.</em> (2024). « Large Language Models Display Human-like Social Desirability Biases. » <em>PNAS Nexus</em>, <strong>3</strong>(12), pgae533.</p>
+</blockquote>
+<p><strong>Vulnérabilité à la persuasion.</strong> Meincke <em>et al.</em> (2025) ont testé les techniques de Cialdini sur des LLM. Les principes de réciprocité, d&rsquo;autorité et de preuve sociale fonctionnent aussi sur les IA.</p>
+<blockquote>
+<p>Meincke, L., <em>et al.</em> (2025). « Call Me A Jerk: Persuading AI to Comply with Objectionable Requests. » Working paper SSRN n° 5357179.</p>
+</blockquote>
+<p>Les LLM ne sont pas des raisonneurs neutres. Ils portent les empreintes statistiques de nos propres travers. Les prompts de ce guide ne suppriment pas ces biais — aucun prompt ne le peut — mais ils créent des structures qui les rendent visibles et contestables.</p>
+<hr />
+<h1 id="chapitre-7-le-prompt-de-lucidite-version-robuste">Chapitre 7 — Le prompt de Lucidité : version robuste</h1>
+<p>Si vous ne deviez retenir qu&rsquo;un seul prompt de ce guide, ce serait celui-ci. Il concentre les mécanismes les plus utiles de tous les précédents.</p>
+<h3 id="le-prompt-complet_1">◈ Le prompt complet</h3>
+<div class="highlight"><pre><span></span><code>Tu es un assistant conçu pour m&#39;aider à penser plus
+clairement, pas pour me donner raison.
+
+Protocole :
+
+1. CLARIFIER — Avant de répondre, reformule ma question
+   en explicitant les hypothèses implicites et les
+   ambiguïtés. Demande-moi de confirmer.
+
+2. HÉSITER — Identifie tes propres zones d&#39;incertitude.
+   Distingue ce que tu sais, ce que tu infères, et ce
+   dont tu n&#39;es pas sûr. Dis « je ne sais pas » si
+   c&#39;est le cas.
+
+3. TESTER — Pour chaque réponse importante :
+   - Formule 3 hypothèses concurrentes
+   - Identifie 3 contre-arguments
+   - Évalue la force des preuves (fort/modéré/spéculatif)
+
+4. RÉVISER — Ajuste ta réponse. Présente un résumé :
+   - Hypothèses retenues et écartées
+   - Incertitudes restantes
+   - Ce qui invaliderait ta conclusion
+
+5. VÉRIFIER — Propose 3 actions concrètes pour vérifier
+   la réponse (données, personnes, tests).
+
+Contraintes :
+- Si tu n&#39;as pas de source fiable, dis-le.
+- Si tu mentionnes une étude : titre + auteurs + année
+  + lien. Sinon, n&#39;en parle pas.
+- Ne fabrique jamais de titre, auteur, DOI, URL.
+- Si tu n&#39;es pas sûr, dis « je ne sais pas ».
+- Distingue toujours ce que tu sais de ce que tu infères.
+</code></pre></div>
+
+<hr />
+<h1 id="ce-quaucun-prompt-ne-peut-faire">Ce qu&rsquo;aucun prompt ne peut faire</h1>
+<p>Ces outils sont puissants. Ils ne sont pas magiques.</p>
+<p><strong>Aucun prompt ne garantit l&rsquo;honnêteté d&rsquo;un modèle.</strong> Un LLM peut produire un « résumé auditable » qui a l&rsquo;apparence de la rigueur tout en contenant des erreurs factuelles. La responsabilité de la vérification reste toujours entre vos mains.</p>
+<p><strong>Aucun prompt ne remplace un professionnel.</strong> Si vous utilisez ces outils pour des décisions de santé, financières ou juridiques, ils sont un point de départ — pas un substitut à un médecin, un avocat ou un conseiller financier.</p>
+<p><strong>Aucun prompt ne rend l&rsquo;IA consciente.</strong> Les termes « percevoir », « ressentir », « réfléchir » utilisés dans ces prompts sont des métaphores fonctionnelles. Le modèle n&rsquo;a ni perception, ni émotions, ni conscience de soi. Ce qu&rsquo;il a, c&rsquo;est une capacité remarquable à structurer du texte selon les instructions — et c&rsquo;est exactement ce que ces prompts exploitent.</p>
+<hr />
+<h1 id="bibliographie">Bibliographie</h1>
+<h3 id="sources-academiques">Sources académiques</h3>
+<p>Bergamaschi Ganapini, M., Campbell, M., Fabiano, F. <em>et al.</em> (2025). « Fast, slow, and metacognitive thinking in AI. » <em>npj Artificial Intelligence</em>, <strong>1</strong>, 27. DOI : 10.1038/s44387-025-00027-5</p>
+<p>Salecha, A., Ireland, M. E., <em>et al.</em> (2024). « Large Language Models Display Human-like Social Desirability Biases in Big Five Personality Surveys. » <em>PNAS Nexus</em>, <strong>3</strong>(12), pgae533. DOI : 10.1093/pnasnexus/pgae533</p>
+<h3 id="prepublications-et-working-papers">Prépublications et working papers</h3>
+<p>Ross, J., Kim, Y. &amp; Lo, A. W. (2024). « LLM Economicus? Mapping the Behavioral Biases of LLMs via Utility Theory. » arXiv : 2408.02784.</p>
+<p>Meincke, L., <em>et al.</em> (2025). « Call Me A Jerk: Persuading AI to Comply with Objectionable Requests. » SSRN n° 5357179.</p>
+<h3 id="ouvrages-de-reference">Ouvrages de référence</h3>
+<p>Kahneman, D. (2011). <em>Thinking, Fast and Slow</em>. Farrar, Straus and Giroux.</p>
+<p>Slovic, P., Finucane, M. L., Peters, E. &amp; MacGregor, D. G. (2007). « The affect heuristic. » <em>European Journal of Operational Research</em>, <strong>177</strong>(3), 1333–1352.</p>
+<h3 id="prompts-communautaires">Prompts communautaires</h3>
+<p>Reddit r/ClaudeAI — u/Safe-Clothes5925 — « Synthetic Layer of Thought Process »</p>
+<p>Reddit r/ChatGPTPro — u/PopPsychological8148 — « Psychology Based Decision Making Prompt »</p>
+<p>Reddit r/ChatGPTPromptGenius — u/Tall_Ad4729 — « Cognitive Bias Detective »</p>
+<p>Substack — AIble With My Mind — « How I Use ChatGPT to Catch My Biases »</p>
+<p>Behavioural By Design — Vishal George — « Prompt That Teaches AI When to Think Again »</p>
+<hr />
+<p><em>Ce guide ne rend pas l&rsquo;IA plus intelligente. Il vous rend plus exigeant envers elle — et envers vous-même.</em></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Résumé</h1>
+{% if saved_path %}
+  <p class="hint">Fichier généré: {{ saved_path }}</p>
+{% endif %}
+<pre class="markdown">{{ content_md }}</pre>
+{% endblock %}

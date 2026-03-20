@@ -1,0 +1,24 @@
+ui:
+  require_token: false
+  token: "local-dev-token"
+
+# GENIAL configuration is stored in SQLite via /genial.
+# Example JSON snippets for the form:
+# allowlist_hosts_ports: ["localhost:8080"]
+# headers_json: {"Authorization": "Bearer ${GENIAL_TOKEN}"}
+# request_template (Jinja2):
+# {
+#   "instructions": "{{ instructions_utilisateur }}",
+#   "from": "{{ from }}",
+#   "to_cc": "{{ to_cc }}",
+#   "subject": "{{ subject }}",
+#   "received_time": "{{ received_time_iso }}",
+#   "body_excerpt": "{{ body_excerpt }}"
+# }
+# response_mapping_json:
+# {
+#   "category_path": "data.category",
+#   "confidence_path": "data.confidence",
+#   "reasons_path": "data.reasons",
+#   "defaults": {"category": "A_LIRE", "confidence": null, "reasons": []}
+# }

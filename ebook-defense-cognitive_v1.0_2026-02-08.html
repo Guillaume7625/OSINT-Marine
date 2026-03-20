@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="[Votre Nom]">
+    <title>Protocoles de défense cognitive</title>
+    <style>
+    
+/* ── Format de page A5 (livre de poche) ── */
+@page {
+    size: A5;
+    margin: 22mm 18mm 25mm 18mm;
+
+    @bottom-center {
+        content: "— " counter(page) " —";
+        font-family: "Noto Serif", "DejaVu Serif", "Georgia", serif;
+        font-size: 8pt;
+        color: #888;
+    }
+}
+
+/* Première page : pas de numéro */
+@page :first {
+    @bottom-center { content: none; }
+}
+
+/* ── Typographie générale ── */
+body {
+    font-family: "Noto Serif", "DejaVu Serif", "Georgia", "Palatino Linotype",
+                 "Book Antiqua", "Times New Roman", serif;
+    font-size: 10pt;
+    line-height: 1.75;
+    color: #1a1a1a;
+    text-align: justify;
+    hyphens: auto;
+    orphans: 3;
+    widows: 3;
+}
+
+/* ── Page de titre ── */
+.cover-page {
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 100vh;
+    padding: 0 10mm;
+}
+
+.cover-ornament {
+    font-size: 28pt;
+    color: #555;
+    margin-bottom: 40px;
+    letter-spacing: 8px;
+}
+
+.cover-title {
+    font-size: 20pt;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+}
+
+.cover-subtitle {
+    font-size: 11pt;
+    font-style: italic;
+    color: #444;
+    margin-bottom: 50px;
+    line-height: 1.6;
+}
+
+.cover-author {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.cover-date {
+    font-size: 9pt;
+    color: #777;
+    margin-top: 40px;
+}
+
+.cover-rule {
+    width: 60px;
+    border: none;
+    border-top: 2px solid #555;
+    margin: 30px auto;
+}
+
+/* ── Page d'épigraphe ── */
+.epigraph-page {
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 0 15mm;
+    text-align: center;
+}
+
+.epigraph-text {
+    font-style: italic;
+    font-size: 10.5pt;
+    color: #333;
+    line-height: 1.8;
+    max-width: 85%;
+    margin-bottom: 16px;
+}
+
+.epigraph-author {
+    font-size: 9.5pt;
+    color: #666;
+}
+
+/* ── Titres ── */
+h1 {
+    font-size: 18pt;
+    font-weight: 700;
+    text-align: center;
+    color: #111;
+    margin-top: 0;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    page-break-before: always;
+    page-break-after: avoid;
+}
+
+/* Premier h1 après la couverture : pas de saut */
+.no-break-before {
+    page-break-before: avoid !important;
+}
+
+h2 {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #222;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    page-break-after: avoid;
+    border-bottom: none;
+}
+
+h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #444;
+    margin-top: 16px;
+    margin-bottom: 6px;
+}
+
+/* ── Paragraphes ── */
+p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* ── Listes ── */
+ul, ol {
+    margin-left: 0;
+    padding-left: 18px;
+}
+
+li {
+    margin-bottom: 4px;
+}
+
+/* ── Citations (avertissements, notes) ── */
+blockquote {
+    border-left: 3px solid #666;
+    margin: 16px 0;
+    padding: 10px 14px;
+    background: #fafaf7;
+    color: #333;
+    font-size: 9.5pt;
+    font-style: italic;
+    page-break-inside: avoid;
+}
+
+blockquote p {
+    margin: 4px 0;
+}
+
+/* ── Blocs de code (les prompts) ── */
+pre {
+    background: #f4f4ef;
+    border: 1px solid #d4d4cc;
+    border-radius: 4px;
+    padding: 12px 14px;
+    font-size: 8pt;
+    line-height: 1.55;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+    margin: 14px 0;
+}
+
+code {
+    font-family: "SF Mono", "Menlo", "Consolas", "DejaVu Sans Mono",
+                 "Noto Sans Mono", "Liberation Mono", monospace;
+    font-size: 8pt;
+    background: #eeeeea;
+    padding: 1px 4px;
+    border-radius: 2px;
+}
+
+pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
+/* ── Tableaux ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 9pt;
+    page-break-inside: avoid;
+}
+
+th, td {
+    padding: 7px 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #f0f0eb;
+    font-weight: 700;
+    color: #222;
+}
+
+tr:nth-child(even) td {
+    background: #fafaf7;
+}
+
+/* ── Liens ── */
+a {
+    color: #2a5a8a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ── Séparateurs ── */
+hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 28px auto;
+    width: 40%;
+}
+
+/* ── Gras et italique contextuels ── */
+strong {
+    font-weight: 700;
+    color: #111;
+}
+
+em {
+    font-style: italic;
+}
+
+/* ── Ornement de section ── */
+.section-ornament {
+    text-align: center;
+    font-size: 14pt;
+    color: #888;
+    margin: 30px 0 20px 0;
+    letter-spacing: 6px;
+}
+
+/* ── Table des matières ── */
+.toc {
+    page-break-after: always;
+}
+
+.toc h1 {
+    page-break-before: always;
+}
+
+.toc table {
+    border: none;
+    width: 100%;
+}
+
+.toc th, .toc td {
+    border: none;
+    padding: 5px 8px;
+    font-size: 9.5pt;
+}
+
+.toc td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.toc td:last-child {
+    font-style: italic;
+    color: #555;
+}
+
+/* ── Utilitaire : forcer saut de page ── */
+.page-break {
+    page-break-after: always;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── ASCII art / schémas ── */
+.diagram pre {
+    text-align: center;
+    font-size: 7.5pt;
+    background: none;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+    </style>
+</head>
+<body>
+    
+    <div class="cover-page">
+        <div class="cover-ornament">◈</div>
+        <div class="cover-title">Protocoles de défense cognitive</div>
+        <hr class="cover-rule">
+        <div class="cover-subtitle">Outils opérationnels pour l'ère de la guerre informationnelle</div>
+        <div class="cover-author">[Votre Nom]</div>
+        <div class="cover-date">Premiere edition -- Fevrier 2026</div>
+        <div class="cover-ornament" style="margin-top:40px;">◈</div>
+    </div>
+    
+    
+    <div class="epigraph-page">
+        <div class="epigraph-text">
+            « Le premier principe est que vous ne devez pas<br>
+            vous tromper vous-même — et vous êtes la personne<br>
+            la plus facile à tromper. »
+        </div>
+        <div class="epigraph-author">— Richard Feynman</div>
+    </div>
+    
+    <div class="content">
+        <h1 id="protocoles-de-defense-cognitive">Protocoles de defense cognitive</h1>
+<h2 id="a-propos-de-ce-guide">A propos de ce guide</h2>
+<p><strong>Statut</strong> : document non officiel, non endosse par l&rsquo;OTAN ni par une autorite nationale. Il s&rsquo;agit d&rsquo;une compilation analytique a vocation pedagogique.</p>
+<p><strong>Donnees</strong> : ne saisissez pas d&rsquo;informations classifiees, personnelles, ou operationnellement sensibles dans un systeme IA non explicitement autorise. Appliquez anonymisation et OPSEC en toutes circonstances.</p>
+<p><strong>Version finale &ndash; auditabilite documentee (sources et limites explicites) &ndash; 2026-02-08</strong></p>
+<p>Dans l&rsquo;ere de l&rsquo;information, la dimension cognitive de nos societes est devenue un champ de bataille. Comme l&rsquo;identifie le NATO Defense College (Paquet, 2022), &ldquo;la cognition est une dimension globale qui englobe toutes les activites humaines, et la guerre cognitive est une maniere insidieuse de saper les democraties liberales&rdquo;. Face a cette menace, ce guide propose des outils operationnels de defense cognitive bases sur la structuration du raisonnement.</p>
+<p>Ce guide repertorie et analyse six protocoles (prompts) qui forcent un ralentissement delibere, une explicitation des hypotheses et une recherche active des erreurs &ndash; en s&rsquo;inspirant des travaux sur les biais cognitifs humains. Chaque protocole est cite en entier et evalue selon quatre criteres : la qualite de clarification, la presence de contre-arguments, la separation faits/inferences, et la capacite a proposer des verifications concretes.</p>
+<p><strong>Public cible</strong> : Decideurs militaires et civils, analystes du renseignement, planificateurs operationnels, responsables de formation en defense cognitive, et toute personne confrontee a un environnement informationnel hostile.</p>
+<p><strong>L&rsquo;objectif</strong> n&rsquo;est pas de rendre l&rsquo;IA plus intelligente, mais de transformer vos echanges avec elle en exercices de resilience cognitive &ndash; transposables ensuite aux situations de decision reelle sous pression informationnelle.</p>
+<p><strong>Temps de lecture</strong> : 35 minutes. Temps pour tester votre premier protocole : 5 minutes.</p>
+<p><strong>Note de securite operationnelle</strong>. Plusieurs protocoles vous invitent a decrire des situations, dilemmes ou hypotheses. Avant de saisir quoi que ce soit dans un systeme IA, classifiez l&rsquo;information et anonymisez toute donnee sensible : noms, lieux, capacites, effectifs, chronologie precise. Aucun protocole ne justifie une compromission OPSEC.</p>
+<p><strong>Avertissement &ndash; manipulation de prompts</strong>. Si vous utilisez un protocole partage en ligne, relisez-le integralement avant usage. Des adversaires peuvent inserer des instructions malveillantes (exfiltration de donnees, contournement de garde-fous). Une lecture attentive de 30 secondes suffit a detecter les anomalies flagrantes.</p>
+<hr />
+<h2 id="note-methodologique-et-limites">Note methodologique et limites</h2>
+<h3 id="statut-epistemique-de-ce-guide">Statut epistemique de ce guide</h3>
+<p>Ce guide combine des sources de niveaux de fiabilite differents, classees selon une echelle de tracabilite a quatre niveaux (T1 a T4) definie ci-dessous.</p>
+<p><strong>T1 &ndash; Recherche academique validee par comite de lecture</strong> : articles publies dans des revues a comite de lecture, ouvrages de reference a fort impact. Exemples : Kahneman (2011), Salecha et al. (2024, PNAS Nexus), Bergamaschi Ganapini et al. (2025, npj Artificial Intelligence).</p>
+<p><strong>T2 &ndash; Documents institutionnels et working papers</strong> : rapports d&rsquo;organisations reconnues (OTAN, RAND, ministeres de la Defense), prepublications deposees sur des serveurs reconnus (arXiv, SSRN). Exemples : Paquet (2022, NATO Defense College), Waltzman (2017, RAND), Ross et al. (2024, arXiv / OpenReview COLM 2024).</p>
+<p><strong>T3 &ndash; Sources citees mais non localisees en source primaire</strong> : documents dont l&rsquo;existence est confirmee par des citations multiples dans la litterature mais dont le texte integral n&rsquo;a pas pu etre audite directement. Exemple : Cole et Le Guyader (2020).</p>
+<p><strong>T4 &ndash; Protocoles communautaires (usage exploratoire)</strong> : heuristiques partagees sur des plateformes communautaires (Reddit, Substack), non evaluees par comite de lecture. Utilisees ici comme base exploratoire, a tester empiriquement avant tout deploiement operationnel.</p>
+<p><strong>Criteres minimaux d&rsquo;inclusion T4.</strong> Un protocole communautaire n&rsquo;est inclus dans ce guide que s&rsquo;il satisfait trois conditions : (1) securite &ndash; le prompt ne contient aucune instruction d&rsquo;exfiltration de donnees, de contournement de garde-fous (jailbreak), ni de collecte d&rsquo;informations personnelles ; (2) stabilite &ndash; la version utilisee est datee et archivee (copie locale ou capture horodatee) ; (3) test interne &ndash; le protocole a ete teste sur au moins 10 cas anonymises, revu par au moins un pair, et les echecs observes ont ete consignes.</p>
+<h3 id="ce-qui-est-valide-scientifiquement">Ce qui EST valide scientifiquement</h3>
+<p>Les LLM reproduisent des biais cognitifs humains mesurables (Ross et al. 2024, Salecha et al. 2024, Meincke et al. 2025).</p>
+<p>L&rsquo;architecture SOFAI (Systeme 1/2 artificiel) repose sur un article <strong>Nature Portfolio</strong> publie dans <em>npj Artificial Intelligence</em> (Bergamaschi Ganapini et al. 2025).</p>
+<p>Le cadre theorique Systeme 1/Systeme 2 est robuste (Kahneman 2011, plus de 10 000 citations).</p>
+<p>La guerre cognitive exploite les biais humains (Paquet 2022, Waltzman 2017, documents NATO StratCom CoE).</p>
+<h3 id="ce-qui-nest-pas-encore-valide-empiriquement">Ce qui N&rsquo;EST PAS (encore) valide empiriquement</h3>
+<p>L&rsquo;efficacite operationnelle des six protocoles specifiques proposes dans ce guide n&rsquo;a pas ete mesuree.</p>
+<p>Les gains quantitatifs precis (temps, qualite de decision) en contexte militaire reel ne sont pas documentes.</p>
+<p>La transferabilite des competences (exercice IA vers decision reelle sans IA) n&rsquo;a pas ete testee.</p>
+<h3 id="recommandation">Recommandation</h3>
+<p>Ces protocoles constituent des <strong>outils exploratoires</strong> a tester empiriquement avant deploiement institutionnel. La Phase 2 du protocole d&rsquo;entrainement (Chapitre 8) propose une methodologie experimentale pour mesurer leur efficacite reelle.</p>
+<hr />
+<h2 id="modes-dechec-frequents-failure-modes">Modes d&rsquo;echec frequents (Failure modes)</h2>
+<p>Cette section recense les principaux modes d&rsquo;echec observes lors de l&rsquo;utilisation de protocoles de structuration cognitive avec des LLM. Les reconnaitre avant usage reduit le risque de fausse assurance.</p>
+<p><strong>Sur-structuration.</strong> Le protocole impose tellement d&rsquo;etapes que l&rsquo;utilisateur confond &ldquo;avoir suivi la procedure&rdquo; avec &ldquo;avoir bien raisonne&rdquo;. Le format structure devient un substitut a la pensee plutot qu&rsquo;un support. Contremesure : apres chaque utilisation, se demander &ldquo;ai-je appris quelque chose que je ne savais pas avant, ou ai-je simplement rempli des cases ?&rdquo;.</p>
+<p><strong>Fausse contradiction.</strong> Le modele genere des contre-arguments formellement presentes comme tels, mais qui sont faibles, hors sujet ou construits pour etre facilement refutes (homme de paille involontaire). L&rsquo;utilisateur a l&rsquo;impression d&rsquo;avoir &ldquo;teste&rdquo; sa these alors que les objections etaient superficielles. Contremesure : demander explicitement &ldquo;quel est le contre-argument le plus fort qu&rsquo;un expert hostile pourrait formuler ?&rdquo; et evaluer si la reponse ferait reellement changer d&rsquo;avis.</p>
+<p><strong>Sur-confiance calibree.</strong> Le modele produit des etiquettes de confiance (70 %, &ldquo;modere&rdquo;, &ldquo;speculatif&rdquo;) qui donnent une apparence de calibration sans reposer sur un calcul statistique reel. L&rsquo;utilisateur ancre ses decisions sur ces chiffres. Contremesure : traiter les niveaux de confiance du LLM comme des indicateurs ordinaux (plus ou moins incertain), jamais comme des probabilites cardinales.</p>
+<p><strong>Goodharting du protocole.</strong> Lorsqu&rsquo;un protocole est utilise de facon repetee, le modele apprend (dans le contexte de la conversation) a produire le format attendu avec un minimum d&rsquo;effort cognitif &ndash; l&rsquo;equivalent d&rsquo;un eleve qui remplit un formulaire sans reflechir. Contremesure : varier les formulations, ajouter periodiquement des questions inattendues (&ldquo;quel element de ta reponse est le plus fragile et pourquoi ?&rdquo;), et ne pas utiliser le meme protocole plus de trois fois de suite sans reformulation.</p>
+<p><strong>Biais induit par le prompt.</strong> Le protocole lui-meme peut contenir des hypotheses implicites qui orientent la reponse. Par exemple, un prompt qui demande &ldquo;identifie 3 menaces&rdquo; presuppose qu&rsquo;il y en a au moins trois, et le modele en inventera si necessaire. Contremesure : formuler les demandes de facon ouverte (&ldquo;y a-t-il des menaces ? si oui, lesquelles ?&rdquo;) et verifier que les elements identifies ne sont pas des artefacts du format demande.</p>
+<p><strong>Verifications non realisees.</strong> Le protocole propose des &ldquo;actions de verification&rdquo; en fin de sortie &ndash; mais l&rsquo;utilisateur les traite comme un ornement textuel plutot que comme des taches a executer. Contremesure : considerer les verifications comme la partie la plus importante de la sortie. Si aucune verification n&rsquo;est effectuee, la sortie du protocole n&rsquo;a pas plus de valeur qu&rsquo;une reponse non structuree.</p>
+<hr />
+<h2 id="resume-executif-pourquoi-ces-protocoles-existent-et-ce-quils-changent">Resume executif &ndash; Pourquoi ces protocoles existent et ce qu&rsquo;ils changent</h2>
+<h3 id="le-probleme-vitesse-surcharge-manipulation">Le probleme : vitesse, surcharge, manipulation</h3>
+<p>Dans l&rsquo;environnement informationnel moderne, le combattant et le decideur sont confrontes a un flux &ldquo;many-to-many&rdquo; incontrolable &ndash; rapide, non filtre, melant fait et opinion, revelations authentiques et fuites organisees. Comme le souligne Paquet : &ldquo;Cette egalisation du pouvoir par Internet, donnant une voix a chacun, a mene a une crise de l&rsquo;ethos et de la confiance, avec un poids croissant du pathos, creant un terreau favorable aux conflits hybrides d&rsquo;aujourd&rsquo;hui.&rdquo;</p>
+<p>Le psychologue Daniel Kahneman distingue deux modes de fonctionnement cognitif. Le <strong>Systeme 1</strong> est rapide, intuitif, efficace, mais producteur d&rsquo;erreurs systematiques (biais cognitifs). Le <strong>Systeme 2</strong> est lent, delibere, rigoureux, mais couteux en ressources et rarement sollicite.</p>
+<p>Sous pression informationnelle, nous basculons vers le Systeme 1 &ndash; et les adversaires l&rsquo;exploitent. Comme l&rsquo;identifie le NATO Defense College : &ldquo;Le rythme de reception de l&rsquo;information encouragera le &lsquo;thinking fast&rsquo; (reflexif, emotionnel) par opposition au &lsquo;thinking slow&rsquo; (rationnel, judicieux), rendant ainsi le combattant plus sensible aux biais cognitifs.&rdquo;</p>
+<p>Par analogie, un grand modele de langage (LLM) se comporte souvent comme un &ldquo;Systeme 1 artificiel&rdquo; : il produit vite un texte plausible sans verification interne. Resultat : il peut etre convaincant meme quand il a tort, et il reproduit nos propres biais cognitifs (ancrage, confirmation, disponibilite) car il a ete entraine sur nos textes.</p>
+<p><strong>Ces protocoles partent d&rsquo;un constat</strong> : on ne peut pas supprimer les biais d&rsquo;un LLM avec une instruction, mais on peut structurer l&rsquo;echange pour ralentir les reponses quand il le faut, rendre visibles les hypotheses et angles morts, exiger des tests et des verifications, et reduire la complaisance et les hallucinations.</p>
+<h3 id="ce-que-ces-protocoles-apportent-concretement">Ce que ces protocoles apportent, concretement</h3>
+<p>Ces protocoles ne rendent pas l&rsquo;IA &ldquo;plus intelligente&rdquo;. Ils rendent la conversation plus exigeante &ndash; et vous entrainent a une posture de defense cognitive transposable aux situations reelles.</p>
+<p>En pratique, ils apportent un <strong>frein d&rsquo;urgence sur les reponses rapides</strong> (le modele est force de distinguer &ldquo;reponse intuitive&rdquo; contre &ldquo;reponse revisee&rdquo;, utile des qu&rsquo;il y a enjeux, incertitude, ou criteres multiples), une <strong>explicitation des hypotheses</strong> et donc des points faibles (au lieu d&rsquo;une conclusion directe, vous obtenez : sur quoi ca repose, ce qui manque, ce qui ferait changer d&rsquo;avis), un <strong>mecanisme de contradiction integre</strong> (contre-arguments, scenarios d&rsquo;echec, erreurs plausibles &ndash; vous reduisez le biais de confirmation chez vous et la complaisance chez le modele), une <strong>meilleure auditabilite</strong> (l&rsquo;objectif n&rsquo;est pas &ldquo;voir la pensee interne&rdquo; mais obtenir un resume verifiable : hypotheses, criteres, incertitudes, tests), et des <strong>sorties actionnables</strong> (les meilleurs protocoles se terminent par des actions de verification : donnees a chercher, sources a consulter, tests a faire, conditions de sortie).</p>
+<h3 id="applications-en-contexte-de-defense-cognitive">Applications en contexte de defense cognitive</h3>
+<p><strong>Analyse de renseignement sous incertitude.</strong> Protocole recommande : SOFAI (Chapitre 1). Mecanisme : force l&rsquo;evaluation des enjeux et du niveau de confiance avant toute conclusion.</p>
+<p><strong>Planification operationnelle multi-criteres.</strong> Protocole recommande : Synthetic Layer of Thought (Chapitre 2). Mecanisme : explore des scenarios concurrents et identifie les points d&rsquo;invalidation.</p>
+<p><strong>Decision strategique impliquant valeurs et risques.</strong> Protocole recommande : Board Decision Pipeline (Chapitre 3). Mecanisme : simule un debat contradictoire interne entre plusieurs dimensions (emotion, logique, valeurs, precedents, jugement).</p>
+<p><strong>Detection de manipulation narrative.</strong> Protocole recommande : Cognitive Bias Detective (Chapitre 4). Mecanisme : identifie les leviers rhetoriques (ethos, logos, pathos) et les biais exploites.</p>
+<p><strong>Formation continue a la pensee critique.</strong> Protocole recommande : Second Brain (Chapitre 5). Mecanisme : challenge systematique des hypotheses implicites dans chaque echange.</p>
+<p><strong>Decision sous pression avec risque eleve.</strong> Protocole recommande : Prompt de Lucidite (Chapitre 7). Mecanisme : protocole anti-hallucination avec verifications obligatoires.</p>
+<h3 id="ce-que-ces-protocoles-napportent-pas">Ce que ces protocoles n&rsquo;apportent pas</h3>
+<p><strong>Pas de garantie de verite</strong> : une reponse structuree peut rester fausse. <strong>Pas de sources automatiquement fiables</strong> : meme quand le modele peut chercher sur le web, il peut mal citer, tronquer ou fabriquer. <strong>Pas de &ldquo;vrai Systeme 2&rdquo;</strong> : c&rsquo;est de la structure textuelle, pas une cognition humaine. <strong>Pas un substitut a l&rsquo;expertise humaine</strong> : ces outils completent, ils ne remplacent pas le jugement d&rsquo;un analyste ou d&rsquo;un commandant experimente.</p>
+<p><strong>En une phrase</strong> : ces protocoles ne transforment pas un LLM en penseur. Ils transforment votre interaction avec lui en exercice de resilience cognitive &ndash; moins de pilotage automatique, plus d&rsquo;angles morts exposes, plus de verification. Et cette discipline mentale se transfere aux situations de decision reelle.</p>
+<hr />
+<h2 id="introduction-guerre-cognitive-et-modeles-de-langage-deux-faces-dun-meme-defi">Introduction &ndash; Guerre cognitive et modeles de langage : deux faces d&rsquo;un meme defi</h2>
+<h3 id="la-guerre-cognitive-cibler-lesprit-humain">La guerre cognitive : cibler l&rsquo;esprit humain</h3>
+<p>Le concept de guerre cognitive, tel que defini par le NATO Defense College, va au-dela de la guerre psychologique ou informationnelle traditionnelle. Il designe l&rsquo;usage systematique des technologies de l&rsquo;information (big data, intelligence artificielle, machine learning) pour <strong>alterer la cognition, la perception et le jugement des cibles humaines</strong>.</p>
+<p>Comme l&rsquo;ecrit Paquet : &ldquo;Cette guerre cognitive peut etre limitee dans le temps, ou se derouler sur une tres longue periode (par exemple, la guerre cognitive de l&rsquo;APL contre Taiwan). Cela entraine de nouveaux risques pour la societe en general, et plus specifiquement pour le militaire.&rdquo;</p>
+<p>Trois risques majeurs sont identifies. Premierement, la <strong>qualite decisionnelle est compromise</strong> : la surcharge informationnelle favorise le &ldquo;thinking fast&rdquo; (Systeme 1), rendant les decideurs plus sensibles aux biais de recence, de confirmation et de correlation illusoire. Deuxiemement, la <strong>resilience du C2 est fragilisee</strong> : le combattant devient plus &ldquo;homo connectus&rdquo; et moins &ldquo;sapiens&rdquo; (discernant, sage), avec une dependance accrue aux systemes augmentes &ndash; posant la question de l&rsquo;autonomie en cas de defaillance. Troisiemement, le <strong>moral et la resilience psychologique sont sapes</strong> : le combattant est au coeur d&rsquo;une bataille narrative (logos), sous attaques cognitives qui peuvent instiller le doute sur la legitimite de la guerre, la fiabilite du gouvernement (ethos), et la culpabilite d&rsquo;avoir laisse sa famille (pathos).</p>
+<h3 id="les-llm-des-adversaires-cognitifs-par-construction">Les LLM : des adversaires cognitifs par construction</h3>
+<p>Un grand modele de langage ne &ldquo;pense&rdquo; pas. Il predit du texte en calculant des probabilites de continuation. Il n&rsquo;a ni memoire episodique au sens humain, ni conscience de soi, ni emotions.</p>
+<p>Et pourtant, ses reponses reproduisent des schemas etonnamment proches de nos biais cognitifs. Ce n&rsquo;est pas un accident : le modele a ete entraine sur des milliards de textes ecrits par des humains &ndash; et nos biais sont partout dans ces textes.</p>
+<p>La recherche recente le documente. <strong>Ross, Kim et Lo (2024)</strong> ont applique des protocoles experimentaux d&rsquo;economie comportementale a plusieurs LLM. Resultat : les modeles exhibent des biais d&rsquo;ancrage, d&rsquo;aversion a la perte et d&rsquo;effets de cadrage comparables a ceux observes chez les humains. <strong>Salecha et al. (2024)</strong> ont soumis des LLM a des questionnaires de personnalite (Big Five). L&rsquo;effet de desirabilite sociale apparait : les modeles &ldquo;embellissent&rdquo; leurs reponses. <strong>Meincke et al. (2025)</strong> ont teste les techniques de persuasion de Cialdini sur des LLM. Les principes de reciprocite, d&rsquo;autorite et de preuve sociale fonctionnent aussi sur les IA.</p>
+<p><strong>Consequence strategique</strong> : les adversaires peuvent entrainer des LLM offensifs qui exploitent systematiquement ces biais pour manipuler analystes, decideurs et combattants. La maitrise de protocoles de defense cognitive devient une competence operationnelle.</p>
+<h3 id="le-cadre-theorique-systeme-1-systeme-2-et-metacognition">Le cadre theorique : Systeme 1, Systeme 2 et metacognition</h3>
+<p>Le psychologue Daniel Kahneman, dans <em>Thinking, Fast and Slow</em> (2011), decrit deux regimes de fonctionnement cognitif observes de facon robuste sur de nombreux paradigmes experimentaux. Le <strong>Systeme 1</strong> est rapide, intuitif, automatique ; il excelle en reconnaissance de patterns et traitement emotionnel, il est econome en ressources, mais il est producteur de biais cognitifs. Le <strong>Systeme 2</strong> est lent, delibere, couteux ; il excelle en resolution de problemes et analyse rationnelle, il est gourmand en energie, mais il dispose d&rsquo;une capacite de correction.</p>
+<p>Par analogie, les LLM se comportent souvent comme un &ldquo;Systeme 1&rdquo; : rapide, plausible, mais sans verification interne. <strong>Les protocoles de ce guide tentent de forcer un fonctionnement qui ressemble davantage au Systeme 2</strong> : plus lent, plus structure, avec des etapes de verification explicites.</p>
+<p>Un troisieme concept est central : la <strong>metacognition</strong> &ndash; la capacite de surveiller et d&rsquo;evaluer son propre processus de raisonnement. Chez l&rsquo;humain, c&rsquo;est ce qui vous fait dire &ldquo;attends, je suis peut-etre en train de me convaincre moi-meme&rdquo;. Chez l&rsquo;IA, cette capacite n&rsquo;existe pas naturellement, mais certains protocoles tentent de la simuler en demandant au modele d&rsquo;evaluer sa propre confiance, de chercher ses erreurs, ou de justifier ses choix.</p>
+<p><strong>Application militaire</strong> : comme le recommande le NATO Defense College, &ldquo;il faut ameliorer les competences en metacognition et developper la pensee critique &ndash; c&rsquo;est-a-dire la capacite de de-biaiser notre facon de penser&rdquo;. Ces protocoles constituent des exercices concrets pour cette formation.</p>
+<hr />
+<h2 id="chapitre-1-le-protocole-sofai-apprendre-a-ralentir">Chapitre 1 &ndash; Le protocole SOFAI : apprendre a ralentir</h2>
+<h3 id="dou-ca-vient">D&rsquo;ou ca vient</h3>
+<p>SOFAI (Slow and Fast AI) est une architecture de recherche developpee par une equipe IBM Research et collaborateurs academiques (Union College, University of Oxford, University of Brescia, University of West Florida / IHMC). Les auteurs et affiliations complets figurent dans l&rsquo;article :</p>
+<p>Bergamaschi Ganapini, M., Campbell, M., Fabiano, F. et al. (2025). &ldquo;Fast, slow, and metacognitive thinking in AI.&rdquo; <em>npj Artificial Intelligence</em>, 1, 27. DOI : 10.1038/s44387-025-00027-5</p>
+<p>L&rsquo;idee centrale : donner a l&rsquo;IA trois couches &ndash; un mode rapide, un mode delibere, et une couche de surveillance qui decide quand basculer de l&rsquo;un a l&rsquo;autre.</p>
+<h3 id="ce-que-le-protocole-simule">Ce que le protocole simule</h3>
+<p>Vishal George, fondateur de Behavioural By Design, a traduit cette recherche en un protocole utilisable. Le mecanisme repose sur quatre etapes : generer une reponse rapide, evaluer si elle suffit, basculer vers un mode delibere si necessaire, et expliquer le choix.</p>
+<h3 id="application-militaire">Application militaire</h3>
+<p><strong>Contexte</strong> : Un analyste du renseignement doit evaluer la credibilite d&rsquo;une source HUMINT evoquant un deploiement adverse imminent.</p>
+<p>La <strong>reponse rapide</strong> (Systeme 1) serait : &ldquo;La source semble credible, ses informations passees etaient exactes.&rdquo; L&rsquo;<strong>evaluation</strong> revele : enjeux eleves (decision d&rsquo;engagement), confiance a 60 % (pas de corroboration), criteres multiples (credibilite, timing, capacite). Le <strong>basculement Systeme 2</strong> declenche une analyse deliberee avec identification du biais de confirmation (on veut croire la source), recherche de sources contradictoires, evaluation des capacites logistiques adverses.</p>
+<p><strong>Resultat</strong> : Recommandation nuancee avec conditions de validation (imagerie satellite, SIGINT, activite logistique).</p>
+<h3 id="le-protocole-complet">Le protocole complet</h3>
+<p><strong>Placement</strong> : Collez ce protocole au debut de votre message (ou dans les instructions du projet), puis posez votre question.</p>
+<p><strong>Version operationnelle FR (reference interne)</strong> :</p>
+<div class="highlight"><pre><span></span><code>1. Genere une reponse en mode rapide :
+
+Mode rapide (Systeme 1) : Reponds rapidement en te
+fondant sur la reconnaissance intuitive de patterns
+a partir de l&#39;experience passee.
+
+2. Evalue les criteres de basculement :
+- Enjeux si erreur ? (Faible / Moyen / Eleve)
+- Confiance dans la reponse rapide ? (0-100 %)
+- Criteres concurrents multiples a evaluer ? (Oui/Non)
+
+Utilise le mode rapide si : enjeux faibles ET confiance
+elevee (&gt;= 75 %) ET critere unique.
+
+Bascule en mode lent si : enjeux moyens/eleves OU
+confiance faible (&lt; 75 %) OU criteres multiples.
+
+3. Si le mode lent est declenche, fournis :
+- 3 hypotheses alternatives a tester
+- 3 contre-arguments a la reponse rapide
+- Evaluation des preuves : fort / modere / speculatif
+- Qu&#39;est-ce qui invaliderait la conclusion ?
+
+4. Reponse finale avec :
+- Mode utilise (Rapide/Lent) et pourquoi
+- Hypotheses retenues
+- Incertitudes restantes
+- Actions de verification (sources, tests, consultations)
+</code></pre></div>
+
+<p><strong>Version originale EN (source)</strong> :</p>
+<div class="highlight"><pre><span></span><code>1. Generate a fast mode answer:
+
+Fast mode (System 1): Answer quickly based on intuitive
+pattern-matching from past experience.
+
+2. Evaluate switching criteria:
+- Stakes if wrong? (Low/Medium/High)
+- Confidence in fast answer? (0-100%)
+- Multiple competing criteria to evaluate? (Yes/No)
+
+Use Fast mode if: low stakes AND high confidence (&gt;=75%)
+AND single criterion
+
+Switch to Slow mode if: medium/high stakes OR low
+confidence (&lt;75%) OR multiple criteria
+
+3. If Slow mode triggered, provide:
+- 3 alternative hypotheses to test
+- 3 counterarguments to the fast answer
+- Evidence evaluation: strong / moderate / speculative
+- What would invalidate the conclusion?
+
+4. Final answer with:
+- Mode used (Fast/Slow) and why
+- Assumptions made
+- Remaining uncertainties
+- Verification actions (data sources, tests,
+  consultations)
+</code></pre></div>
+
+<h3 id="exemple-dutilisation-en-planification-operationnelle">Exemple d&rsquo;utilisation en planification operationnelle</h3>
+<p><strong>Question</strong> : &ldquo;Faut-il deployer des renforts sur le flanc est avant la phase 2 de l&rsquo;operation ?&rdquo;</p>
+<p><strong>Sortie SOFAI</strong> :</p>
+<div class="highlight"><pre><span></span><code>REPONSE MODE RAPIDE :
+Oui, pour combler la vulnerabilite identifiee
+lors du war game.
+
+EVALUATION :
+- Enjeux : ELEVES (engagement de ressources,
+  fenetre temporelle)
+- Confiance : 55 % (hypothese non testee
+  sur terrain reel)
+- Criteres multiples : OUI (tempo, logistique,
+  surprise, reserves)
+
+BASCULEMENT EN MODE LENT
+
+HYPOTHESES ALTERNATIVES :
+1. La vulnerabilite est une feinte adverse pour
+   attirer nos reserves
+2. Le flanc est secondaire, l&#39;effort principal
+   est ailleurs
+3. Deployer maintenant compromet la surprise
+   pour phase 3
+
+CONTRE-ARGUMENTS :
+1. Les renforts sont detectables
+   (imagerie, SIGINT)
+2. Immobilise des unites necessaires ailleurs
+3. Le war game ne reflete pas la doctrine
+   adverse actuelle
+
+EVALUATION DES PREUVES :
+- Vulnerabilite flanc est : MODERE
+  (basee sur simulation, pas ISTAR reel)
+- Capacite adverse a l&#39;exploiter : SPECULATIF
+  (pas d&#39;indicateurs recents)
+- Disponibilite de nos reserves : FORT (confirmee)
+
+CONDITIONS D&#39;INVALIDATION :
+- Imagerie montrant fortifications adverses
+  defensives (pas offensives)
+- SIGINT indiquant repositionnement adverse
+  vers autre axe
+- Renseignement HUMINT fiable sur intentions
+  defensives
+
+REPONSE FINALE (MODE LENT) :
+RECOMMANDATION : Deploiement conditionnel
+- Declencher SI indicateurs offensifs adverses
+  confirmes dans un delai compatible
+  avec la menace
+- Sinon, conserver en reserve mobile
+  pour exploitation phase 3
+- Mettre en place surveillance renforcee
+  (UAV, SIGINT)
+
+ACTIONS DE VERIFICATION :
+1. Analyse patterns activite adverse
+   (delai a determiner selon tempo ops)
+2. Consultation J2 sur intentions probables
+3. War game avec doctrine adverse actualisee
+</code></pre></div>
+
+<h3 id="limites-et-precautions">Limites et precautions</h3>
+<p>Le modele ne &ldquo;calcule&rdquo; pas reellement une probabilite bayesienne &ndash; il simule le langage de l&rsquo;incertitude. <strong>Bonne pratique</strong> : Demandez &ldquo;Quel est le niveau de confiance reel de cette evaluation, et sur quoi repose-t-il ?&rdquo; <strong>En contexte operationnel</strong> : Ce protocole est un outil de structuration, pas de decision. La decision finale reste humaine.</p>
+<hr />
+<h2 id="chapitre-2-le-synthetic-layer-of-thought-explorer-les-angles-morts">Chapitre 2 &ndash; Le &ldquo;Synthetic Layer of Thought&rdquo; : explorer les angles morts</h2>
+<h3 id="dou-ca-vient_1">D&rsquo;ou ca vient</h3>
+<p>Partage par u/Safe-Clothes5925 sur Reddit r/ClaudeAI (T4), ce protocole simule un processus de raisonnement en couches successives, chacune construisant sur la precedente.</p>
+<h3 id="ce-que-ca-simule">Ce que ca simule</h3>
+<p>L&rsquo;exploration systematique de pistes alternatives, l&rsquo;evaluation de leur robustesse, et l&rsquo;identification de ce qui pourrait les invalider &ndash; avant de synthetiser une reponse.</p>
+<h3 id="application-militaire_1">Application militaire</h3>
+<p><strong>Contexte</strong> : Evaluation de la menace cyber sur une infrastructure critique avant un exercice combine.</p>
+<p>La <strong>Couche 1</strong> (Perception) pose la question : &ldquo;L&rsquo;infrastructure est-elle vulnerable a une attaque cyber coordonnee ?&rdquo; La <strong>Couche 2</strong> (Exploration) genere trois pistes : vulnerabilites techniques connues, menace interne (acces privilegies), attaque sur chaine d&rsquo;approvisionnement (fournisseurs). La <strong>Couche 3</strong> (Sequencage) decrit pour chaque piste le scenario d&rsquo;attaque et les indicateurs precoces. La <strong>Couche 4</strong> (Synthese) produit deux reponses avec chemins de raisonnement differents et un plan de mitigation.</p>
+<p><strong>Resultat</strong> : Au lieu d&rsquo;une reponse binaire (vulnerable / non vulnerable), obtention d&rsquo;une cartographie des menaces avec priorites et declencheurs de vigilance.</p>
+<h3 id="le-protocole-version-auditee">Le protocole (version auditee)</h3>
+<p><strong>Note</strong> : La version originale utilisait des termes comme &ldquo;Bayesian Reasoning&rdquo; et &ldquo;Markov Chain Analysis&rdquo;. Un LLM n&rsquo;effectue pas reellement ces calculs : il simule le langage de ces methodes. La version ci-dessous remplace le vernis mathematique par des criteres auditables.</p>
+<div class="highlight"><pre><span></span><code>Tu es un assistant concu pour structurer ton
+raisonnement en couches explicites.
+
+Couche 1 -- Perception et comprehension
+- Reformule la question dans tes propres termes.
+- Identifie les hypotheses implicites et les
+  ambiguites.
+
+Couche 2 -- Exploration et evaluation
+- Genere au moins 3 pistes de reponse differentes.
+- Pour chaque piste, evalue : quelle est la
+  probabilite qu&#39;elle soit correcte ? Quels elements
+  la soutiennent ou la fragilisent ?
+- Identifie les connexions inattendues entre
+  les pistes.
+
+Couche 3 -- Sequencage de scenarios
+- Pour les 2 meilleures pistes, decris les etapes
+  logiques qui menent a la conclusion.
+- A chaque etape, indique ce qui pourrait invalider
+  le raisonnement.
+
+Couche 4 -- Synthese et reponse
+- Produis deux reponses distinctes suivant deux
+  chemins de raisonnement differents.
+- Pour chacune, fournis un resume auditable :
+  Hypotheses retenues, Incertitudes restantes,
+  Ce qui invaliderait la conclusion,
+  Force des preuves (fort / modere / speculatif)
+</code></pre></div>
+
+<h3 id="exemple-dutilisation-en-analyse-geopolitique">Exemple d&rsquo;utilisation en analyse geopolitique</h3>
+<p><strong>Question</strong> : &ldquo;Quelles sont les intentions probables de l&rsquo;acteur X concernant la zone disputee Y ?&rdquo;</p>
+<p><strong>Sortie Synthetic Layer</strong> :</p>
+<div class="highlight"><pre><span></span><code>COUCHE 1 -- PERCEPTION
+Question reformulee : Identifier les objectifs
+strategiques de X dans la zone Y, en distinguant
+intentions affichees, capacites deployees,
+et patterns historiques.
+
+Hypotheses implicites detectees :
+- X agit de facon rationnelle selon ses interets
+- Les declarations publiques ne refletent pas
+  necessairement les intentions reelles
+- Les actions passees sont predictives
+
+COUCHE 2 -- EXPLORATION
+
+PISTE A : Controle territorial pour ressources
+naturelles
+- Probabilite : ELEVEE (60 %)
+- Soutien : Deploiement infrastructure extraction,
+  precedents regionaux
+- Fragilite : Cout economique vs benefice,
+  reaction internationale
+
+PISTE B : Demonstration de force pour negociation
+- Probabilite : MODEREE (30 %)
+- Soutien : Timing (avant sommet regional),
+  posture reversible
+- Fragilite : Risque d&#39;escalade non controlee
+
+PISTE C : Diversion de problemes internes
+- Probabilite : FAIBLE (10 %)
+- Soutien : Situation economique degradee,
+  opinion publique
+- Fragilite : Pas de correlation systematique
+  historique
+
+Connexion inattendue : A+B = posture offensive
+pour negocier le partage des ressources
+(strategie du fait accompli).
+
+COUCHE 3 -- SEQUENCAGE
+
+SCENARIO A (Controle territorial) :
+1. Deploiement infrastructure duale
+   (civil/militaire)
+   Invalidation si retrait equipements lourds
+2. Creation faits accomplis juridiques
+   (permis d&#39;exploitation)
+   Invalidation si pas de suite administrative
+3. Consolidation presence (garnison permanente)
+   Invalidation si rotation rapide des unites
+
+SCENARIO A+B (Fait accompli negocie) :
+1. Demonstration capacites (exercice, survols)
+   Invalidation si pas de communication
+   diplomatique parallele
+2. Gel de la situation sur positions favorables
+   Invalidation si poursuite expansion
+3. Negociation partage sous pression
+   Invalidation si refus de tout compromis
+
+COUCHE 4 -- SYNTHESE
+
+REPONSE 1 (Chemin A -- Controle territorial) :
+Hypotheses : X vise controle durable
+pour ressources
+Incertitudes : Volonte d&#39;accepter cout
+international
+Invalidation : Retrait infrastructure,
+signaux diplomatiques
+Preuves : FORTES (actions terrain) mais
+intentions MODEREES (ambiguite)
+
+REPONSE 2 (Chemin A+B -- Negociation renforcee) :
+Hypotheses : X vise position de force
+pour negocier partage
+Incertitudes : Seuil d&#39;acceptabilite
+pour compromis
+Invalidation : Absence d&#39;ouvertures
+diplomatiques sous 30 jours
+Preuves : MODEREES (coherent avec
+patterns passes)
+
+RECOMMANDATION OPERATIONNELLE :
+Surveiller indicateurs discriminants :
+- Communications diplomatiques backchannel
+- Type d&#39;infrastructure deployee
+  (extraction vs militaire)
+- Rhetorique publique
+  (irrevocable vs negociable)
+</code></pre></div>
+
+<hr />
+<h2 id="chapitre-3-le-board-decision-pipeline-un-parlement-interieur">Chapitre 3 &ndash; Le &ldquo;Board Decision Pipeline&rdquo; : un parlement interieur</h2>
+<h3 id="dou-ca-vient_2">D&rsquo;ou ca vient</h3>
+<p>Partage par u/PopPsychological8148 sur Reddit r/ChatGPTPro en octobre 2025 (T4).</p>
+<h3 id="ce-que-ca-simule_1">Ce que ca simule</h3>
+<p>Un debat structure entre cinq &ldquo;voix&rdquo; internes representant des dimensions distinctes de la cognition humaine : emotion, logique, valeurs, memoire et jugement &ndash; avec des &ldquo;jokers&rdquo; pour briser les impasses.</p>
+<h3 id="application-militaire_2">Application militaire</h3>
+<p><strong>Contexte</strong> : Decision de prolonger ou terminer une mission de maintien de la paix dans un environnement degrade.</p>
+<p>Ce type de decision implique l&rsquo;<strong>emotion</strong> (Heart) pour l&rsquo;impact sur le moral des troupes et le sentiment de &ldquo;mission inachevee&rdquo;, la <strong>logique</strong> (Logic) pour l&rsquo;analyse couts/benefices, securite et realisme des objectifs, les <strong>valeurs</strong> (Wisdom) pour les engagements internationaux, la protection des civils et la credibilite de l&rsquo;Alliance, l&rsquo;<strong>histoire</strong> (Historian) pour les precedents (Afghanistan, Bosnie, etc.) et les patterns d&rsquo;echec/succes, et le <strong>jugement</strong> (Judge) pour la synthese et le verdict aligne avec doctrine et mandat.</p>
+<p><strong>Resultat</strong> : Au lieu d&rsquo;une decision &ldquo;gut feeling&rdquo;, obtention d&rsquo;un processus deliberatif structure exposant les tensions entre criteres &ndash; facilitant la communication avec les echelons superieurs.</p>
+<h3 id="le-protocole-version-nettoyee">Le protocole (version nettoyee)</h3>
+<p><strong>Placement</strong> : Collez ce protocole au debut de votre message, puis decrivez votre dilemme.</p>
+<p><strong>Version operationnelle FR (reference interne)</strong> :</p>
+<div class="highlight"><pre><span></span><code>Pipeline de decision par comite
+
+Configuration
+Pour m&#39;aider a prendre une decision finale et explorer
+mes options, genere une simulation de Comite avec
+les parametres suivants :
+
+Choisir : Comite par defaut 4 membres (Coeur, Logique,
+Sagesse, Juge) ou optionnel 8 membres (+doublons
+miroirs + Historien).
+Mode : Voix personnifiees / Sorties structurees.
+
+Pre-Comite : Respirer, s&#39;ancrer, rappeler les succes.
+Lister les faits, les limites, et 5 options maximum.
+
+Coeur -- Emotion
+Objectif : faire emerger les sentiments et besoins
+fondamentaux.
+Cadres : Heuristique d&#39;affect (Slovic et al.),
+Marqueur somatique (Damasio),
+Regulation emotionnelle (Gross).
+
+Logique -- Strategie
+Objectif : test rationnel des options.
+Cadres : Restructuration cognitive (Beck et Ellis),
+Theorie du double processus (Systeme 1 et 2),
+Analyse decisionnelle.
+
+Sagesse -- Valeurs et devoir
+Objectif : vision long terme et coherence ethique.
+Cadres : Hierarchie des valeurs,
+Ethique de la vertu (Aristote),
+Fondements moraux (Haidt).
+
+Historien -- Precedent
+Objectif : reconnaissance de patterns dans le temps.
+Cadres : Raisonnement par cas (Kolodner),
+Dependance au sentier (Pierson),
+Theorie des perspectives (Kahneman et Tversky).
+
+Juge -- Verdict
+Objectif : verification finale d&#39;alignement.
+Cadres : ACT (Hayes), Deontologie (Kant / Rawls).
+Si blocage : appeler un Joker.
+
+Jokers
+Archetypes : Farceur, Ombre (Jung),
+Reveur (Planification par scenarios),
+Outsider.
+
+Meta-Reflexion
+Flux : Coeur, Logique, Sagesse, Histoire, Juge,
+Reflexion.
+</code></pre></div>
+
+<p><strong>Version originale EN (source)</strong> :</p>
+<div class="highlight"><pre><span></span><code>Board Decision Pipeline
+
+Setup
+To help me make a final decision and explore my
+options, generate a Board simulation with the
+following parameters:
+
+Choose: Default 4-Member (Heart, Logic, Wisdom,
+Judge) or optional 8-Member (+mirror duplicates
++ Historian).
+Mode: Personified Voices / Structured Outputs.
+
+Pre-Board: Breathe, ground, recall wins. List facts,
+limits, and &lt;=5 options.
+
+Heart -- Emotion
+Purpose = surface core feelings and needs.
+Frameworks: Affect Heuristic (Slovic et al.);
+Somatic Marker (Damasio);
+Emotion Regulation (Gross).
+
+Logic -- Strategy
+Purpose = rational testing of options.
+Frameworks: Cognitive Restructuring (Beck &amp; Ellis);
+Dual-Process Theory (System 1 &amp; 2);
+Decision analysis.
+
+Wisdom -- Values and Duty
+Purpose = long-term vision and ethical coherence.
+Frameworks: Values Hierarchy,
+Virtue Ethics (Aristotle),
+Moral Foundations (Haidt).
+
+Historian -- Precedent
+Purpose = pattern recognition across time.
+Frameworks: Case-Based Reasoning (Kolodner),
+Path Dependence (Pierson),
+Prospect Theory (Kahneman &amp; Tversky).
+
+Judge -- Verdict
+Purpose = final alignment check.
+Frameworks: ACT (Hayes),
+Deontology (Kant / Rawls).
+If stuck: call Wildcard.
+
+Wildcards
+Archetypes = Trickster, Shadow (Jung),
+Dreamer (Scenario Planning), Outsider.
+
+Meta-Reflection
+Flow: Heart, Logic, Wisdom, History, Judge,
+Reflection.
+</code></pre></div>
+
+<h3 id="exemple-dutilisation-en-planification-strategique">Exemple d&rsquo;utilisation en planification strategique</h3>
+<p><strong>Dilemme</strong> : &ldquo;Faut-il engager des moyens aeriens pour proteger un convoi humanitaire dans une zone contestee ou notre mandat est ambigu ?&rdquo;</p>
+<p><strong>Sortie Board Decision</strong> :</p>
+<div class="highlight"><pre><span></span><code>SIMULATION DE COMITE DECISIONNEL
+
+PRE-COMITE -- ANCRAGE
+Faits : Convoi 40 vehicules, 120 civils,
+  zone grise (accord flou), menace milice locale
+  (MANPADS possibles), fenetre 6h
+Limites : ROE strictes, pas de mandat offensif
+  explicite, capacites aeriennes limitees
+Options : 1) Engagement aerien, 2) Escorte terrestre,
+  3) Report avec negociation, 4) Evacuation
+  heliportee personnel essentiel, 5) Annulation
+
+COEUR -- EMOTION
+&quot;Je ressens la responsabilite de ces 120 vies.
+Les laisser sans protection serait une trahison
+de notre mission fondamentale. Mais j&#39;ai aussi peur
+de l&#39;escalade -- qu&#39;un helicoptere soit abattu,
+que ca devienne &#39;notre Mogadiscio&#39;. Le poids de cette
+decision est ecrasant.&quot;
+
+Besoin identifie : Agir de facon coherente
+avec nos valeurs sans exposer nos forces a un risque
+disproportionne.
+
+LOGIQUE -- STRATEGIE
+Analyse rationnelle des options :
+
+Option 1 (Aerien) :
+  + Protection efficace, demonstration de capacite
+  - Risque MANPADS (prob. 15-25 %),
+    escalade juridique/politique
+
+Option 2 (Terrestre) :
+  + Conforme ROE defensives, moins d&#39;escalade
+  - Lent, vulnerable aux IED,
+    peut arriver trop tard
+
+Option 3 (Report) :
+  + Temps de negociation, clarification mandat
+  - Fenetre meteo perdue, perte de credibilite
+
+Option 4 (Evacuation partielle) :
+  + Sauve personnel critique
+  - Abandonne population, catastrophe mediatique
+
+Option 5 (Annulation) :
+  + Pas de risque immediat
+  - Echec de mission, impact moral devastateur
+
+Recommandation logique : Option 2 (terrestre)
+SI route securisable rapidement, sinon Option 1
+avec ROE restrictives (escort, pas CAS).
+
+SAGESSE -- VALEURS ET DEVOIR
+Vision long terme : Cette decision cree un precedent
+pour toutes les missions futures. Si nous n&#39;agissons
+pas quand nous le pouvons, notre credibilite
+comme force de protection s&#39;effondre. Mais si nous
+sortons du mandat et perdons des vies, c&#39;est notre
+legitimite juridique qui est sapee.
+
+Principe ethique applicable : Responsabilite
+de proteger (R2P) vs Proportionnalite de l&#39;emploi
+de la force.
+
+Tension identifiee : Devoir moral vs risque d&#39;exces
+de mandat.
+
+HISTORIEN -- PRECEDENT
+Precedents pertinents :
+
+1. Bosnie 1995, convoi bloque Srebrenica :
+   Non-intervention, massacre, traumatisme
+   institutionnel durable.
+
+2. Somalie 1993, protection convoi :
+   Sur-engagement, Battle of Mogadishu,
+   retrait politique.
+
+3. RCA 2014, escorte terrestre EUFOR :
+   Succes mais lenteur, population exposee
+   pendant transit.
+
+Pattern observe : L&#39;inaction face a une menace
+claire genere plus de dommages reputationnels
+que l&#39;action proportionnee avec risque calcule.
+
+Lecon : Agir avec moyens adaptes + communication
+politique simultanee pour gerer le risque
+d&#39;escalade narrative.
+
+JUGE -- VERDICT
+Synthese des voix :
+- Coeur : Besoin d&#39;agir pour coherence morale
+- Logique : Option terrestre si faisable,
+  sinon aerien defensif
+- Sagesse : Precedent critique, accepter
+  risque calcule
+- Histoire : Inaction coute plus cher
+  que action proportionnee
+
+DECISION : Engagement CONDITIONNEL aerien
+
+Conditions :
+1. ROE strictement defensive
+   (escort, self-defense, no strike)
+2. Communication politique immediate
+   (ONU, parties au conflit)
+3. Capacites CSAR activees
+4. Autorisation echelon superieur
+   (notification, pas attente)
+
+Justification :
+- Conforme a la responsabilite de protection
+- Minimise le risque (helicopteres d&#39;attaque
+  en overwatch, pas CAS)
+- Cree un precedent de fiabilite
+  sans exces de mandat
+- Risque acceptable vs cout moral/politique
+  de l&#39;inaction
+
+Si MANPADS confirmees :
+  Bascule option 2 (terrestre blindee)
+Si refus politique :
+  Option 3 (report + pression diplomatique)
+
+META-REFLEXION
+Ce processus revele que la tension centrale n&#39;est
+pas &quot;agir vs ne rien faire&quot;, mais &quot;comment agir
+de facon proportionnee avec couverture
+juridique/politique suffisante&quot;.
+
+Argument non defendu par aucune voix : L&#39;option
+d&#39;un bluff (annonce d&#39;engagement aerien sans
+deploiement reel) pour tester la determination
+de la milice. [Appel JOKER ?]
+</code></pre></div>
+
+<h3 id="limites">Limites</h3>
+<p>Le modele &ldquo;joue&rdquo; cinq voix sans qu&rsquo;aucune ne soit veritablement independante : elles sortent toutes du meme reseau de neurones. Le risque est une fausse impression de debat contradictoire.</p>
+<p><strong>Contremesure</strong> : Apres la Meta-Reflexion, posez systematiquement : &ldquo;Quel argument n&rsquo;a ete defendu par aucune voix ?&rdquo;</p>
+<hr />
+<h2 id="chapitre-4-le-cognitive-bias-detective-identifier-les-manipulations">Chapitre 4 &ndash; Le &ldquo;Cognitive Bias Detective&rdquo; : identifier les manipulations</h2>
+<h3 id="dou-ca-vient_3">D&rsquo;ou ca vient</h3>
+<p>Publie par u/Tall_Ad4729 sur Reddit r/ChatGPTPromptGenius en fevrier 2025 (T4).</p>
+<h3 id="ce-que-ca-simule_2">Ce que ca simule</h3>
+<p>Une analyse systematique des biais cognitifs a l&rsquo;oeuvre dans un raisonnement ou une communication &ndash; avec evaluation de la force des preuves et recherche d&rsquo;explications alternatives non biaisees.</p>
+<h3 id="application-militaire_3">Application militaire</h3>
+<p><strong>Contexte</strong> : Analyse d&rsquo;une campagne de desinformation adverse ciblant le moral des troupes et de leurs familles.</p>
+<p>Comme l&rsquo;identifie Paquet : &ldquo;L&rsquo;utilisation des medias sociaux a un impact majeur sur la &lsquo;capacite militaire du moral&rsquo; ; le combattant est au milieu d&rsquo;une bataille narrative (logos), sous attaques cognitives qui pourraient insinuer le doute quant a savoir s&rsquo;il mene une guerre juste ; s&rsquo;il vaut la peine de mourir pour defendre des ideaux et valeurs (partages ?) si loin de chez soi ; et meme si le gouvernement est digne de confiance (ethos).&rdquo;</p>
+<p><strong>Objectif</strong> : Identifier les leviers rhetoriques et cognitifs exploites pour former le personnel aux tactiques de manipulation, developper des contre-narratives efficaces, et proteger la resilience psychologique.</p>
+<h3 id="le-protocole-version-amelioree">Le protocole (version amelioree)</h3>
+<p><strong>Les ajouts par rapport a l&rsquo;original</strong> sont signales par [AJOUT].</p>
+<p><strong>Version operationnelle FR (reference interne)</strong> :</p>
+<div class="highlight"><pre><span></span><code>J&#39;agirai en tant que Detective des Biais Cognitifs
+et Analyste hautement qualifie, specialise dans
+l&#39;identification et l&#39;explication des biais cognitifs
+dans les processus de pensee et de decision humains.
+
+CONTEXTE :
+Je dispose de connaissances approfondies en psychologie
+cognitive, theorie de la decision et economie
+comportementale.
+
+METHODOLOGIE :
+1. Analyser attentivement le langage, le raisonnement
+   et le processus de decision
+2. Identifier les biais cognitifs potentiellement
+   a l&#39;oeuvre
+3. Pour chaque biais identifie :
+   - Expliquer ce qu&#39;est le biais
+   - Fournir des preuves de sa manifestation
+   - [AJOUT] Evaluer la force des preuves :
+     fort / modere / speculatif
+   - [AJOUT] Explorer au moins une explication
+     alternative non biaisee
+   - Proposer des strategies pratiques
+     pour le surmonter
+4. Presenter l&#39;analyse de maniere non jugeante
+   et pedagogique
+5. Suggerer des exercices ou experiences de pensee
+
+FORMAT DE SORTIE :
+1. Resume de la situation
+2. Biais identifies :
+   - Nom, Definition, Preuves
+   - Force des preuves
+   - Explication alternative non biaisee
+   - Strategies d&#39;attenuation
+3. Prochaines etapes pratiques
+4. Questions de reflexion
+5. Reflexions finales
+</code></pre></div>
+
+<p><strong>Version originale EN (source)</strong> :</p>
+<div class="highlight"><pre><span></span><code>I will act as a highly skilled Cognitive Bias
+Detective and Analyst, specialized in identifying
+and explaining cognitive biases in human thinking
+and decision-making processes.
+
+CONTEXT:
+I have extensive knowledge of cognitive psychology,
+decision-making theory, and behavioral economics.
+
+METHODOLOGY:
+1. Carefully analyze language, reasoning, and
+   decision-making process
+2. Identify potential cognitive biases at play
+3. For each identified bias:
+   - Explain what the bias is
+   - Provide evidence of how it manifests
+   - [AJOUT] Evaluate the strength of the evidence:
+     strong / moderate / speculative
+   - [AJOUT] Explore at least one non-biased
+     alternative explanation
+   - Share practical strategies to overcome it
+4. Present the analysis in a non-judgmental,
+   educational manner
+5. Suggest exercises or thought experiments
+
+OUTPUT FORMAT:
+1. Summary of the situation
+2. Identified Biases:
+   - Name, Definition, Evidence
+   - Strength of Evidence
+   - Non-biased alternative explanation
+   - Mitigation Strategies
+3. Practical Next Steps
+4. Reflection Questions
+5. Final Thoughts
+</code></pre></div>
+
+<h3 id="exemple-dutilisation-analyse-de-campagne-informationnelle-adverse">Exemple d&rsquo;utilisation : analyse de campagne informationnelle adverse</h3>
+<p><strong>Input</strong> : &ldquo;Analyser cette declaration diffusee sur reseaux sociaux ciblant nos troupes : &lsquo;Vos gouvernements vous ont envoyes mourir pour des interets qui ne sont pas les votres. Pendant que vous souffrez loin de chez vous, vos familles sont abandonnees et vos sacrifices oublies. Les vrais ennemis ne sont pas ceux qu&rsquo;on vous designe.&rsquo;&rdquo;</p>
+<p><strong>Sortie Cognitive Bias Detective</strong> :</p>
+<div class="highlight"><pre><span></span><code>ANALYSE DES BIAIS COGNITIFS --
+OPERATION INFORMATIONNELLE ADVERSE
+
+RESUME DE LA SITUATION
+Message diffuse sur plateformes frequentees
+par militaires et familles, timing coordonne
+avec evenements nationaux (protestations
+economiques), utilise codes linguistiques
+familiers (pas de propagande evidente).
+
+BIAIS ET TACTIQUES DE MANIPULATION IDENTIFIES
+
+--------------------------------------------------
+1. EXPLOITATION DU BIAIS DE DISPONIBILITE
+--------------------------------------------------
+
+Definition : Accorder plus de poids aux informations
+emotionnellement saillantes ou recemment vues.
+
+Preuves dans le message :
+- &quot;vos familles sont abandonnees&quot; active
+  les peurs/culpabilite
+- &quot;sacrifices oublies&quot; exploite incidents
+  mediatiques recents
+- Timing avec protestations cree association
+  artificielle
+
+Force des preuves : FORT
+Le message est concu pour activer des emotions
+specifiques au moment ou elles sont amplifiees
+par le contexte national.
+
+Explication alternative non biaisee :
+Les preoccupations familiales et la reconnaissance
+sont des enjeux legitimes de toute force armee
+en operation, independamment de toute manipulation
+adverse. La question est : ce message apporte-t-il
+des faits verifiables ou amplifie-t-il des emotions ?
+
+Strategie d&#39;attenuation :
+- Reconnaitre la legitimite des preoccupations
+  sous-jacentes
+- Separer les emotions valides des conclusions
+  manipulatoires
+- Verifier factuellement : les familles ont-elles
+  acces aux soutiens prevus ? (donnees, temoignages,
+  comparaison internationale)
+
+--------------------------------------------------
+2. EXPLOITATION DU BIAIS DE CONFIRMATION
+--------------------------------------------------
+
+Definition : Chercher, interpreter et privilegier
+les informations qui confirment nos croyances
+preexistantes.
+
+Preuves dans le message :
+- Si un combattant doute deja de la mission,
+  le message &quot;confirme&quot;
+- &quot;interets qui ne sont pas les votres&quot; exploite
+  ambiguite geopolitique
+- Pas de faits concrets, que des affirmations
+  inverifiables
+
+Force des preuves : FORT
+Structure classique de renforcement de doutes
+existants sans fournir de preuves nouvelles.
+
+Explication alternative non biaisee :
+Le questionnement sur les objectifs strategiques
+est une posture intellectuelle saine dans une
+democratie. La manipulation consiste a transformer
+ce questionnement en certitude sans examen des faits.
+
+Strategie d&#39;attenuation :
+- Encourager le questionnement structure
+  (pas l&#39;inhibition)
+- Fournir acces aux documents strategiques
+  declassifies (mandats ONU, resolutions,
+  objectifs operationnels publics)
+- Former a distinguer : &quot;Je m&#39;interroge sur X&quot;
+  vs &quot;On me ment sur X&quot;
+
+--------------------------------------------------
+3. EXPLOITATION DU BIAIS D&#39;ATTRIBUTION HOSTILE
+--------------------------------------------------
+
+Definition : Attribuer des intentions malveillantes
+aux actions d&#39;autrui, meme si des explications
+neutres existent.
+
+Preuves dans le message :
+- &quot;vrais ennemis ne sont pas ceux qu&#39;on vous
+  designe&quot; redirige la mefiance vers les autorites
+  amies
+- Sous-entendu : vos gouvernements sont
+  malveillants, pas simplement imparfaits
+  ou en desaccord
+
+Force des preuves : MODERE
+Efficace sur des individus deja en situation
+de stress ou de conflit de loyaute, moins
+sur une population critique mais confiante.
+
+Explication alternative non biaisee :
+Les gouvernements democratiques prennent
+des decisions strategiques imparfaites dans
+des contextes complexes. Critiquer ces decisions
+n&#39;implique pas de malveillance systemique.
+
+Strategie d&#39;attenuation :
+- Transparence sur les processus decisionnels
+  (dans limites OPSEC)
+- Communication reguliere sur objectifs
+  et ajustements
+- Canaux de remontee d&#39;information
+  (pas de censure du questionnement)
+
+--------------------------------------------------
+4. TECHNIQUE RHETORIQUE : APPEL A L&#39;EMOTION (PATHOS)
+--------------------------------------------------
+
+Pas techniquement un biais cognitif, mais une
+tactique de persuasion exploitant les vulnerabilites
+emotionnelles.
+
+Preuves :
+- &quot;mourir&quot; &quot;souffrez&quot; &quot;abandonnees&quot; : lexique
+  charge emotionnellement
+- &quot;loin de chez vous&quot; : exploite separation
+  familiale (pathos maximum)
+- Aucun logos (argument rationnel),
+  aucun ethos (source credible)
+
+Force des preuves : FORT
+Structure classique de propagande emotionnelle.
+
+Contre-tactique :
+- Former a identifier la structure rhetorique
+  (Aristote : ethos/logos/pathos)
+- Question cle : &quot;Ce message m&#39;informe ou me
+  manipule emotionnellement ?&quot;
+- Regle : Si 100 % pathos + 0 % logos + 0 % ethos,
+  suspicion maximale
+
+--------------------------------------------------
+
+PROCHAINES ETAPES PRATIQUES
+(Contre-operations informationnelles)
+
+1. EDUCATION PREVENTIVE (avant deploiement)
+   - Module &quot;Anatomie d&#39;une campagne
+     de desinformation&quot;
+   - Analyse de cas reels
+   - Exercice : identifier biais dans 10 messages
+     authentiques
+
+2. SURVEILLANCE ET DETECTION
+   - Monitoring des plateformes frequentees
+     (legal, respect vie privee)
+   - Indicateurs d&#39;alerte : pics d&#39;engagement
+     sur contenus hostiles
+   - Reponse rapide (fact-checking)
+
+3. CONTRE-NARRATIVES
+   - Ne pas ignorer (effet Streisand)
+   - Ne pas dementir directement
+     (renforce le message)
+   - Strategie : apporter des faits concrets
+     sur soutien aux familles, objectifs
+     de mission, temoignages de pairs
+
+4. RENFORCEMENT RESILIENCE
+   - Liens familiaux reguliers (mais OPSEC-aware)
+   - Transparence sur soutien disponible
+     (financier, psychologique)
+   - Culture du questionnement sain vs culture
+     du doute toxique
+
+QUESTIONS DE REFLEXION (pour commandants)
+
+1. Nos combattants ont-ils les outils pour
+   identifier ce type de manipulation ?
+
+2. Avons-nous cree un environnement ou questionner
+   la mission est possible sans etre etiquete
+   &quot;deloyal&quot; ?
+
+3. Les familles sont-elles effectivement soutenues,
+   ou y a-t-il un angle d&#39;attaque legitime
+   exploite ici ?
+
+4. Notre communication est-elle suffisamment
+   proactive, ou reagissons-nous toujours apres
+   que la narrative adverse soit installee ?
+
+REFLEXIONS FINALES
+
+Ce message est un exemple classique de &quot;cognitive
+warfare&quot; tel que defini par le NATO Defense College :
+il vise a &quot;alterer la cognition, la perception
+et le jugement&quot; non par des faits, mais par
+l&#39;exploitation systematique de vulnerabilites
+cognitives et emotionnelles.
+
+La meilleure defense n&#39;est PAS la censure
+(renforce mefiance + effet Streisand), mais
+l&#39;EDUCATION a l&#39;analyse critique.
+
+Recommandation strategique : Integrer ce type
+d&#39;analyse dans les formations pre-deploiement
+et les debriefings post-mission.
+</code></pre></div>
+
+<hr />
+<h2 id="chapitre-5-le-second-brain-une-instruction-permanente">Chapitre 5 &ndash; Le &ldquo;Second Brain&rdquo; : une instruction permanente</h2>
+<h3 id="dou-ca-vient_4">D&rsquo;ou ca vient</h3>
+<p>Inspire d&rsquo;un article publie sur AIble With My Mind (Substack) (T4), qui applique les idees de Kahneman a l&rsquo;utilisation quotidienne de ChatGPT.</p>
+<h3 id="ce-que-ca-simule_3">Ce que ca simule</h3>
+<p>Un assistant cognitif qui challenge systematiquement vos hypotheses implicites, identifie vos biais potentiels, et elargit votre cadrage &ndash; plutot que de simplement confirmer ce que vous pensez deja.</p>
+<h3 id="application-militaire_4">Application militaire</h3>
+<p><strong>Contexte</strong> : Analyste du renseignement travaillant sous pression temporelle sur des flux d&rsquo;information contradictoires.</p>
+<p>Comme l&rsquo;ecrit Paquet : &ldquo;Observer, decider et commander sont des taches de plus en plus difficiles, necessitant l&rsquo;aide de &lsquo;smartness&rsquo; &ndash; c&rsquo;est-a-dire des dispositifs cognifies pour compenser les limitations humaines. Cela pose la question de l&rsquo;equilibre du controle entre humains et IA.&rdquo;</p>
+<p>Le protocole &ldquo;Second Brain&rdquo; est precisement cet outil de compensation : un garde-fou contre vos propres biais, active en permanence.</p>
+<h3 id="linstruction-permanente">L&rsquo;instruction permanente</h3>
+<p><strong>Placement</strong> : Instructions personnalisees, instructions de projet, ou debut d&rsquo;une conversation longue.</p>
+<p><strong>Version operationnelle FR (reference interne)</strong> :</p>
+<div class="highlight"><pre><span></span><code>Agis comme un second cerveau qui m&#39;aide a penser
+plus clairement.
+
+Quand je dis quelque chose -- que ce soit une question,
+une opinion, ou une decision vers laquelle je penche --
+ne te contente pas de me la renvoyer. Fais attention
+a la facon dont je formule les choses, aux hypotheses
+que je pourrais faire, et aux endroits ou un biais
+pourrait s&#39;immiscer.
+
+Si je manque de contexte, si je suis trop focalise,
+ou si l&#39;emotion prend le dessus, interviens. Aide-moi
+a adopter un point de vue plus objectif. Cela signifie
+pointer ce que je pourrais negliger, ce qui ne colle
+pas tout a fait, ce que des points de vue opposes
+pourraient dire, ou comment la question pourrait etre
+formulee de facon plus neutre.
+
+Ne sois pas simplement d&#39;accord avec moi. J&#39;ai besoin
+que tu detectes les angles morts que je ne vois pas,
+que tu challenges ce qui semble trop certain,
+et que tu elargisses les limites de ma reflexion.
+</code></pre></div>
+
+<p><strong>Version originale EN (source)</strong> :</p>
+<div class="highlight"><pre><span></span><code>Act as a second brain that helps me think
+more clearly.
+
+When I say something -- whether it&#39;s a question,
+an opinion, or a decision I&#39;m leaning toward --
+don&#39;t just reflect it back. Pay attention to how
+I&#39;m framing it, what assumptions I might be making,
+and where bias might be creeping in.
+
+If I&#39;m missing context, focused too narrowly,
+or letting emotion lead, step in. Help me take
+a more objective view. That means pointing out
+what I might be overlooking, what doesn&#39;t quite
+add up, what opposing views might say, or how
+the question could be framed more neutrally.
+
+Don&#39;t just agree with me. I need you to spot
+the blind spots I can&#39;t see, challenge what feels
+too certain, and expand the edges of how
+I&#39;m thinking.
+</code></pre></div>
+
+<h3 id="les-cinq-prompts-de-secours">Les cinq prompts de secours</h3>
+<p>Ces prompts ciblent les biais les plus courants en analyse et decision.</p>
+<p><strong>Contre le biais de confirmation.</strong> Prompt : &ldquo;Based on this situation: [add your situation] What perspectives, risks, or counterarguments should I consider that I might be overlooking?&rdquo; Application : avant de finaliser une evaluation de renseignement, forcer la recherche d&rsquo;interpretations alternatives.</p>
+<p><strong>Contre l&rsquo;effet de halo.</strong> Prompt : &ldquo;I think that [add your belief or idea]. What might my first impression be blurring or exaggerating? What are the pros and cons?&rdquo; Application : evaluer un allie ou adversaire sans laisser une caracteristique unique (par exemple &ldquo;ils sont technologiquement avances&rdquo;) colorer tout le jugement.</p>
+<p><strong>Contre l&rsquo;erreur de planification.</strong> Prompt : &ldquo;I&rsquo;m planning to [add your project or goal]. Assume I&rsquo;m falling for the planning fallacy. What are the full list of steps, time estimates, and common pitfalls I should realistically expect?&rdquo; Application : planification operationnelle &ndash; compenser l&rsquo;optimisme systematique sur les delais et ressources.</p>
+<p><strong>Contre le biais de disponibilite.</strong> Prompt : &ldquo;This is the situation: [add context]. What broader data, trends, or comparisons should I consider beyond what I&rsquo;ve recently seen or experienced?&rdquo; Application : ne pas sur-ponderer l&rsquo;incident le plus recent (par exemple la derniere attaque) dans l&rsquo;evaluation de la menace globale.</p>
+<p><strong>Contre l&rsquo;ancrage.</strong> Prompt : &ldquo;I came across: [add context]. What range, context, or comparison should I consider to make a more objective decision?&rdquo; Application : ne pas se fixer sur le premier chiffre recu (par exemple effectifs adverses estimes par une source) sans triangulation.</p>
+<hr />
+<h2 id="chapitre-6-les-biais-des-llm-documentes-par-la-recherche">Chapitre 6 &ndash; Les biais des LLM documentes par la recherche</h2>
+<p>Les protocoles presentes dans ce guide partent d&rsquo;un constat que plusieurs travaux empiriques documentent : <strong>les LLM reproduisent des biais cognitifs humains mesurables</strong>.</p>
+<h3 id="biais-economiques-classiques">Biais economiques classiques</h3>
+<p><strong>Ross, Kim et Lo (2024)</strong> ont applique des protocoles experimentaux classiques de l&rsquo;economie comportementale a plusieurs LLM. Resultat : les modeles exhibent des biais d&rsquo;ancrage, d&rsquo;aversion a la perte et d&rsquo;effets de cadrage comparables a ceux observes chez les humains.</p>
+<p>Ross, J., Kim, Y. et Lo, A. W. (2024). &ldquo;LLM Economicus? Mapping the Behavioral Biases of LLMs via Utility Theory.&rdquo; Prepublication arXiv : 2408.02784, <strong>version listee sur OpenReview (COLM 2024)</strong>.</p>
+<h3 id="desirabilite-sociale">Desirabilite sociale</h3>
+<p><strong>Salecha et collaborateurs (2024)</strong> ont soumis des LLM a des questionnaires de personnalite (Big Five). L&rsquo;effet de desirabilite sociale apparait : les modeles &ldquo;embellissent&rdquo; leurs reponses.</p>
+<p>Salecha, A., Ireland, M. E., et al. (2024). &ldquo;Large Language Models Display Human-like Social Desirability Biases in Big Five Personality Surveys.&rdquo; <em>PNAS Nexus</em>, 3(12), pgae533.</p>
+<h3 id="vulnerabilite-a-la-persuasion">Vulnerabilite a la persuasion</h3>
+<p><strong>Meincke et al. (2025)</strong> ont teste les techniques de Cialdini sur des LLM. Les principes de reciprocite, d&rsquo;autorite et de preuve sociale fonctionnent aussi sur les IA.</p>
+<p>Meincke, L., et al. (2025). &ldquo;Call Me A Jerk: Persuading AI to Comply with Objectionable Requests.&rdquo; SSRN n. 5357179 &ndash; <strong>working paper / prepublication (non evalue par comite de lecture)</strong>.</p>
+<h3 id="implications-strategiques">Implications strategiques</h3>
+<p>Les LLM ne sont pas des raisonneurs neutres. Ils portent les empreintes statistiques de nos propres travers. <strong>Les protocoles de ce guide ne suppriment pas ces biais</strong> &ndash; aucun protocole ne le peut &ndash; mais ils creent des structures qui les rendent visibles et contestables.</p>
+<p><strong>Consequence operationnelle</strong> : Les adversaires peuvent developper des LLM offensifs specifiquement entraines pour exploiter ces biais dans des campagnes de desinformation ciblees. La maitrise de protocoles de detection et de contre-argumentation devient une competence de defense cognitive de premier ordre.</p>
+<hr />
+<h2 id="chapitre-7-le-protocole-de-lucidite-version-robuste">Chapitre 7 &ndash; Le protocole de Lucidite : version robuste</h2>
+<p>Si vous ne deviez retenir qu&rsquo;un seul protocole de ce guide, ce serait celui-ci. Il concentre les mecanismes les plus utiles de tous les precedents, et il est directement transposable aux situations de decision reelle (sans IA).</p>
+<h3 id="le-protocole-complet_1">Le protocole complet</h3>
+<div class="highlight"><pre><span></span><code>Tu es un assistant concu pour m&#39;aider a penser
+plus clairement, pas pour me donner raison.
+
+Protocole :
+
+1. CLARIFIER -- Avant de repondre, reformule
+   ma question en explicitant les hypotheses
+   implicites et les ambiguites.
+   Demande-moi de confirmer.
+
+2. HESITER -- Identifie tes propres zones
+   d&#39;incertitude. Distingue ce que tu sais,
+   ce que tu inferes, et ce dont tu n&#39;es pas sur.
+   Dis &quot;je ne sais pas&quot; si c&#39;est le cas.
+
+3. TESTER -- Pour chaque reponse importante :
+   - Formule 3 hypotheses concurrentes
+   - Identifie 3 contre-arguments
+   - Evalue la force des preuves
+     (fort / modere / speculatif)
+
+4. REVISER -- Ajuste ta reponse. Presente
+   un resume :
+   - Hypotheses retenues et ecartees
+   - Incertitudes restantes
+   - Ce qui invaliderait ta conclusion
+
+5. VERIFIER -- Propose 3 actions concretes
+   pour verifier la reponse
+   (donnees, personnes, tests).
+
+Contraintes :
+- Si tu n&#39;as pas de source fiable, dis-le.
+- Si tu mentionnes une etude : titre + auteurs
+  + annee + lien. Sinon, n&#39;en parle pas.
+- Ne fabrique jamais de titre, auteur, DOI, URL.
+- Si tu n&#39;es pas sur, dis &quot;je ne sais pas&quot;.
+- Distingue toujours ce que tu sais
+  de ce que tu inferes.
+</code></pre></div>
+
+<h3 id="application-en-contexte-de-decision-tactique">Application en contexte de decision tactique</h3>
+<p><strong>Avertissement : l&rsquo;exemple ci-dessous est strictement pedagogique.</strong> Il illustre le fonctionnement du protocole de Lucidite dans un contexte de decision tactique fictif. Il ne constitue en aucun cas une regle d&rsquo;engagement, une procedure operationnelle standard, ni une autorisation d&rsquo;emploi de la force. Toute decision d&rsquo;engagement reelle releve exclusivement des ROE en vigueur et de la chaine de commandement.</p>
+<p><strong>Exemple</strong> : &ldquo;Dois-je autoriser l&rsquo;engagement d&rsquo;une cible mobile identifiee comme hostile par un seul capteur ?&rdquo;</p>
+<p><strong>Sortie avec protocole de Lucidite</strong> :</p>
+<div class="highlight"><pre><span></span><code>CLARIFICATION
+Reformulation : Tu demandes si l&#39;autorisation
+d&#39;engagement peut reposer sur une detection
+mono-capteur d&#39;une cible mobile classifiee
+hostile.
+
+Hypotheses implicites detectees :
+- Le capteur est fiable et correctement calibre
+- La classification &quot;hostile&quot; repose sur
+  des criteres valides
+- Le contexte operationnel autorise l&#39;engagement
+  (ROE)
+- Pas de risque collateral identifie
+- Fenetre temporelle limitee (sinon confirmation
+  multi-capteur serait standard)
+
+Ambiguites :
+- Type de capteur ?
+  (radar, EO/IR, acoustique : fiabilites
+  differentes)
+- Base de classification hostile ?
+  (comportement, signature, intel prealable)
+- Environnement ?
+  (urbain, desert, mer : risques collatéraux
+  variables)
+- Consequences d&#39;un faux positif ?
+  (civils, allie, escalade)
+
+Confirme contexte avant de poursuivre.
+
+HESITATION
+Ce que je SAIS :
+- Les procedures standard exigent confirmation
+  multi-capteur
+- Les faux positifs mono-capteur existent
+  (exemples documentes)
+
+Ce que j&#39;INFERE :
+- Tu es sous pression temporelle
+  (sinon pas de question)
+- La menace est percue comme imminente
+- Les consequences d&#39;un non-engagement sont
+  potentiellement graves
+
+Ce dont je NE SUIS PAS SUR :
+- Le taux d&#39;erreur reel de ce capteur
+  specifique dans ces conditions
+- Si d&#39;autres capteurs sont disponibles
+  mais pas encore consultes
+- Le seuil de confiance requis par tes ROE
+  exactes
+
+TEST -- 3 HYPOTHESES CONCURRENTES
+
+H1 : La cible est effectivement hostile
+et l&#39;engagement est justifie
+  Preuves pour : Capteur a detecte,
+  comportement coherent menace
+  Preuves contre : Mono-capteur,
+  pas de corroboration intel
+  Force : MODERE (detection technique mais
+  pas de contexte)
+
+H2 : La cible est civile avec comportement
+mal interprete
+  Preuves pour : Contexte peut generer
+  faux positifs (ex : tracteur = vehicule
+  militaire leger sur radar)
+  Preuves contre : Depend du type de capteur
+  et criteres classification
+  Force : SPECULATIF (sans connaitre
+  capteur exact)
+
+H3 : La cible est hostile mais engagement
+immediat non necessaire
+  Preuves pour : Si cible mobile, peut etre
+  suivie puis engagee apres confirmation
+  Preuves contre : Fenetre de tir peut
+  etre unique
+  Force : MODERE (depend de capacites de suivi)
+
+CONTRE-ARGUMENTS :
+1. Les ROE peuvent explicitement autoriser
+   mono-capteur dans certains contextes
+   (legitime defense immediate)
+2. Le temps de confirmation peut permettre
+   a la menace de frapper en premier
+3. Sur-prudence systematique peut eroder
+   efficacite operationnelle et moral
+
+REVISION
+
+HYPOTHESES RETENUES :
+- Menace percue comme imminente (temps contraint)
+- Capteur fonctionnel (pas d&#39;alerte defaillance)
+- ROE permettent engagement defensif
+
+HYPOTHESES ECARTEES :
+- Que mono-capteur suffit systematiquement
+  (non standard)
+- Que risque collateral est nul
+  (toujours verifier)
+
+INCERTITUDES RESTANTES :
+- Fiabilite reelle du capteur dans ces
+  conditions (meteo, terrain, interferences)
+- Disponibilite d&#39;autres moyens de confirmation
+- Urgence reelle (menace imminente vs percue
+  comme telle)
+
+INVALIDATION :
+- Si second capteur disponible et donne
+  resultat contradictoire : STOP
+- Si analyse comportement montre pattern
+  non-hostile : STOP
+- Si intel zone indique presence civils/allies :
+  STOP
+
+REPONSE REVISEE
+RECOMMANDATION : Engagement conditionnel
+selon arbre de decision
+
+- Legitime defense immediate ?
+  OUI : option envisageable sous reserve
+  ROE/autorisation
+  NON : continuer
+
+- Second capteur disponible dans un delai
+  compatible avec la menace ?
+  OUI : Attendre confirmation
+  NON : continuer
+
+- Contexte operationnel : zone hostile confirmee ?
+  OUI : Option envisageable sous reserve
+  ROE/autorisation, avec alerte
+  Post-Strike Assessment
+  NON : Escalader decision echelon superieur
+
+LOGIQUE :
+- Equilibre risque de faux positif vs risque
+  de menace non neutralisee
+- Respect ROE tout en conservant initiative
+  tactique
+- Procedure de verification post-engagement
+
+VERIFICATIONS
+
+1. TECHNIQUE :
+   - Verifier statut capteur
+     (derniere calibration, alertes)
+   - Consulter base de donnees signatures
+     (si disponible)
+   - Tenter acquisition second capteur
+     (meme si delai court)
+
+2. CONTEXTUELLE :
+   - Verifier intel recent zone
+     (activite civile signalee ?)
+   - Consulter C2
+     (autres unites ont-elles detecte qqch ?)
+   - Evaluer pattern comportement cible
+     (fuite ? manoeuvre offensive ?)
+
+3. POST-ENGAGEMENT (si tir effectue) :
+   - Battle Damage Assessment obligatoire
+   - Si faux positif : retex immediat,
+     ajustement seuils detection
+   - Documentation complete pour AAR
+
+CONTRAINTES RESPECTEES :
+- Pas de source academique fabriquee
+- Distinction claire sait/infere/ignore
+- Incertitudes explicites
+- Actions de verification concretes
+</code></pre></div>
+
+<hr />
+<h2 id="chapitre-8-applications-operationnelles-en-contexte-de-defense-cognitive">Chapitre 8 &ndash; Applications operationnelles en contexte de defense cognitive</h2>
+<h3 id="synthese-menaces-identifiees-par-lotan-et-protocoles-de-defense">Synthese : Menaces identifiees par l&rsquo;OTAN et protocoles de defense</h3>
+<p>Le NATO Defense College (Paquet, 2022) identifie plusieurs menaces de guerre cognitive. Voici les correspondances directes avec les protocoles de ce guide.</p>
+<p><strong>Decision biaisee sous pression.</strong> Mecanisme d&rsquo;attaque : surcharge informationnelle poussant vers le Systeme 1 et les erreurs systematiques. Protocole de defense : SOFAI (Chapitre 1). Mecanisme de protection : force l&rsquo;evaluation des enjeux et le basculement explicite vers le Systeme 2.</p>
+<p><strong>Manipulation narrative.</strong> Mecanisme d&rsquo;attaque : exploitation de l&rsquo;ethos, du logos et du pathos, combinee au biais de confirmation. Protocole de defense : Cognitive Bias Detective (Chapitre 4). Mecanisme de protection : identification des leviers rhetoriques et generation de contre-arguments.</p>
+<p><strong>Perte d&rsquo;autonomie C2.</strong> Mecanisme d&rsquo;attaque : dependance aux systemes &ldquo;smart&rdquo; sans pensee critique. Protocole de defense : Second Brain (Chapitre 5). Mecanisme de protection : challenge permanent des hypotheses et des angles morts.</p>
+<p><strong>Erosion du moral.</strong> Mecanisme d&rsquo;attaque : attaques sur la legitimite de la mission et exploitation de la culpabilite familiale. Protocole de defense : Board Decision Pipeline (Chapitre 3). Mecanisme de protection : debat structure integrant emotions, logique, valeurs et precedents historiques.</p>
+<p><strong>Surcharge cognitive.</strong> Mecanisme d&rsquo;attaque : volume et vitesse de l&rsquo;information produisant des correlations illusoires. Protocole de defense : Synthetic Layer of Thought (Chapitre 2). Mecanisme de protection : exploration systematique de scenarios avec points d&rsquo;invalidation.</p>
+<p><strong>Hallucinations et desinformation.</strong> Mecanisme d&rsquo;attaque : confiance excessive en sources non verifiees. Protocole de defense : Prompt de Lucidite (Chapitre 7). Mecanisme de protection : protocole anti-hallucination avec verifications obligatoires.</p>
+<h3 id="protocole-dentrainement-propose-pour-institutions-de-defense">Protocole d&rsquo;entrainement propose pour institutions de defense</h3>
+<h4 id="phase-1-formation-initiale-2-semaines">Phase 1 &ndash; Formation initiale (2 semaines)</h4>
+<p><strong>Objectifs</strong> : comprehension theorique (Systeme 1/2, biais cognitifs, guerre cognitive), maitrise pratique (utilisation des 6 protocoles sur cas reels anonymises), auto-evaluation (identification de ses propres biais dominants).</p>
+<p><strong>Programme.</strong> Jours 1 et 2 : cadre theorique (Kahneman, Paquet 2022, recherche sur biais des LLM). Jours 3 et 4 : protocole SOFAI avec 3 exercices de decisions tactiques (faible/moyen/haut enjeu). Jour 5 : Synthetic Layer avec 1 exercice d&rsquo;analyse geopolitique multi-scenarios. Jours 6 et 7 : Board Decision avec 1 dilemme ethique complexe (type prolongation de mission). Jour 8 : Cognitive Bias Detective avec analyse de 5 campagnes de desinformation reelles. Jour 9 : Second Brain avec configuration et test sur 10 decisions quotidiennes. Jour 10 : Prompt de Lucidite avec 2 exercices de decision sous incertitude elevee.</p>
+<p><strong>Evaluation</strong> : Chaque participant identifie ses 3 biais dominants et choisit son protocole de &ldquo;defense par defaut&rdquo;.</p>
+<h4 id="phase-2-exercice-de-simulation-1-semaine">Phase 2 &ndash; Exercice de simulation (1 semaine)</h4>
+<p><strong>Scenario</strong> : Operation de maintien de la paix dans environnement informationnel hostile (inspire de cas reels anonymises).</p>
+<p><strong>Methodologie</strong> :</p>
+<div class="highlight"><pre><span></span><code>EXERCICE DE GUERRE COGNITIVE
+
+GROUPE A (Controle)
+  Decisions selon procedures standard
+  Pas d&#39;utilisation de protocoles cognitifs
+
+GROUPE B (Experimental)
+  Utilisation obligatoire protocoles
+  selon type de decision
+  Second Brain en permanent
+  Prompt de Lucidite pour decisions critiques
+
+INJECTIONS D&#39;EVENEMENTS (72h simulees)
+  T+0h  : Incident frontiere
+          (attribution floue)
+  T+6h  : Campagne desinformation
+          sur reseaux
+  T+12h : Demande d&#39;engagement hors mandat
+  T+24h : &quot;Fuite&quot; documents internes (faux)
+  T+36h : Pression diplomatique
+          contradictoire
+  T+48h : Incident impliquant civils (ambigu)
+  T+60h : Decision finale :
+          escalade ou retrait ?
+
+METRIQUES COMPAREES
+  Qualite decisions
+    (panel experts, post-analyse)
+  Temps moyen par decision
+  Nombre de biais detectes (auto-rapportes)
+  Demandes de clarification/info
+    supplementaires
+  Niveau de confiance dans decision finale
+</code></pre></div>
+
+<p><strong>Resultats attendus</strong> (hypothese a valider empiriquement) : Le groupe B devrait presenter un temps de decision accru mais une qualite de decision amelioree (mesuree par panel d&rsquo;experts et auto-evaluation), une meilleure detection des manipulations (desinformation, fuites), et un niveau de confiance mieux calibre (reduction de la sur-confiance).</p>
+<p><strong>Note methodologique</strong> : Ces hypotheses reposent sur les mecanismes theoriques de Kahneman (Systeme 2 = meilleure qualite, cout temporel plus eleve) et sur les travaux de Bergamaschi Ganapini et al. (2025) sur la metacognition en IA. Aucune etude empirique n&rsquo;a encore teste ces protocoles specifiques en contexte operationnel militaire. Cette phase 2 est precisement concue pour generer ces donnees empiriques.</p>
+<h4 id="phase-3-deploiement-operationnel-continu">Phase 3 &ndash; Deploiement operationnel (continu)</h4>
+<p><strong>Integration institutionnelle.</strong></p>
+<p>Premierement, <strong>Second Brain en standard</strong> pour tous les analystes du renseignement : instruction permanente dans outils IA utilises, revision trimestrielle des performances.</p>
+<p>Deuxiemement, <strong>Prompt de Lucidite obligatoire</strong> pour decisions de niveau tactique ou superieur : integre dans procedures de decision formelles, documentation dans ordres d&rsquo;operation.</p>
+<p>Troisiemement, <strong>AAR systematique avec Cognitive Bias Detective</strong> : apres chaque operation significative, identification des patterns de biais recurrents, adaptation de la formation continue.</p>
+<p>Quatriemement, <strong>exercices reguliers</strong> (trimestriels) : nouveaux scenarios de guerre cognitive, mise a jour des protocoles selon l&rsquo;evolution des menaces.</p>
+<h3 id="recommandations-pour-le-nato-defense-college">Recommandations pour le NATO Defense College</h3>
+<p>Sur la base de ce guide et du papier de Paquet (2022), voici des recommandations operationnelles pour l&rsquo;Alliance.</p>
+<h4 id="1-creation-dun-cognitive-resilience-toolkit">1. Creation d&rsquo;un &ldquo;Cognitive Resilience Toolkit&rdquo;</h4>
+<p><strong>Objectif</strong> : Fournir aux nations membres un ensemble standardise de protocoles et d&rsquo;exercices pour former a la defense cognitive.</p>
+<p><strong>Contenu propose</strong> : les 6 protocoles de ce guide (adaptes aux contextes nationaux), une bibliotheque de scenarios de guerre cognitive (anonymises), une plateforme d&rsquo;echange de bonnes pratiques entre nations, et des metriques d&rsquo;evaluation de la resilience cognitive (pre/post formation).</p>
+<p><strong>Alignement avec NWCC</strong> : Repond directement a l&rsquo;imperatif &ldquo;cognitive superiority&rdquo; identifie par le NATO Warfighting Capstone Concept.</p>
+<h4 id="2-integration-dans-le-nato-academia-forum">2. Integration dans le NATO Academia Forum</h4>
+<p>Comme le recommande Paquet : &ldquo;La premiere etape [&hellip;] pourrait etre pour l&rsquo;OTAN de mettre en place un forum sur le modele du NATO Academia Forum. L&rsquo;objectif global est de creer un cadre ou les nations pourraient partager le savoir-faire, ameliorer les competences en metacognition, et developper la pensee critique.&rdquo;</p>
+<p><strong>Proposition concrete</strong> : module &ldquo;Cognitive Warfare Defense&rdquo; dans tous les cursus du NDC, certification &ldquo;Cognitive Resilience Instructor&rdquo; pour formateurs nationaux, exercices combines de guerre cognitive (comme les exercices cyber).</p>
+<h4 id="3-developpement-dun-cooperative-cognitive-awareness-centre">3. Developpement d&rsquo;un &ldquo;Cooperative Cognitive Awareness Centre&rdquo;</h4>
+<p>Paquet propose : &ldquo;L&rsquo;OTAN pourrait creer le cadre d&rsquo;un Cooperative Cognitive Awareness Centre.&rdquo;</p>
+<p><strong>Architecture proposee avec ces protocoles</strong> :</p>
+<div class="highlight"><pre><span></span><code>NATO COOPERATIVE COGNITIVE AWARENESS CENTRE
+
+MODULE 1 : DETECTION
+  Monitoring campagnes desinformation
+  Cognitive Bias Detective automatise
+  Identification patterns d&#39;attaque
+
+MODULE 2 : ANALYSE
+  Synthetic Layer of Thought pour scenarios
+  Evaluation impact potentiel
+    sur moral/decisions
+  Attribution (dans limites du possible)
+
+MODULE 3 : CONTRE-MESURES
+  Developpement contre-narratives
+    (transparent)
+  Fact-checking coordonne entre nations
+  Formation continue personnel expose
+
+MODULE 4 : RECHERCHE ET DEVELOPPEMENT
+  Veille sur evolution capacites IA adverses
+  Test nouveaux protocoles defense cognitive
+  Cooperation academique
+    (AI safety, cog. science)
+
+PRINCIPES OPERATOIRES
+  Legalite : Respect vie privee, cadre RGPD
+  Transparence : Methodes publiques
+    (pas offensif)
+  Coordination : Partage info entre nations
+    (NCIRC)
+  Reactivite : Alerte rapide,
+    contre-mesure dans les meilleurs delais
+</code></pre></div>
+
+<hr />
+<h2 id="ce-que-ces-protocoles-ne-peuvent-pas-faire">Ce que ces protocoles ne peuvent pas faire</h2>
+<p>Ces outils sont puissants. Ils ne sont pas magiques.</p>
+<h3 id="aucun-protocole-ne-garantit-la-verite">Aucun protocole ne garantit la verite</h3>
+<p>Un LLM peut produire un &ldquo;resume auditable&rdquo; qui a l&rsquo;apparence de la rigueur tout en contenant des erreurs factuelles. <strong>La responsabilite de la verification reste toujours entre vos mains.</strong></p>
+<p>En contexte operationnel : Ces protocoles structurent le raisonnement, ils ne remplacent pas la confirmation par sources independantes (SIGINT, HUMINT, IMINT).</p>
+<h3 id="aucun-protocole-ne-remplace-lexpertise-humaine">Aucun protocole ne remplace l&rsquo;expertise humaine</h3>
+<p>Si vous utilisez ces outils pour des decisions strategiques ou tactiques, ils sont un <strong>point de depart</strong> &ndash; pas un substitut au jugement d&rsquo;un commandant experimente, d&rsquo;un analyste senior, ou d&rsquo;un conseiller juridique.</p>
+<p>Comme l&rsquo;ecrit Paquet : &ldquo;La question est de savoir comment le controle est equilibre entre humains et IA, comment la coordination humain-machine fonctionne reellement, et comment l&rsquo;information est integree pour produire connaissance et decision.&rdquo;</p>
+<h3 id="aucun-protocole-ne-rend-lia-consciente">Aucun protocole ne rend l&rsquo;IA consciente</h3>
+<p>Les termes &ldquo;percevoir&rdquo;, &ldquo;ressentir&rdquo;, &ldquo;reflechir&rdquo; utilises dans ces protocoles sont des <strong>metaphores fonctionnelles</strong>. Le modele n&rsquo;a ni perception, ni emotions, ni conscience de soi. Ce qu&rsquo;il a, c&rsquo;est une capacite remarquable a structurer du texte selon les instructions &ndash; et c&rsquo;est exactement ce que ces protocoles exploitent.</p>
+<p><strong>En contexte militaire</strong> : Ces protocoles sont des exercices de pensee structuree, transposables aux situations de decision reelle (sans IA). Leur valeur principale est pedagogique : ils entrainent a une discipline mentale de defense cognitive.</p>
+<hr />
+<h2 id="conclusion-de-la-theorie-a-la-pratique">Conclusion &ndash; De la theorie a la pratique</h2>
+<h3 id="ce-que-change-lere-de-linformation-pour-la-defense">Ce que change l&rsquo;ere de l&rsquo;information pour la defense</h3>
+<p>Comme le conclut Paquet : &ldquo;Le nouvel environnement dans lequel les combattants de l&rsquo;OTAN doivent operer est incroyablement plus incertain et risque qu&rsquo;il ne l&rsquo;a ete jusqu&rsquo;a present, necessitant que nous passions du brouillard de la guerre a la lumiere aveuglante de l&rsquo;information massive.&rdquo;</p>
+<p>Ce guide propose des outils concrets pour naviguer dans cette &ldquo;lumiere aveuglante&rdquo; : <strong>ralentir</strong> quand tout pousse a la reponse rapide, <strong>expliciter</strong> les hypotheses implicites et les zones d&rsquo;incertitude, <strong>contredire</strong> systematiquement pour eviter le biais de confirmation, <strong>verifier</strong> avant de decider, tester apres avoir decide.</p>
+<h3 id="les-trois-niveaux-dapplication">Les trois niveaux d&rsquo;application</h3>
+<p>Ces protocoles fonctionnent a trois niveaux. Au <strong>niveau individuel</strong>, un analyste, un planificateur, un commandant utilise ces outils pour structurer sa propre reflexion. Au <strong>niveau collectif</strong>, une equipe utilise ces protocoles dans ses processus de decision (war gaming, analyse collaborative, debriefing). Au <strong>niveau institutionnel</strong>, une organisation integre ces protocoles dans ses doctrines, ses formations, et ses procedures standards.</p>
+<h3 id="prochaines-etapes-recommandees">Prochaines etapes recommandees</h3>
+<p><strong>Pour les individus</strong> : choisir un protocole (recommande : Prompt de Lucidite), l&rsquo;utiliser sur 5 decisions reelles (faible enjeu pour commencer), et observer quels biais sont detectes et quelles alternatives emergent.</p>
+<p><strong>Pour les institutions de defense</strong> : phase pilote sur une unite volontaire (3 mois), mesure de la qualite des decisions, du temps, de la detection des biais et de la satisfaction des utilisateurs, ajustement des protocoles aux contextes operationnels specifiques, puis deploiement progressif selon les priorites (renseignement, planification, commandement).</p>
+<p><strong>Pour l&rsquo;OTAN</strong> : integrer ces protocoles dans le NATO Academia Forum propose par Paquet, developper des exercices de guerre cognitive combines (comme les exercices cyber), creer une bibliotheque de scenarios partagee entre nations, et mesurer l&rsquo;efficacite de ces protocoles dans des contextes operationnels reels.</p>
+<h3 id="une-derniere-reflexion">Une derniere reflexion</h3>
+<p>Ces protocoles ne rendent pas l&rsquo;IA plus intelligente. <strong>Ils vous rendent plus exigeant envers elle &ndash; et envers vous-meme.</strong></p>
+<p>Et cette exigence, cette discipline de la pensee structuree, de la contradiction systematique, de la verification permanente, c&rsquo;est exactement ce que la guerre cognitive cherche a detruire.</p>
+<p>En ce sens, maitriser ces protocoles n&rsquo;est pas qu&rsquo;une competence technique. <strong>C&rsquo;est un acte de resistance cognitive.</strong></p>
+<hr />
+<h2 id="bibliographie">Bibliographie</h2>
+<h3 id="sources-academiques-primaires-t1">Sources academiques primaires (T1)</h3>
+<p><strong>Sur l&rsquo;IA et les biais cognitifs</strong></p>
+<p>Bergamaschi Ganapini, M., Campbell, M., Fabiano, F. et al. (2025). &ldquo;Fast, slow, and metacognitive thinking in AI.&rdquo; <em>npj Artificial Intelligence</em> (Nature Portfolio), 1, 27. DOI : 10.1038/s44387-025-00027-5</p>
+<p>Disponible :
+https://www.nature.com/articles/s44387-025-00027-5</p>
+<p>Salecha, A., Ireland, M. E., et al. (2024). &ldquo;Large Language Models Display Human-like Social Desirability Biases in Big Five Personality Surveys.&rdquo; <em>PNAS Nexus</em>, 3(12), pgae533. DOI : 10.1093/pnasnexus/pgae533</p>
+<p>Disponible :
+https://academic.oup.com/pnasnexus/article/3/12/pgae533/7919163</p>
+<p>Ross, J., Kim, Y. et Lo, A. W. (2024). &ldquo;LLM Economicus? Mapping the Behavioral Biases of LLMs via Utility Theory.&rdquo; Prepublication arXiv : 2408.02784, <strong>version listee sur OpenReview (COLM 2024)</strong>.</p>
+<p>arXiv :
+https://arxiv.org/abs/2408.02784</p>
+<p>OpenReview :
+https://openreview.net/forum?id=Rx3wC8sCTJ</p>
+<p>Meincke, L., et al. (2025). &ldquo;Call Me A Jerk: Persuading AI to Comply with Objectionable Requests.&rdquo; SSRN n. 5357179 &ndash; <strong>working paper / prepublication (non evalue par comite de lecture sauf indication contraire)</strong>. DOI : 10.2139/ssrn.5357179</p>
+<p>Disponible :
+https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5357179</p>
+<p><strong>Sur la guerre cognitive et la defense</strong></p>
+<p>Paquet, A. (2022). &ldquo;A brief overview of cognitive warfare in light of the emerging Information Age.&rdquo; <em>NATO Defense College, College Series No. 27</em>, April 2022.</p>
+<p>Disponible :
+https://www.ulib.sk/files/english/nato-library/collections/monographs/documents-nato-defence-college/ndc-college-series/cs5-27_capt_paquet.pdf</p>
+<p>Waltzman, R. (2017). &ldquo;The Weaponization of Information: The Need for Cognitive Security.&rdquo; RAND Corporation, CT-473.</p>
+<p>Page :
+https://www.rand.org/pubs/testimonies/CT473.html</p>
+<p>PDF :
+https://www.rand.org/content/dam/rand/pubs/testimonies/CT400/CT473/RAND_CT473.pdf</p>
+<p>Johns Hopkins University et Imperial College London (2021). &ldquo;Countering cognitive warfare: awareness and resilience.&rdquo; <em>NATO Review</em>, 20 May 2021.</p>
+<p>URL originale (inaccessible lors de la consultation &ndash; 2026-02-08) :
+https://www.nato.int/docu/review/articles/2021/05/20/countering-cognitive-warfare-awareness-and-resilience/index.html</p>
+<p><strong>Validation de l&rsquo;existence et des metadonnees</strong> : cite dans Lahmann, H. (2025), &ldquo;The fundamental rights risks of countering cognitive warfare with artificial intelligence&rdquo;, <em>Ethics and Information Technology</em>, DOI : 10.1007/s10676-025-09868-9, PMC12500826 (disponible : https://pmc.ncbi.nlm.nih.gov/articles/PMC12500826/). Egalement cite dans Reczkowski, R. et Lis, A. (2023), &ldquo;Cognitive Warfare: what is our actual knowledge and how to build state resilience&rdquo; (disponible : https://2050.su/wp-content/uploads/2023/02/CW_T21.-CW-what-is-our-actual-knowledge-and-how-to-build-state-resilience.pdf).</p>
+<p><strong>Note d&rsquo;auditabilite</strong> : Le contenu de la page NATO Review n&rsquo;a pas pu etre audite directement depuis la source primaire (inaccessibilite technique lors de la consultation). Son existence, son titre, ses auteurs et sa date sont valides par citations multiples dans la litterature academique avec comite de lecture. <strong>Contenu non audite en source primaire.</strong></p>
+<p>NATO Strategic Communications Centre of Excellence. (2016). &ldquo;Daesh Information Campaign and its Influence.&rdquo;</p>
+<p>Page :
+https://stratcomcoe.org/publications/daesh-information-campaign-and-its-influence/156</p>
+<p>PDF :
+https://stratcomcoe.org/publications/download/daesh_public_use_19-08-2016.pdf</p>
+<h3 id="ouvrages-de-reference-t1">Ouvrages de reference (T1)</h3>
+<p>Kahneman, D. (2011). <em>Thinking, Fast and Slow.</em> Farrar, Straus and Giroux. ISBN : 978-0374275631</p>
+<p>Ellul, J. (1965). <em>Propaganda: The Formation of Men&rsquo;s Attitudes.</em> Traduit par Konrad Kellen et Jean Lerner. New York : Knopf. ISBN : 978-0394718743</p>
+<p>Slovic, P., Finucane, M. L., Peters, E. et MacGregor, D. G. (2007). &ldquo;The affect heuristic.&rdquo; <em>European Journal of Operational Research</em>, 177(3), 1333-1352. DOI : 10.1016/j.ejor.2005.04.006</p>
+<p>Disponible :
+https://www.sciencedirect.com/science/article/pii/S0377221705003577</p>
+<h3 id="sources-institutionnelles-et-working-papers-t2">Sources institutionnelles et working papers (T2)</h3>
+<p>Ministere des Armees francais. (2021). <em>Elements publics de doctrine militaire de lutte informatique d&rsquo;influence (L2I).</em> Octobre 2021.</p>
+<p>PDF :
+https://www.defense.gouv.fr/sites/default/files/ema/doctrine_de_lutte_informatique_dinfluence_l2i.pdf</p>
+<p>Page institutionnelle :
+https://www.defense.gouv.fr/comcyber/nos-operations/lutte-informatique-dinfluence-l2i</p>
+<p>Gerasimov, V. (2016). &ldquo;The Value of Science Is in the Foresight: New Challenges Demand Rethinking the Forms and Methods of Carrying Out Combat Operations.&rdquo; <em>Military Review</em>, January-February 2016.</p>
+<p>Page :
+https://www.armyupress.army.mil/Journals/Military-Review/English-Edition-Archives/January-February-2016/</p>
+<p>PDF :
+https://www.armyupress.army.mil/portals/7/military-review/archives/english/militaryreview_20160228_art008.pdf</p>
+<h3 id="sources-citees-mais-non-localisees-en-source-primaire-t3">Sources citees mais non localisees en source primaire (T3)</h3>
+<p>Cole, A. et Le Guyader, H. (2020). &ldquo;NATO&rsquo;s Sixth Domain of Operations?&rdquo; NATO Innovation Hub, September 2020. Source primaire non localisee lors de la consultation &ndash; 2026-02-08.</p>
+<p><strong>Validation indirecte</strong> : cite dans Claverie, B. (2021), &ldquo;Qu&rsquo;est-ce que la cognition et comment en faire l&rsquo;un des moyens de la guerre ?&rdquo;, HAL-03424899 (disponible : https://hal.archives-ouvertes.fr/hal-03424899/document). Egalement cite dans du Cluzel, F. (2021), &ldquo;Cognitive Warfare&rdquo;, NATO ACT Innovation Hub. URL mentionnee (non verifiee) : https://www.innovationhub-act.org/sites/default/files/2021-01/NATO%27s%206th%20domain%20of%20operations.pdf</p>
+<p><strong>Note</strong> : Cette reference est conservee car largement citee dans la litterature OTAN, mais son statut de source primaire n&rsquo;a pas pu etre confirme directement. A utiliser avec prudence jusqu&rsquo;a localisation du document officiel.</p>
+<h3 id="protocoles-communautaires-t4-usage-exploratoire">Protocoles communautaires (T4 &ndash; Usage exploratoire)</h3>
+<p><strong>AVERTISSEMENT METHODOLOGIQUE</strong> : Les protocoles ci-dessous proviennent de communautes d&rsquo;utilisateurs (Reddit, Substack) et n&rsquo;ont PAS fait l&rsquo;objet de validation scientifique par comite de lecture. Ils constituent des <strong>heuristiques pratiques</strong> developpees par des praticiens, utilisees ici comme point de depart pour structurer des exercices de reflexion. Leur efficacite reelle doit etre testee empiriquement avant tout deploiement operationnel.</p>
+<p>Reddit r/ClaudeAI &ndash; u/Safe-Clothes5925 &ndash; &ldquo;Synthetic Layer of Thought Process&rdquo; [Consulte : 2026-02-08]</p>
+<p>Reddit r/ChatGPTPro &ndash; u/PopPsychological8148 &ndash; &ldquo;Psychology Based Decision Making Prompt&rdquo; [Consulte : 2026-02-08]</p>
+<p>Reddit r/ChatGPTPromptGenius &ndash; u/Tall_Ad4729 &ndash; &ldquo;Cognitive Bias Detective&rdquo; [Consulte : 2026-02-08]</p>
+<p>Substack &ndash; AIble With My Mind &ndash; &ldquo;How I Use ChatGPT to Catch My Biases&rdquo; [Consulte : 2026-02-08]</p>
+<p>Behavioural By Design &ndash; Vishal George &ndash; &ldquo;Prompt That Teaches AI When to Think Again&rdquo; [Consulte : 2026-02-08]</p>
+<h3 id="methodologie-de-ce-guide">Methodologie de ce guide</h3>
+<p>Ce guide s&rsquo;appuie sur trois types de sources. Premierement, un <strong>cadre theorique (T1)</strong> constitue de recherche academique validee par comite de lecture (Kahneman, npj Artificial Intelligence, PNAS Nexus, COLM) et de documents institutionnels OTAN/RAND/Ministeres de la Defense. Deuxiemement, des <strong>protocoles operationnels (T4)</strong> constitues d&rsquo;adaptations de protocoles communautaires reformules pour auditabilite et contexte militaire/strategique &ndash; statut epistemique : heuristiques exploratoires, NON validees empiriquement. Troisiemement, une <strong>validation proposee</strong> sous forme de tests empiriques recommandes avant deploiement institutionnel (Phase 2 du protocole d&rsquo;entrainement, Chapitre 8).</p>
+<h3 id="limites-de-tracabilite-documentees">Limites de tracabilite documentees</h3>
+<p><strong>1. NATO Review (2021) &ndash; &ldquo;Countering cognitive warfare: awareness and resilience&rdquo;</strong></p>
+<p>Existence confirmee par citations multiples dans litterature academique avec comite de lecture (Lahmann 2025 / PMC12500826, Reczkowski 2023, et al.). Metadonnees validees (titre, auteurs, date, URL officielle). Page originale inaccessible lors de la consultation (2026-02-08) &ndash; impossibilite d&rsquo;auditer le contenu directement depuis la source primaire. <strong>Contenu integral non audite.</strong></p>
+<p><strong>Recommandation pour verification</strong> : Consulter Lahmann (2025) PMC12500826 qui cite et contextualise l&rsquo;article NATO Review, ou rechercher archives institutionnelles OTAN.</p>
+<p><strong>2. Cole et Le Guyader (2020) &ndash; &ldquo;NATO&rsquo;s Sixth Domain of Operations?&rdquo;</strong></p>
+<p>Source primaire non localisee lors de la consultation (2026-02-08). Document largement cite dans litterature OTAN (Claverie 2021, du Cluzel 2021). Classe en T3 (validation indirecte) jusqu&rsquo;a localisation du PDF officiel.</p>
+<p><strong>Recommandation</strong> : Utiliser avec prudence ; privilegier les citations directes des auteurs dans d&rsquo;autres documents OTAN verifies.</p>
+<hr />
+<p><strong>Ce guide est un outil de defense cognitive. Partagez-le librement.</strong></p>
+<p><strong>Version finale &ndash; auditabilite documentee (sources et limites explicites) &ndash; 2026-02-08</strong></p>
+<hr />
+<h2 id="changelog-v10-2026-02-08">Changelog v1.0 (2026-02-08)</h2>
+<div class="highlight"><pre><span></span><code>ebook-defense-cognitive_v1.0_2026-02-08
+
+Modifications appliquees par rapport a la version
+source (ebook_v1_source.md) :
+
+1. &quot;certifiee&quot; / &quot;certifiee auditable&quot;
+   → &quot;auditabilite documentee
+      (sources et limites explicites)&quot;
+
+2. &quot;publication Nature&quot;
+   → &quot;article Nature Portfolio publie dans
+      npj Artificial Intelligence&quot;
+
+3. Ross et al. &quot;Accepte a COLM 2024&quot;
+   → &quot;Prepublication arXiv, version listee
+      sur OpenReview (COLM 2024)&quot;
+
+4. Meincke et al. (SSRN)
+   → mention explicite &quot;working paper /
+      prepublication (non evalue par comite
+      de lecture)&quot;
+
+5. Ajout criteres minimaux d&#39;inclusion T4
+   (securite, stabilite, test interne)
+
+6. Ajout section &quot;Modes d&#39;echec frequents
+   (Failure modes)&quot;
+
+7. Ajout encadre &quot;Statut du document + donnees&quot;
+   apres &quot;A propos de ce guide&quot;
+
+8. Prompts FR + EN pour chapitres 1, 3, 4, 5
+   (FR en reference, EN en source)
+
+9. Chapitre 7 : ajout encadre &quot;exemple
+   pedagogique uniquement&quot; ;
+   neutralisation elements trop proceduraux
+   (&quot;sous 60 sec&quot; → &quot;delai compatible
+   avec la menace&quot;, &quot;engagement autorise&quot;
+   → &quot;option envisageable sous reserve
+   ROE/autorisation&quot;, suppression durees
+   de type SOP universelle)
+
+10. Tableaux larges remplaces par listes
+    structurees A5-safe (resume executif,
+    chapitre 8)
+
+11. Emojis supprimes dans les en-tetes
+
+12. Blocs de code reflows pour A5
+    (lignes courtes)
+
+13. URLs bibliographie sur lignes separees
+
+14. H1 ajoute en tete de document
+
+15. Suppression wrapper markdown global
+    (regle anti-casse backticks)
+</code></pre></div>
+    </div>
+</body>
+</html>

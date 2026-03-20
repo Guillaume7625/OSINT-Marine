@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Cycle Outlook</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">Cycle Outlook</div>
+    <nav class="nav">
+      <a href="{{ url_for('consignes') }}">Consignes</a>
+      <a href="{{ url_for('trier') }}">Trier</a>
+      <a href="{{ url_for('resume') }}">Résumé</a>
+      <a href="{{ url_for('logs') }}">Logs</a>
+      <a href="{{ url_for('genial') }}">GENIAL</a>
+    </nav>
+  </header>
+  <main class="content">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Logs</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Horodatage</th>
+      <th>Niveau</th>
+      <th>Run</th>
+      <th>Événement</th>
+      <th>Détails</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for entry in entries %}
+      <tr>
+        <td>{{ entry.ts }}</td>
+        <td>{{ entry.level }}</td>
+        <td>{{ entry.run_id }}</td>
+        <td>{{ entry.event }}</td>
+        <td><pre>{{ entry.details }}</pre></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">Aucun log.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

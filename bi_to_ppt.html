@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>bi_to_ppt</title>
+<style>
+:root{--t:#1b2a32;--m:#4f6370;--bg:#eef4f7;--pri:#0a7b94;--pri2:#01495a;--line:#c6d8de;--card:#ffffff}
+*{box-sizing:border-box}
+body{margin:0;font:13px "Segoe UI",sans-serif;background:var(--bg);color:var(--t)}
+.w{max-width:1420px;margin:auto;padding:10px}
+.h{background:linear-gradient(120deg,var(--pri2),var(--pri));color:#fff;border-radius:10px;padding:10px}
+.r{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.g{flex:1 1 220px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.tabs button{border:1px solid #8db5c0;background:#f6fbfd;padding:7px 11px;border-radius:999px;cursor:pointer;font-weight:700}
+.tabs button.on{background:#0a7b94;color:#fff}
+.tab{display:none}
+.tab.on{display:block}
+.p{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0}
+.dep{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px}
+.dc{border:1px solid #c4d7de;border-radius:7px;background:#fbfeff;padding:7px}
+.ok{color:#0a8f47}.ko{color:#c23d24}
+.hint{font-size:12px;color:var(--m)}
+label{font-size:12px;font-weight:700;display:block;margin:0 0 4px}
+input,select,textarea,button{font:inherit}
+input[type=text],input[type=number],select,textarea{width:100%;padding:7px;border:1px solid #95bcc8;border-radius:7px;background:#fff;color:var(--t)}
+button{border:1px solid #8db5c0;background:#f6fbfd;color:#163f4b;border-radius:7px;padding:7px 10px;font-weight:700;cursor:pointer}
+button:disabled{opacity:.55;cursor:not-allowed}
+button.pr{background:#0a7b94;border-color:#0a7b94;color:#fff}
+button.warn{background:#fff8ea;border-color:#be8a24;color:#8d600e}
+button.d{background:#fff1ef;border-color:#c23d24;color:#8f2e1d}
+.tbl{overflow:auto;border:1px solid #bfd2d9;border-radius:8px;background:#fff;max-height:420px}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{border-right:1px solid #ebf2f5;border-bottom:1px solid #e1ecf0;padding:5px 6px;white-space:nowrap;font-size:12px;text-align:left}
+th{position:sticky;top:0;background:#eef7fa;z-index:1}
+tr:nth-child(even)td{background:#fbfdfe}
+.pager{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:7px}
+.k{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:7px}
+.kc{border:1px solid #bfd7e0;background:#f3fafc;border-radius:8px;padding:7px}
+.kc b{display:block;font-size:11px;color:#476675}
+.kc span{font-size:15px;font-weight:800}
+.frow{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr auto;gap:4px;align-items:end;margin:4px 0}
+.small{font-size:11px;font-weight:700;color:#355969;display:block}
+.pre{background:#0f2430;color:#dbedf3;border-radius:8px;padding:8px;font:12px Consolas,monospace;white-space:pre-wrap;max-height:200px;overflow:auto}
+.ov{position:fixed;inset:0;background:rgba(6,27,33,.4);display:none;align-items:center;justify-content:center;z-index:99}
+.box{background:#fff;border:1px solid #aec9d1;border-radius:10px;padding:10px;display:flex;gap:10px;align-items:center;max-width:480px;width:92vw}
+.sp{width:22px;height:22px;border:3px solid #c5dfe7;border-top-color:#0a7b94;border-radius:50%;animation:s .85s linear infinite}@keyframes s{to{transform:rotate(360deg)}}
+#cv{width:100%;max-width:980px;height:410px;display:block;margin:auto}
+#svg{max-width:980px;margin:auto}
+.drop{border:2px dashed #7eb5c1;border-radius:12px;background:#f8fdff;padding:18px;text-align:center}
+.drop.on{background:#e8f8fc;border-color:#0a7b94}
+.empty{border:2px dashed #a7c9d3;border-radius:12px;padding:22px;text-align:center;background:#f9feff;font-weight:700;color:#325767}
+.badge{display:inline-block;padding:2px 6px;border-radius:999px;font-size:11px;font-weight:700}
+.b-text{background:#e9f3fb;color:#275c86}.b-number{background:#eef7ea;color:#2d6d2d}.b-date{background:#fdf1e8;color:#8a4f1b}
+.viz-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:8px}
+.viz{border:1px solid #c8dbe1;background:#fff;border-radius:10px;padding:7px;min-height:340px}
+.viz h4{margin:0 0 6px;font-size:13px}
+.viz .hint{margin-bottom:5px}
+.viz svg,.viz canvas{width:100%;height:300px;display:block;background:#fff;border-radius:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid #a6c6d1;background:#f2fbfd;color:#204957;border-radius:999px;padding:4px 8px;font-size:12px;cursor:pointer}
+.muted{opacity:.75}
+.action-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+@media(max-width:920px){.frow{grid-template-columns:1fr} .viz-grid{grid-template-columns:1fr}}
+</style></head><body><div class="w">
+<div class="h"><div class="r" style="justify-content:space-between"><div><div style="font-weight:800;font-size:20px">BI to PPT Offline</div><div style="font-size:12px;opacity:.92">CSV/XLSX offline, dashboard auto, IA copier/coller, deck PPT analytique</div></div><div class="r"><label style="display:flex;align-items:center;gap:6px"><input id="mask" type="checkbox" checked>Masquer données logs</label><button id="clr" class="d">Effacer données locales</button></div></div><div id="deps" class="dep" style="margin-top:8px"></div></div>
+<div class="tabs" id="tabs"></div>
+
+<div id="t-import" class="tab on"><div class="p">
+<div id="drop" class="drop"><div style="font-size:16px;font-weight:800">Déposez un fichier CSV / XLSX</div><div class="hint" style="margin-top:4px">Ou utilisez le bouton ci-dessous. Analyse automatique après import.</div><div class="action-row" style="justify-content:center;margin-top:10px"><button id="pick" class="pr">Choisir fichier</button><button id="an">Analyser</button><input id="file" type="file" accept=".csv,.txt,.xlsx,.xls" style="display:none"></div></div>
+<div class="r" style="margin-top:8px"><div class="g"><label>Délimiteur</label><select id="del"><option value="auto">Auto</option><option value=",">Virgule</option><option value=";">Point-virgule</option><option value="	">Tab</option><option value="|">Pipe</option></select><div id="delh" class="hint">Délimiteur détecté: -</div></div><div class="g"><div class="hint">XLSX actif seulement si SheetJS est disponible.</div></div></div>
+<div id="xopts" class="p" style="display:none"><div class="r"><div class="g"><label>Feuille</label><select id="sheet"></select></div><div class="g"><label>Ligne en-têtes (1..)</label><input id="hrow" type="number" min="1" value="1"></div><div class="g" style="align-self:flex-end"><button id="apSheet" class="pr">Appliquer feuille</button></div></div><div class="hint" style="margin:6px 0">Typage auto + override</div><div class="tbl" style="max-height:250px"><table id="tt"></table></div><div class="pager"><button id="apTypes" class="pr">Appliquer types</button></div></div>
+<div class="r"><div class="hint">Fichier: <b id="fN">-</b> | Lignes: <b id="rN">0</b> | Colonnes: <b id="cN">0</b> | Feuille: <b id="sN">-</b></div></div>
+<div style="margin-top:7px"><b>Aperçu (50)</b><div class="tbl" style="max-height:320px"><table id="pv"></table></div></div>
+<div style="margin-top:7px"><b>Logs</b><div id="log" class="pre"></div></div>
+</div></div>
+
+<div id="t-dashboard" class="tab"><div class="p">
+<div id="dempty" class="empty">Importer un fichier pour lancer l'analyse visuelle automatique.<div class="hint" style="margin-top:6px">Commencez dans l'onglet Import.</div></div>
+<div class="action-row" style="margin-bottom:8px"><button id="dan" class="pr">Analyser</button><button id="dgoPpt" class="pr">Générer deck</button><button id="dgoAi">Générer prompt IA</button><button id="dreset" class="warn">Reset sélections</button></div>
+<div style="margin-bottom:6px"><b>Filtres actifs</b><div id="dchips" class="chips"></div></div>
+<div id="dkpi" class="k"></div>
+<div class="p"><div class="r" style="justify-content:space-between"><b>Field list</b><span class="hint">Type détecté + qualité</span></div><div class="tbl" style="max-height:260px"><table id="dfields"></table></div></div>
+<div class="viz-grid">
+<div class="viz"><h4>Trend / Distribution</h4><div class="hint">Agrégation automatique (mois/semaine si date disponible)</div><div id="dtrend"></div></div>
+<div class="viz"><h4>Top N (Dim1 vs Mesure)</h4><div class="hint">Cliquez une barre pour filtrer Dim1</div><div id="dtop"></div></div>
+<div class="viz"><h4>Pareto / Cumulé</h4><div class="hint">Cliquez une barre pour filtrer Dim1</div><div id="dpar"></div></div>
+<div class="viz"><h4>Distribution de la mesure</h4><div class="hint">Histogramme</div><div id="ddist"></div></div>
+<div class="viz"><h4>Heatmap Dim1 x Dim2</h4><div class="hint">Cliquez une cellule pour filtrer Dim1+Dim2</div><div id="dheat"></div></div>
+<div class="viz"><h4>Data Quality</h4><div class="hint">Top colonnes % vides</div><div id="dqual"></div></div>
+</div>
+<div class="p" style="margin-top:8px"><b>Outliers / Anomalies (Top 20)</b><div class="tbl"><table id="dout"></table></div></div>
+</div></div>
+
+<div id="t-explorer" class="tab"><div class="p">
+<div class="r"><div class="g" style="flex:2 1 380px"><label>Recherche globale</label><input id="search" type="text" placeholder="Entrée puis Entrée pour appliquer"></div><div class="g"><label>Lignes/page</label><select id="rpp"><option>50</option><option selected>100</option><option>200</option></select></div></div>
+<div class="p"><div class="r" style="justify-content:space-between"><b>Filtres par colonne</b><div class="r"><button id="addF">+ Filtre</button><button id="apF" class="pr">Appliquer filtres</button><button id="rsF" class="warn">Réinitialiser</button></div></div><div id="fs"></div></div>
+<div class="r"><div class="hint">Total: <b id="tot">0</b> | Filtré: <b id="flt">0</b> | Pages: <b id="tpg">0</b></div><div class="g"><label>Stats colonne (filtré)</label><select id="sc"></select></div></div>
+<div id="sb" class="k"></div>
+<div class="tbl"><table id="et"></table></div><div class="pager"><button id="epv">Préc.</button><button id="enx">Suiv.</button><span id="epi" class="hint"></span></div>
+</div></div>
+
+<div id="t-pivot" class="tab"><div class="p">
+<div class="r"><div class="g"><label>Dimension 1*</label><select id="pd1"></select></div><div class="g"><label>Dimension 2</label><select id="pd2"></select></div><div class="g"><label>Mesure</label><select id="pm"></select></div><div class="g"><label>Agrégat</label><select id="pa"><option>SUM</option><option>COUNT</option><option>AVG</option></select></div><div class="g"><label>Top N + Others</label><input id="pn" type="number" min="1" max="500" value="20"></div></div>
+<div class="pager"><button id="cp" class="pr">Calculer pivot</button><button id="xp">Exporter CSV pivot</button><span id="ps" class="hint">Aucun pivot</span></div>
+<div class="tbl"><table id="pt"></table></div><div class="pager"><button id="ppv">Préc.</button><button id="pnx">Suiv.</button><span id="ppi" class="hint"></span></div>
+</div></div>
+
+<div id="t-charts" class="tab"><div class="p">
+<div class="r"><div class="g"><label>Type</label><select id="ct"><option value="bar">Bar</option><option value="line">Line</option></select></div><div class="g"><label>Points max</label><input id="cm" type="number" min="5" max="300" value="40"></div><div class="g" style="align-self:flex-end"><button id="rc" class="pr">Rendre</button><button id="xc">Exporter image</button></div></div>
+<div id="chm" class="hint">Mode: -</div><div class="tbl" style="padding:8px"><canvas id="cv" width="980" height="420"></canvas><div id="svg" style="display:none"></div></div>
+</div></div>
+
+<div id="t-export" class="tab"><div class="p">
+<div id="ek" class="k"></div>
+<div class="r"><div class="g"><button id="xcf" class="pr">Exporter CSV filtré</button></div><div class="g"><label style="display:flex;align-items:center;gap:6px"><input id="jall" type="checkbox">Inclure toutes les lignes dans JSON</label><button id="xj">Exporter JSON analytique</button></div><div class="g"><button id="xrh">Générer rapport HTML imprimable</button></div></div>
+<div class="hint">JSON exporte un sample filtré par défaut.</div>
+</div></div>
+
+<div id="t-ai" class="tab"><div class="p">
+<div class="r"><div class="g"><button id="aig" class="pr">Générer prompt IA</button></div><div class="g"><button id="aic">Copier prompt</button></div><div class="g"><button id="aidl">Télécharger prompt</button><label class="hint" style="display:flex;align-items:center;gap:6px;margin-top:4px"><input id="aidj" type="checkbox">Inclure JSON pack</label></div></div>
+<div style="margin-top:7px"><label>Prompt</label><textarea id="aip" rows="10" placeholder="Le prompt pack sera généré ici"></textarea></div>
+<div style="margin-top:7px"><label>Réponse IA (coller ici)</label><textarea id="air" rows="10" placeholder="Coller soit un JSON strict, soit un texte libre"></textarea></div>
+<div class="r"><div class="g"><button id="aii" class="pr">Importer réponse</button></div><div class="g"><button id="aix" class="d">Effacer IA</button></div></div>
+<div id="ais" class="pre" style="min-height:82px;margin-top:7px"></div>
+<div class="hint" style="margin-top:7px">Schéma JSON recommandé: {"executiveSummary":"<=800","keyInsights":["5-10"],"risks":["3-8"],"recommendations":["5-10"],"slideNarratives":{"2":"...","5":"..."},"speakerNotes":{"4":"...","5":"..."}}</div>
+</div></div>
+
+<div id="t-ppt" class="tab"><div class="p">
+<div class="r"><div class="g" style="flex:2 1 360px"><label>Titre deck</label><input id="ttl" type="text" placeholder="Revue Performance"></div><div class="g"><label>Période</label><input id="prd" type="text" placeholder="2025"></div><div class="g"><label>Source</label><input id="src" type="text" placeholder="ERP"></div></div>
+<div class="r"><div class="g"><label>Date (optionnel)</label><select id="dcol"></select></div><div class="g"><label>Dim1*</label><select id="d1"></select></div><div class="g"><label>Dim2</label><select id="d2"></select></div><div class="g"><label>Mesure1*</label><select id="m1"></select></div><div class="g"><label>Mesure2</label><select id="m2"></select></div></div>
+<div class="r"><div class="g"><label>Top N</label><input id="tn" type="number" min="5" max="200" value="20"></div><div class="g"><label>Granularité</label><select id="gr"><option value="month">Mois</option><option value="week">Semaine</option></select></div><div class="g"><label>Thème</label><select id="th"><option value="o">Ocean</option><option value="s">Sand</option></select></div><div class="g" style="align-self:flex-end"><button id="gp" class="pr">Générer PPTX</button></div></div>
+<div style="margin-top:7px"><b>Progression</b><div id="pp" class="pre" style="min-height:120px"></div></div>
+</div></div>
+
+</div>
+<div id="ov" class="ov"><div class="box"><div class="sp"></div><div><b>Traitement</b><div id="ovt" class="hint">...</div></div></div></div>
+<script>
+/* PASTE xlsx.full.min.js HERE (can be empty) */
+(function(g){
+"use strict";
+if(g.XLSX)return;
+const TD=new TextDecoder("utf-8"),XMLNS_REL="http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+const sig=(u,o)=>u[o]|(u[o+1]<<8)|(u[o+2]<<16)|(u[o+3]<<24),dec=u=>TD.decode(u);
+const normPath=(base,t)=>{const trg=String(t||"").replace(/\\/g,"/").replace(/^\/+/,""),b=String(base||"").split("/");b.pop();for(const p of trg.split("/")){if(!p||p===".")continue;if(p==="..")b.pop();else b.push(p)}return b.join("/")};
+function parseZip(ab){const u=ab instanceof Uint8Array?ab:new Uint8Array(ab),dv=new DataView(u.buffer,u.byteOffset,u.byteLength);let eocd=-1;for(let i=u.length-22;i>=Math.max(0,u.length-66000);i--){if(sig(u,i)===0x06054b50){eocd=i;break}}if(eocd<0)throw Error("ZIP invalide");const total=dv.getUint16(eocd+10,true),cdSize=dv.getUint32(eocd+12,true),cdOff=dv.getUint32(eocd+16,true),entries={};let p=cdOff;for(let i=0;i<total&&p<cdOff+cdSize;i++){if(sig(u,p)!==0x02014b50)break;const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true),usize=dv.getUint32(p+24,true),nlen=dv.getUint16(p+28,true),elen=dv.getUint16(p+30,true),clen=dv.getUint16(p+32,true),loff=dv.getUint32(p+42,true),name=dec(u.slice(p+46,p+46+nlen)).replace(/^\/+/,"");entries[name]={method,csize,usize,loff,name};p+=46+nlen+elen+clen}return{u,dv,entries}}
+async function inflateRaw(u){if(typeof DecompressionStream==="undefined")throw Error("DecompressionStream indisponible");const ds=new DecompressionStream("deflate-raw"),ab=await new Response(new Blob([u]).stream().pipeThrough(ds)).arrayBuffer();return new Uint8Array(ab)}
+async function getBytes(z,name){const key=String(name||"").replace(/^\/+/,""),e=z.entries[key]||z.entries[key.replace(/^\.\//,"")];if(!e)return null;const p=e.loff;if(sig(z.u,p)!==0x04034b50)throw Error("Entree ZIP invalide: "+key);const nlen=z.dv.getUint16(p+26,true),elen=z.dv.getUint16(p+28,true),st=p+30+nlen+elen,comp=z.u.slice(st,st+e.csize);if(e.method===0)return comp;if(e.method===8)return inflateRaw(comp);throw Error("Compression ZIP non supportee: "+e.method)}
+const parseXml=txt=>new DOMParser().parseFromString(txt,"application/xml"),textOf=(el,tag)=>{const n=el.getElementsByTagName(tag)[0];return n?(n.textContent||""):""};
+function colIdx(ref){let n=0;for(let i=0;i<ref.length;i++){const c=ref.charCodeAt(i);if(c>=65&&c<=90){n=n*26+c-64;continue}if(c>=97&&c<=122){n=n*26+c-96;continue}break}return Math.max(0,n-1)}
+function parseShared(txt){const doc=parseXml(txt),sis=[...doc.getElementsByTagName("si")];return sis.map(si=>[...si.getElementsByTagName("t")].map(t=>t.textContent||"").join(""))}
+function parseSheet(txt,ss){const doc=parseXml(txt),rows=[...doc.getElementsByTagName("row")],out=[];let maxC=-1,autoR=0;for(const row of rows){let ri=parseInt(row.getAttribute("r")||"",10);if(!Number.isFinite(ri)||ri<1)ri=autoR+1;autoR=ri;const arr=[];let autoC=0;for(const c of [...row.getElementsByTagName("c")]){const ref=c.getAttribute("r")||"";let ci=ref?colIdx(ref):autoC;autoC=ci+1;const t=(c.getAttribute("t")||"").toLowerCase();let v="";if(t==="s"){const idx=parseInt(textOf(c,"v"),10);v=Number.isFinite(idx)?(ss[idx]??""):""}else if(t==="inlineStr"){v=[...c.getElementsByTagName("t")].map(tn=>tn.textContent||"").join("")}else if(t==="b"){v=textOf(c,"v")==="1"?"TRUE":"FALSE"}else{v=textOf(c,"v");if(v==null)v=""}arr[ci]=v;if(ci>maxC)maxC=ci}out[ri-1]=arr}for(let i=0;i<out.length;i++)if(!out[i])out[i]=[];if(maxC>=0){for(const r of out){for(let c=0;c<=maxC;c++)if(r[c]===undefined)r[c]=""}}return out}
+async function read(data){const z=parseZip(data instanceof ArrayBuffer?new Uint8Array(data):data),wbBytes=await getBytes(z,"xl/workbook.xml");if(!wbBytes)throw Error("workbook.xml introuvable");const wbDoc=parseXml(dec(wbBytes)),relBytes=await getBytes(z,"xl/_rels/workbook.xml.rels"),relMap={};if(relBytes){const relDoc=parseXml(dec(relBytes));for(const r of [...relDoc.getElementsByTagName("Relationship")]){const id=r.getAttribute("Id"),t=r.getAttribute("Target");if(id&&t)relMap[id]=t}}const ssBytes=await getBytes(z,"xl/sharedStrings.xml"),shared=ssBytes?parseShared(dec(ssBytes)):[],sheets=[...wbDoc.getElementsByTagName("sheet")],wb={SheetNames:[],Sheets:{}};let idx=0;for(const s of sheets){idx++;const name=s.getAttribute("name")||("Sheet"+idx),rid=s.getAttribute("r:id")||s.getAttributeNS(XMLNS_REL,"id")||"",target=relMap[rid]||("worksheets/sheet"+idx+".xml"),path=normPath("xl/workbook.xml",target),sheetBytes=await getBytes(z,path);if(!sheetBytes)continue;wb.SheetNames.push(name);wb.Sheets[name]={__aoa:parseSheet(dec(sheetBytes),shared)}}if(!wb.SheetNames.length)throw Error("Aucune feuille lisible");return wb}
+function sheet_to_json(ws,opt){const o=opt||{},def=Object.prototype.hasOwnProperty.call(o,"defval")?o.defval:"",src=(ws&&ws.__aoa)||[];let max=0;for(const r of src)if(r&&r.length>max)max=r.length;const out=new Array(src.length);for(let i=0;i<src.length;i++){const r=src[i]||[],row=new Array(max);for(let c=0;c<max;c++)row[c]=r[c]!==undefined?r[c]:def;out[i]=row}return out}
+g.XLSX={read:(d,o)=>read(d,o),utils:{sheet_to_json}};
+})(window);
+</script>
+<script>
+/* PASTE pptxgen bundle HERE (can be empty) */
+(function(g){
+"use strict";
+if(g.PptxGenJS||g.pptxgen)return;
+const TE=new TextEncoder(),EMU=914400,MIME_PPTX="application/vnd.openxmlformats-officedocument.presentationml.presentation";
+const xml=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&apos;"}[m])),utf8=s=>TE.encode(String(s??""));
+const emu=v=>Math.round((Number(v)||0)*EMU),clr=(v,d)=>{let x=String(v||d||"000000").replace(/[^0-9a-fA-F]/g,"");if(x.length===3)x=x.split("").map(c=>c+c).join("");if(x.length<6)x=String(d||"000000").replace(/[^0-9a-fA-F]/g,"");return x.slice(0,6).toUpperCase()},align=a=>{const x=String(a||"").toLowerCase();return x==="center"||x==="ctr"?"ctr":x==="right"?"r":x==="justify"?"just":"l"},valign=a=>{const x=String(a||"").toLowerCase();return x==="mid"||x==="middle"||x==="center"?"ctr":x==="bottom"?"b":"t"};
+const fromData=u=>{const m=String(u||"").match(/^data:([^;,]+)?(;base64)?,([\s\S]*)$/i);if(!m)return null;const mime=(m[1]||"application/octet-stream").toLowerCase();if(m[2]){let b=m[3].replace(/\s+/g,"").replace(/-/g,"+").replace(/_/g,"/");const pad=b.length%4;if(pad)b+="=".repeat(4-pad);const bin=atob(b),out=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i)&255;return{mime,bytes:out}}try{return{mime,bytes:utf8(decodeURIComponent(m[3]))}}catch{return{mime,bytes:utf8(m[3])}}};
+const extOf=m=>m.includes("png")?"png":m.includes("jpeg")||m.includes("jpg")?"jpg":m.includes("svg")?"svg":"bin";
+const relNS="http://schemas.openxmlformats.org/package/2006/relationships",imgRelType="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
+const crcT=(()=>{const t=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let j=0;j<8;j++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[i]=c>>>0}return t})(),crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=crcT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+const join=arr=>{let n=0;for(const a of arr)n+=a.length;const out=new Uint8Array(n);let o=0;for(const a of arr){out.set(a,o);o+=a.length}return out};
+function zip(entries){let off=0,loc=[],cen=[];for(const e of entries){const name=utf8(e.name),data=e.data instanceof Uint8Array?e.data:utf8(e.data),crc=crc32(data),lh=new Uint8Array(30+name.length+data.length),ld=new DataView(lh.buffer);ld.setUint32(0,0x04034b50,true);ld.setUint16(4,20,true);ld.setUint16(6,0,true);ld.setUint16(8,0,true);ld.setUint16(10,0,true);ld.setUint16(12,0,true);ld.setUint32(14,crc,true);ld.setUint32(18,data.length,true);ld.setUint32(22,data.length,true);ld.setUint16(26,name.length,true);ld.setUint16(28,0,true);lh.set(name,30);lh.set(data,30+name.length);loc.push(lh);const ch=new Uint8Array(46+name.length),cd=new DataView(ch.buffer);cd.setUint32(0,0x02014b50,true);cd.setUint16(4,20,true);cd.setUint16(6,20,true);cd.setUint16(8,0,true);cd.setUint16(10,0,true);cd.setUint16(12,0,true);cd.setUint16(14,0,true);cd.setUint32(16,crc,true);cd.setUint32(20,data.length,true);cd.setUint32(24,data.length,true);cd.setUint16(28,name.length,true);cd.setUint16(30,0,true);cd.setUint16(32,0,true);cd.setUint16(34,0,true);cd.setUint16(36,0,true);cd.setUint32(38,0,true);cd.setUint32(42,off,true);ch.set(name,46);cen.push(ch);off+=lh.length}const csize=cen.reduce((p,a)=>p+a.length,0),eocd=new Uint8Array(22),ed=new DataView(eocd.buffer);ed.setUint32(0,0x06054b50,true);ed.setUint16(4,0,true);ed.setUint16(6,0,true);ed.setUint16(8,entries.length,true);ed.setUint16(10,entries.length,true);ed.setUint32(12,csize,true);ed.setUint32(16,off,true);ed.setUint16(20,0,true);return join([...loc,...cen,eocd])}
+function mkText(id,text,o){const x=emu(o.x),y=emu(o.y),w=emu(o.w||1),h=emu(o.h||.3),fs=Math.max(8,Math.round((Number(o.fontSize)||12)*100)),c=clr(o.color,"20323A"),b=o.bold?' b="1"':"",a=align(o.align),va=valign(o.valign),ln=String(text??"").split(/\r?\n/),pars=ln.map(line=>line?`<a:p><a:pPr algn="${a}"/><a:r><a:rPr lang="fr-FR" sz="${fs}"${b}><a:solidFill><a:srgbClr val="${c}"/></a:solidFill></a:rPr><a:t>${xml(line)}</a:t></a:r><a:endParaRPr lang="fr-FR" sz="${fs}"/></a:p>`:`<a:p><a:pPr algn="${a}"/><a:endParaRPr lang="fr-FR" sz="${fs}"/></a:p>`).join(""),fill=o.fill&&o.fill.color?`<a:solidFill><a:srgbClr val="${clr(o.fill.color,"FFFFFF")}"/></a:solidFill>`:"<a:noFill/>",line=o.line&&o.line.color?`<a:ln w="12700"><a:solidFill><a:srgbClr val="${clr(o.line.color,"A0A0A0")}"/></a:solidFill></a:ln>`:"<a:ln><a:noFill/></a:ln>";return`<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Text ${id}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${w}" cy="${h}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom>${fill}${line}</p:spPr><p:txBody><a:bodyPr wrap="square" anchor="${va}"/><a:lstStyle/>${pars}</p:txBody></p:sp>`}
+function mkShape(id,tp,o){const x=emu(o.x),y=emu(o.y),w=emu(o.w||1),h=emu(o.h||.3),p=String(tp||"rect").toLowerCase(),prst=p.includes("round")?"roundRect":p==="line"?"line":"rect",fill=o.fill&&o.fill.color?`<a:solidFill><a:srgbClr val="${clr(o.fill.color,"FFFFFF")}"/></a:solidFill>`:"<a:noFill/>",line=o.line&&o.line.color?`<a:ln w="12700"><a:solidFill><a:srgbClr val="${clr(o.line.color,"808080")}"/></a:solidFill></a:ln>`:"<a:ln><a:noFill/></a:ln>";return`<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Shape ${id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${w}" cy="${h}"/></a:xfrm><a:prstGeom prst="${prst}"><a:avLst/></a:prstGeom>${fill}${line}</p:spPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>`}
+function mkPic(id,rid,o){const x=emu(o.x),y=emu(o.y),w=emu(o.w||1),h=emu(o.h||1);return`<p:pic><p:nvPicPr><p:cNvPr id="${id}" name="Image ${id}"/><p:cNvPicPr/><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${w}" cy="${h}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`}
+const grp=`<p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr><p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>`;
+class Slide{constructor(){this.items=[]}addText(t,o={}){this.items.push({k:"text",t:String(t??""),o})}addShape(tp,o={}){this.items.push({k:"shape",tp,o})}addImage(o={}){if(o&&o.data&&/^data:/i.test(String(o.data)))this.items.push({k:"img",o,data:String(o.data)})}addTable(rows,o={}){const lines=(rows||[]).map(r=>Array.isArray(r)?r.map(v=>String(v??"")).join(" | "):String(r??""));this.items.push({k:"text",t:lines.join("\n"),o})}addNotes(t){if(t!=null)this.items.push({k:"notes",t:String(t)})}}
+class MiniPptx{constructor(){this.layout="LAYOUT_WIDE";this.author="";this.title="";this.slides=[];this.ShapeType={rect:"rect",roundRect:"roundRect",line:"line"}}addSlide(){const s=new Slide;this.slides.push(s);return s}async writeFile(o={}){const file=(o.fileName||"deck.pptx").replace(/\.pptx$/i,"")+".pptx",blob=new Blob([this._build()],{type:MIME_PPTX}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download=file;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2500)}_build(){if(!this.slides.length)this.addSlide();const now=new Date().toISOString(),media=[],mMap=new Map,slides=[],srels=[];const addM=data=>{if(mMap.has(data))return mMap.get(data);const p=fromData(data);if(!p)return null;const ext=extOf(p.mime),m={id:media.length+1,name:`image${media.length+1}.${ext}`,mime:p.mime,ext,bytes:p.bytes};media.push(m);mMap.set(data,m);return m};for(let i=0;i<this.slides.length;i++){const sl=this.slides[i];let id=2,body="",notes=[];const rel=[`<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/>`];for(const it of sl.items){if(it.k==="text")body+=mkText(id++,it.t,it.o||{});else if(it.k==="shape")body+=mkShape(id++,it.tp,it.o||{});else if(it.k==="img"){const m=addM(it.data);if(m){const rid=`rId${rel.length+1}`;rel.push(`<Relationship Id="${rid}" Type="${imgRelType}" Target="../media/${m.name}"/>`);body+=mkPic(id++,rid,it.o||{})}}else if(it.k==="notes"){if(it.t&&it.t.trim())notes.push(it.t.trim())}}if(notes.length)body+=mkText(id++,`Notes: ${notes.join(" | ")}`,{x:.2,y:6.95,w:12.8,h:.25,fontSize:8,color:"9A9A9A"});slides.push(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:spTree>${grp}${body}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sld>`);srels.push(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${relNS}">${rel.join("")}</Relationships>`)}const sid=this.slides.map((_,i)=>`<p:sldId id="${256+i}" r:id="rId${i+2}"/>`).join(""),pres=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:presentation xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:sldMasterIdLst><p:sldMasterId id="2147483648" r:id="rId1"/></p:sldMasterIdLst><p:sldIdLst>${sid}</p:sldIdLst><p:sldSz cx="12192000" cy="6858000" type="wide"/><p:notesSz cx="6858000" cy="9144000"/></p:presentation>`,presRel=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${relNS}"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>${this.slides.map((_,i)=>`<Relationship Id="rId${i+2}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide" Target="slides/slide${i+1}.xml"/>`).join("")}</Relationships>`,master=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sldMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld name="Master"><p:spTree>${grp}</p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink"/><p:sldLayoutIdLst><p:sldLayoutId id="1" r:id="rId1"/></p:sldLayoutIdLst><p:txStyles><p:titleStyle/><p:bodyStyle/><p:otherStyle/></p:txStyles></p:sldMaster>`,masterRel=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${relNS}"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="../theme/theme1.xml"/></Relationships>`,layout=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><p:sldLayout xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" type="blank" preserve="1"><p:cSld name="Blank"><p:spTree>${grp}</p:spTree></p:cSld><p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr></p:sldLayout>`,layoutRel=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${relNS}"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="../slideMasters/slideMaster1.xml"/></Relationships>`,theme=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" name="Office"><a:themeElements><a:clrScheme name="Office"><a:dk1><a:srgbClr val="000000"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1><a:dk2><a:srgbClr val="1F497D"/></a:dk2><a:lt2><a:srgbClr val="EEECE1"/></a:lt2><a:accent1><a:srgbClr val="4F81BD"/></a:accent1><a:accent2><a:srgbClr val="C0504D"/></a:accent2><a:accent3><a:srgbClr val="9BBB59"/></a:accent3><a:accent4><a:srgbClr val="8064A2"/></a:accent4><a:accent5><a:srgbClr val="4BACC6"/></a:accent5><a:accent6><a:srgbClr val="F79646"/></a:accent6><a:hlink><a:srgbClr val="0000FF"/></a:hlink><a:folHlink><a:srgbClr val="800080"/></a:folHlink></a:clrScheme><a:fontScheme name="Office"><a:majorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:majorFont><a:minorFont><a:latin typeface="Calibri"/><a:ea typeface=""/><a:cs typeface=""/></a:minorFont></a:fontScheme><a:fmtScheme name="Office"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:fillStyleLst><a:lnStyleLst><a:ln w="9525"><a:solidFill><a:schemeClr val="phClr"/></a:solidFill><a:prstDash val="solid"/></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr"/></a:solidFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/></a:theme>`,rootRel=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="${relNS}"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="ppt/presentation.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>`,app=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>BI to PPT Offline</Application><PresentationFormat>Ecran 16:9</PresentationFormat><Slides>${this.slides.length}</Slides><Notes>0</Notes><HiddenSlides>0</HiddenSlides><MMClips>0</MMClips><ScaleCrop>false</ScaleCrop></Properties>`,core=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xml(this.title||"Rapport BI")}</dc:title><dc:creator>${xml(this.author||"BI to PPT Offline")}</dc:creator><cp:lastModifiedBy>${xml(this.author||"BI to PPT Offline")}</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`,defaults=`<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${[...new Set(media.map(m=>m.ext))].map(ext=>ext==="png"?`<Default Extension="png" ContentType="image/png"/>`:ext==="jpg"||ext==="jpeg"?`<Default Extension="${ext}" ContentType="image/jpeg"/>`:ext==="svg"?`<Default Extension="svg" ContentType="image/svg+xml"/>`:`<Default Extension="${ext}" ContentType="application/octet-stream"/>`).join("")}`,overrides=`<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/><Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/><Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/><Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>${this.slides.map((_,i)=>`<Override PartName="/ppt/slides/slide${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slide+xml"/>`).join("")}`,ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">${defaults}${overrides}</Types>`;const files=[{name:"[Content_Types].xml",data:ct},{name:"_rels/.rels",data:rootRel},{name:"docProps/app.xml",data:app},{name:"docProps/core.xml",data:core},{name:"ppt/presentation.xml",data:pres},{name:"ppt/_rels/presentation.xml.rels",data:presRel},{name:"ppt/slideMasters/slideMaster1.xml",data:master},{name:"ppt/slideMasters/_rels/slideMaster1.xml.rels",data:masterRel},{name:"ppt/slideLayouts/slideLayout1.xml",data:layout},{name:"ppt/slideLayouts/_rels/slideLayout1.xml.rels",data:layoutRel},{name:"ppt/theme/theme1.xml",data:theme}];for(let i=0;i<slides.length;i++){files.push({name:`ppt/slides/slide${i+1}.xml`,data:slides[i]});files.push({name:`ppt/slides/_rels/slide${i+1}.xml.rels`,data:srels[i]})}for(const m of media)files.push({name:`ppt/media/${m.name}`,data:m.bytes});return zip(files)}}
+g.PptxGenJS=MiniPptx;
+const f=()=>new MiniPptx;g.pptxgen=f;g.pptxgen.PptxGenJS=MiniPptx;
+})(window);
+</script>
+<script>
+/* PASTE chart.umd.min.js HERE (can be empty) */
+(function(g){
+"use strict";
+if(g.Chart)return;
+const num=v=>{const n=Number(v);return Number.isFinite(n)?n:0};
+class MiniChart{
+constructor(ctx,cfg){this.ctx=ctx;this.canvas=ctx&&ctx.canvas?ctx.canvas:null;this.cfg=cfg||{};this._dead=false;this.render()}
+destroy(){this._dead=true}
+clear(){if(!this.ctx||!this.canvas)return;this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height)}
+update(){if(!this._dead)this.render()}
+toBase64Image(){return this.canvas?this.canvas.toDataURL("image/png"):""}
+render(){if(this._dead||!this.ctx||!this.canvas)return;const x=this.ctx,c=this.canvas,w=c.width||980,h=c.height||420,d=this.cfg&&this.cfg.data?this.cfg.data:{},labels=Array.isArray(d.labels)?d.labels:[],ds=d.datasets&&d.datasets[0]?d.datasets[0]:{data:[]},vals=Array.isArray(ds.data)?ds.data.map(num):[],type=String(this.cfg.type||"bar").toLowerCase();x.clearRect(0,0,w,h);x.fillStyle="#ffffff";x.fillRect(0,0,w,h);const m={l:52,r:18,t:18,b:42},pw=w-m.l-m.r,ph=h-m.t-m.b,n=Math.max(1,vals.length),mx=Math.max(0,...vals),mn=Math.min(0,...vals),yr=mx-mn||1,y=v=>h-m.b-((v-mn)/yr)*ph;x.strokeStyle="#365a69";x.lineWidth=1.5;x.beginPath();x.moveTo(m.l,m.t);x.lineTo(m.l,h-m.b);x.lineTo(w-m.r,h-m.b);x.stroke();if(type==="line"){x.strokeStyle=ds.borderColor||"#007b94";x.lineWidth=2.5;x.beginPath();for(let i=0;i<n;i++){const xx=m.l+i*pw/Math.max(1,n-1),yy=y(vals[i]||0);i?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke();x.fillStyle=ds.pointBackgroundColor||"#ef7d00";for(let i=0;i<n;i++){const xx=m.l+i*pw/Math.max(1,n-1),yy=y(vals[i]||0);x.beginPath();x.arc(xx,yy,2.8,0,Math.PI*2);x.fill()}}else{const bw=Math.max(3,pw/Math.max(1,n*1.7)),slot=pw/n;x.fillStyle=ds.backgroundColor&&typeof ds.backgroundColor==="string"?ds.backgroundColor:"#0a7b94";for(let i=0;i<n;i++){const v=vals[i]||0,yy=y(Math.max(0,v)),yb=y(Math.min(0,v)),hh=Math.max(1,Math.abs(yb-yy)),xx=m.l+i*slot+(slot-bw)/2;x.fillRect(xx,Math.min(yy,yb),bw,hh)}}x.fillStyle="#385865";x.font="11px Segoe UI";const ticks=Math.min(8,n);for(let i=0;i<ticks;i++){const k=Math.round(i*Math.max(1,n-1)/Math.max(1,ticks-1)),xx=type==="line"?m.l+k*pw/Math.max(1,n-1):m.l+k*pw/n+pw/n/2;x.save();x.translate(xx,h-m.b+14);x.rotate(-Math.PI/8);x.fillText(String(labels[k]||"").slice(0,16),0,0);x.restore()}}}
+g.Chart=MiniChart;
+})(window);
+</script>
+<script>
+(()=>{"use strict";
+const LSK="bi_to_ppt_prefs_v4",MAXF=80*1024*1024,SMP=300,TPR=30;
+const qs=id=>document.getElementById(id);
+const TABN=["import","dashboard","explorer","pivot","charts","export","ai","ppt"];
+const S={
+  rows:[],cols:[],types:[],num:{},dat:{},fidx:[],fil:[],
+  page:1,ppage:1,rpp:100,piv:[],pc:null,raw:"",wb:null,
+  fi:{name:"",sheet:"",del:"",ext:""},
+  deps:{x:false,c:false,p:false},
+  ch:{mode:"none",inst:null,svg:"",png:""},
+  ai:{prompt:"",responseJson:null,responseRaw:"",importedAt:"",valid:false,mode:"none",strict:false},
+  mask:true,
+  auto:{date:"",dim1:"",dim2:"",measure1:"",measure2:"",topN:20,granularity:"month"},
+  sel:{d1:new Set(),d2:new Set()},
+  dash:null,
+  locks:{applying:false}
+};
+const E={
+  tabs:qs("tabs"),deps:qs("deps"),mask:qs("mask"),clr:qs("clr"),log:qs("log"),
+  ov:qs("ov"),ovt:qs("ovt"),
+  file:qs("file"),drop:qs("drop"),pick:qs("pick"),an:qs("an"),
+  del:qs("del"),delh:qs("delh"),xopts:qs("xopts"),sheet:qs("sheet"),hrow:qs("hrow"),apSheet:qs("apSheet"),
+  tt:qs("tt"),apTypes:qs("apTypes"),fN:qs("fN"),rN:qs("rN"),cN:qs("cN"),sN:qs("sN"),pv:qs("pv"),
+  // dashboard
+  dempty:qs("dempty"),dkpi:qs("dkpi"),dfields:qs("dfields"),dchips:qs("dchips"),dreset:qs("dreset"),dan:qs("dan"),
+  dtrend:qs("dtrend"),dtop:qs("dtop"),dpar:qs("dpar"),ddist:qs("ddist"),dheat:qs("dheat"),dqual:qs("dqual"),
+  dout:qs("dout"),
+  dgoPpt:qs("dgoPpt"),dgoAi:qs("dgoAi"),
+  // explorer
+  search:qs("search"),rpp:qs("rpp"),addF:qs("addF"),apF:qs("apF"),rsF:qs("rsF"),fs:qs("fs"),tot:qs("tot"),flt:qs("flt"),tpg:qs("tpg"),
+  sc:qs("sc"),sb:qs("sb"),et:qs("et"),epv:qs("epv"),enx:qs("enx"),epi:qs("epi"),
+  // pivot
+  pd1:qs("pd1"),pd2:qs("pd2"),pm:qs("pm"),pa:qs("pa"),pn:qs("pn"),cp:qs("cp"),xp:qs("xp"),ps:qs("ps"),
+  pt:qs("pt"),ppv:qs("ppv"),pnx:qs("pnx"),ppi:qs("ppi"),
+  // charts
+  ct:qs("ct"),cm:qs("cm"),rc:qs("rc"),xc:qs("xc"),chm:qs("chm"),cv:qs("cv"),svg:qs("svg"),
+  // export
+  ek:qs("ek"),xcf:qs("xcf"),jall:qs("jall"),xj:qs("xj"),xrh:qs("xrh"),
+  // ai
+  aig:qs("aig"),aic:qs("aic"),aidl:qs("aidl"),aidj:qs("aidj"),aip:qs("aip"),air:qs("air"),aii:qs("aii"),aix:qs("aix"),ais:qs("ais"),
+  // ppt
+  ttl:qs("ttl"),prd:qs("prd"),src:qs("src"),dcol:qs("dcol"),d1:qs("d1"),d2:qs("d2"),m1:qs("m1"),m2:qs("m2"),tn:qs("tn"),gr:qs("gr"),th:qs("th"),gp:qs("gp"),pp:qs("pp")
+};
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
+const escAttr=s=>esc(s).replace(/`/g,"&#96;");
+const fmt=n=>Number.isFinite(n)?n.toLocaleString("fr-FR",{maximumFractionDigits:2}):"-";
+const rng=(a,b)=>Array.from({length:Math.max(0,b-a)},(_,i)=>a+i);
+const hd=a=>new Date(a.getFullYear(),a.getMonth(),a.getDate());
+const pd=a=>new Date(a.getFullYear(),a.getMonth(),a.getDate(),23,59,59,999);
+const noHttp=s=>String(s??"").replace(/https?:\/\/[^\s<>"']+/gi,"[URL-EXTERNE-BLOQUEE]");
+const cut=(s,n)=>String(s??"").slice(0,Math.max(0,n||0));
+const arrStr=(a,max,len)=>Array.isArray(a)?a.map(x=>cut(typeof x==="string"?x:String(x??""),len||240)).map(x=>x.trim()).filter(Boolean).slice(0,max):[];
+const mapStr=(o,maxKeys,len)=>{const r={};if(!o||typeof o!=="object")return r;Object.keys(o).slice(0,maxKeys||20).forEach(k=>{const v=o[k];r[String(k)]=cut(typeof v==="string"?v:String(v??""),len||900)});return r};
+function j(x){try{return JSON.stringify(x)}catch{return "{}"}}
+function lg(m,o){
+  const t=new Date().toLocaleTimeString("fr-FR");
+  let x=`[${t}] ${m}`;
+  if(o){
+    if(S.mask)x+=" | "+Object.entries(o).map(([k,v])=>k+"="+(Array.isArray(v)?v.length:typeof v==="object"?Object.keys(v||{}).length:v)).join(", ");
+    else x+=" | "+j(o);
+  }
+  E.log.textContent=x+"\n"+E.log.textContent;
+}
+function dep(){
+  S.deps.x=!!window.XLSX;
+  S.deps.c=!!window.Chart;
+  S.deps.p=!!pf();
+  E.deps.innerHTML="";
+  [["SheetJS (XLSX)",S.deps.x,"Import XLSX activé","CSV/TXT only"],["Chart.js",S.deps.c,"Rendu canvas + PNG","Fallback SVG"],["PptxGen",S.deps.p,"Export .pptx","Outline + images"]].forEach(d=>{
+    const c=document.createElement("div");
+    c.className="dc";
+    c.innerHTML=`<div style="display:flex;justify-content:space-between;font-weight:700"><span>${d[0]}</span><span class="${d[1]?"ok":"ko"}">${d[1]?"OK":"Indisponible"}</span></div><div class="hint">${d[1]?d[2]:d[3]}</div>`;
+    E.deps.appendChild(c);
+  });
+}
+function sw(t){TABN.forEach(n=>{const tab=qs("t-"+n),btn=document.querySelector(`[data-tab='${n}']`);if(tab)tab.classList.toggle("on",n===t);if(btn)btn.classList.toggle("on",n===t)})}
+function makeTabs(){
+  const lbl=n=>n==="ai"?"IA":n==="dashboard"?"Dashboard":n[0].toUpperCase()+n.slice(1);
+  E.tabs.innerHTML=TABN.map(n=>`<button data-tab='${n}' class='${n==="import"?"on":""}'>${lbl(n)}</button>`).join("");
+  E.tabs.querySelectorAll("button").forEach(b=>b.onclick=()=>sw(b.dataset.tab));
+}
+function ov(s){E.ovt.textContent=s||"...";E.ov.style.display="flex"}
+function hov(){E.ov.style.display="none"}
+async function chunk(n,msg,fn){
+  let sh=false;
+  const tm=setTimeout(()=>{sh=true;ov(msg+" 0%")},200);
+  return new Promise((res,rej)=>{
+    let i=0;
+    const step=()=>{
+      try{
+        const t=performance.now();
+        while(i<n&&performance.now()-t<12){fn(i++);} 
+        if(sh)E.ovt.textContent=msg+" "+(n?Math.round(i*100/n):100)+"%";
+        if(i<n)requestAnimationFrame(step);else{clearTimeout(tm);if(sh)hov();res();}
+      }catch(e){clearTimeout(tm);if(sh)hov();rej(e);}
+    };
+    requestAnimationFrame(step);
+  });
+}
+function setBtn(btn,on,msg){if(!btn)return;btn.disabled=!on;if(!on&&msg)btn.title=msg;else btn.title=""}
+function updateActionState(){
+  const has=S.cols.length>0&&S.rows.length>0;
+  setBtn(E.an,has,"Importer un fichier d'abord");
+  setBtn(E.dan,has,"Importer un fichier d'abord");
+  setBtn(E.dgoPpt,has,"Importer un fichier d'abord");
+  setBtn(E.dgoAi,has,"Importer un fichier d'abord");
+  setBtn(E.cp,has,"Importer un fichier d'abord");
+  setBtn(E.rc,S.piv.length>0,"Calculer un pivot d'abord");
+  setBtn(E.xcf,has,"Importer un fichier d'abord");
+  setBtn(E.xj,has,"Importer un fichier d'abord");
+  setBtn(E.xrh,has,"Importer un fichier d'abord");
+  setBtn(E.gp,has,"Importer un fichier d'abord");
+  setBtn(E.aig,has,"Importer un fichier d'abord");
+  E.dempty.style.display=has?"none":"block";
+}
+function num(v){
+  if(v==null)return null;
+  if(typeof v==="number")return Number.isFinite(v)?v:null;
+  let s=String(v).trim(); if(!s)return null;
+  s=s.replace(/\s+/g,"");
+  if(s.includes(",")&&s.includes(".")){
+    if(s.lastIndexOf(",")>s.lastIndexOf("."))s=s.replace(/\./g,"").replace(",", ".");
+    else s=s.replace(/,/g,"");
+  }else if(s.includes(",")){
+    const c=(s.match(/,/g)||[]).length;
+    s=c===1?s.replace(",", "."):s.replace(/,/g,"");
+  }
+  const n=Number(s);
+  return Number.isFinite(n)?n:null;
+}
+function dt(v){
+  if(v==null)return null;
+  if(v instanceof Date&&!isNaN(+v))return v;
+  if(typeof v==="number"&&v>20000&&v<80000){
+    const d=new Date(Date.UTC(1899,11,30)+Math.round(v*864e5));
+    if(!isNaN(+d))return d;
+  }
+  const s=String(v).trim(); if(!s)return null;
+  let m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m){const d=new Date(+m[1],+m[2]-1,+m[3]);if(!isNaN(+d))return d}
+  m=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+  if(m){let y=+m[3];if(y<100)y+=2000;const d=new Date(y,+m[2]-1,+m[1]);if(!isNaN(+d))return d}
+  const d=new Date(s);
+  return isNaN(+d)?null:d;
+}
+function delCount(line,d){let q=0,c=0;for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"'){if(q&&line[i+1]==='"')i++;else q=!q}else if(!q&&ch===d)c++}return c}
+function delAuto(txt){
+  const ls=txt.replace(/\r\n/g,"\n").replace(/\r/g,"\n").split("\n").filter(x=>x.trim()).slice(0,30);
+  if(!ls.length)return ",";
+  let b={d:",",s:-1e9};
+  [",",";","\t","|"].forEach(d=>{
+    const cs=ls.map(l=>delCount(l,d)),a=cs.reduce((p,c)=>p+c,0)/cs.length,v=cs.reduce((p,c)=>p+(c-a)*(c-a),0)/cs.length,sc=a-v;
+    if(a>0&&sc>b.s)b={d,s:sc};
+  });
+  return b.d;
+}
+function csv(txt,sd){
+  let s=String(txt||"");
+  if(s.charCodeAt(0)===65279)s=s.slice(1);
+  s=s.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+  const d=sd==="auto"?delAuto(s):sd;
+  const R=[];let r=[],c="",q=false;
+  for(let i=0;i<s.length;i++){
+    const ch=s[i];
+    if(q){
+      if(ch==='"'){if(s[i+1]==='"'){c+='"';i++;}else q=false;}else c+=ch;
+    }else{
+      if(ch==='"')q=true;
+      else if(ch===d){r.push(c);c=""}
+      else if(ch==='\n'){r.push(c);c="";if(!(r.length===1&&r[0]===""))R.push(r);r=[]}
+      else c+=ch;
+    }
+  }
+  r.push(c);if(!(r.length===1&&r[0]===""))R.push(r);
+  let M=0;R.forEach(x=>M=Math.max(M,x.length));R.forEach(x=>{while(x.length<M)x.push("")});
+  return {R,d};
+}
+function heads(a){const u={};return a.map((x,i)=>{let b=String(x??"").trim().replace(/\s+/g," ")||("Column_"+(i+1)),n=b,k=2;while(u[n])n=b+"_"+(k++);u[n]=1;return n})}
+async function caches(){
+  S.num={};S.dat={};
+  const nc=[],dc=[];
+  S.types.forEach((t,i)=>{if(t==="number")nc.push(i);else if(t==="date")dc.push(i)});
+  nc.forEach(i=>{S.num[i]=new Float64Array(S.rows.length);S.num[i].fill(NaN)});
+  dc.forEach(i=>{S.dat[i]=new Float64Array(S.rows.length);S.dat[i].fill(NaN)});
+  await chunk(S.rows.length,"Typage",i=>{
+    const r=S.rows[i];
+    for(const c of nc){const n=num(r[c]);S.num[c][i]=n==null?NaN:n}
+    for(const c of dc){const d=dt(r[c]);S.dat[c][i]=d?+d:NaN}
+  });
+}
+function infer(){
+  const n=Math.min(3000,S.rows.length);
+  const st=Array.from({length:S.cols.length},()=>({n:0,u:0,d:0}));
+  for(let i=0;i<n;i++){
+    const r=S.rows[i];
+    for(let c=0;c<S.cols.length;c++){
+      const v=r[c];
+      if(v==null||String(v).trim()==="")continue;
+      st[c].u++;
+      if(num(v)!=null)st[c].n++;
+      if(dt(v))st[c].d++;
+    }
+  }
+  S.types=st.map(x=>!x.u?"text":x.n/x.u>=0.9?"number":x.d/x.u>=0.9?"date":"text");
+}
+function ttable(){
+  if(!S.cols.length){E.tt.innerHTML="";return;}
+  E.tt.innerHTML="<thead><tr><th>Colonne</th><th>Type détecté</th><th>Override</th></tr></thead><tbody>"+
+    S.cols.map((c,i)=>`<tr><td>${esc(c)}</td><td>${esc(S.types[i])}</td><td><select data-i='${i}'><option ${S.types[i]==="text"?"selected":""}>text</option><option ${S.types[i]==="number"?"selected":""}>number</option><option ${S.types[i]==="date"?"selected":""}>date</option></select></td></tr>`).join("")+
+    "</tbody>";
+}
+function fill(sel,arr,emp,label){
+  if(!sel)return;
+  const pv=sel.value;
+  sel.innerHTML=emp?`<option value="">${esc(label||"(Aucune)")}</option>`:"";
+  arr.forEach(x=>{const o=document.createElement("option");o.value=x;o.textContent=x;sel.appendChild(o)});
+  if([...sel.options].some(o=>o.value===pv))sel.value=pv;
+}
+function guessAuto(){
+  const nums=S.cols.filter((_,i)=>S.types[i]==="number");
+  const dates=S.cols.filter((_,i)=>S.types[i]==="date");
+  const texts=S.cols.filter((_,i)=>S.types[i]==="text");
+  const idxCol=i=>S.cols[i];
+  const scoreDim=ci=>{
+    const sample=Math.min(4000,S.rows.length);const st=new Set();let non=0;
+    for(let i=0;i<sample;i++){
+      const v=(S.rows[i]?.[ci]??"").toString().trim();
+      if(!v)continue;non++;if(st.size<1500)st.add(v);
+    }
+    return {u:st.size,non};
+  };
+  let d1="",d2="";
+  if(texts.length){
+    const ranked=texts.map(c=>{const i=S.cols.indexOf(c),s=scoreDim(i);const pen=s.u>Math.max(2000,S.rows.length*0.7)?-10000:0;return{c,score:s.non+s.u*3+pen,u:s.u}}).sort((a,b)=>b.score-a.score);
+    d1=ranked[0]?.c||texts[0];
+    d2=ranked.find(x=>x.c!==d1&&x.u>1)?.c||"";
+  }else{
+    d1=S.cols[0]||"";
+    d2=S.cols[1]||"";
+  }
+  const measureScore=ci=>{
+    const arr=S.num[ci];if(!arr)return -1;
+    let c=0,s=0;const n=Math.min(arr.length,12000);
+    for(let i=0;i<n;i++){const v=arr[i];if(!isNaN(v)){c++;s+=Math.abs(v)}}
+    return c*10 + s/Math.max(1,c);
+  };
+  const mRank=nums.map(c=>{const i=S.cols.indexOf(c);return{c,s:measureScore(i)}}).sort((a,b)=>b.s-a.s);
+  const m1=mRank[0]?.c||nums[0]||"";
+  const m2=mRank.find(x=>x.c!==m1)?.c||"";
+  const dcol=dates[0]||"";
+  S.auto={date:dcol,dim1:d1,dim2:d2,measure1:m1,measure2:m2,topN:Math.max(5,parseInt(E.tn.value)||20),granularity:E.gr.value||"month"};
+}
+function applyAutoToSelectors(){
+  if(!S.cols.length)return;
+  const set=(el,v)=>{if(el&&[...el.options].some(o=>o.value===v))el.value=v||""};
+  set(E.dcol,S.auto.date);
+  set(E.d1,S.auto.dim1);
+  set(E.d2,S.auto.dim2);
+  set(E.m1,S.auto.measure1);
+  set(E.m2,S.auto.measure2);
+  set(E.pd1,S.auto.dim1||S.cols[0]||"");
+  set(E.pd2,S.auto.dim2||"");
+  set(E.pm,S.auto.measure1||"");
+  if(E.pn)E.pn.value=String(S.auto.topN||20);
+}
+function upd(){
+  fill(E.sc,S.cols,true,"(Choisir)");
+  fill(E.pd1,S.cols,false);
+  fill(E.pd2,S.cols,true,"(Aucune)");
+  fill(E.d1,S.cols,false);
+  fill(E.d2,S.cols,true,"(Aucune)");
+  const n=S.cols.filter((_,i)=>S.types[i]==="number"),d=S.cols.filter((_,i)=>S.types[i]==="date");
+  fill(E.pm,n,true,"(Aucune)");
+  fill(E.m1,n,false);
+  fill(E.m2,n,true,"(Aucune)");
+  fill(E.dcol,d,true,"(Aucune)");
+  syncFilters();
+  applyAutoToSelectors();
+}
+function mkTable(el,heads,rows){
+  if(!el)return;
+  if(!heads.length){el.innerHTML="";return;}
+  let h="<thead><tr>"+heads.map(x=>`<th>${esc(x)}</th>`).join("")+"</tr></thead><tbody>";
+  for(const r of rows)h+="<tr>"+r.map(v=>`<td>${esc(v==null?"":String(v))}</td>`).join("")+"</tr>";
+  h+="</tbody>";
+  el.innerHTML=h;
+}
+function pv(){mkTable(E.pv,S.cols,S.rows.slice(0,50))}
+function csvCell(v){const s=noHttp(String(v??""));return /[";\n,]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
+function addF(v){
+  if(!S.cols.length)return;
+  const d=document.createElement("div");
+  d.className="frow";
+  d.innerHTML="<div><span class='small'>Colonne</span><select class='fc'></select></div><div><span class='small'>Op</span><select class='fo'></select></div><div><span class='small'>V1</span><input class='f1' type='text'></div><div><span class='small'>V2</span><input class='f2' type='text'></div><div><button class='d fr'>X</button></div>";
+  E.fs.appendChild(d);
+  const c=d.querySelector('.fc'),o=d.querySelector('.fo'),f2=d.querySelector('.f2');
+  S.cols.forEach(x=>{const op=document.createElement("option");op.value=op.textContent=x;c.appendChild(op)});
+  if(v?.c)c.value=v.c;
+  function ro(){
+    const i=S.cols.indexOf(c.value),t=S.types[i]||"text";
+    o.innerHTML="";
+    const ops=t==="number"||t==="date"?[["eq","="],["gt",">"],["lt","<"],["bt","entre"]]:[["ct","contient"],["eq","égal"]];
+    ops.forEach(p=>{const x=document.createElement("option");x.value=p[0];x.textContent=p[1];o.appendChild(x)});
+    if(v?.o)o.value=v.o;
+    f2.parentElement.style.display=o.value==="bt"?"":"none";
+  }
+  c.onchange=ro;
+  o.onchange=()=>f2.parentElement.style.display=o.value==="bt"?"":"none";
+  d.querySelector('.fr').onclick=()=>d.remove();
+  if(v){d.querySelector('.f1').value=v.v1||"";d.querySelector('.f2').value=v.v2||""}
+  ro();
+}
+function syncFilters(){
+  E.fs.querySelectorAll('.frow').forEach(r=>{
+    const c=r.querySelector('.fc');const v=c.value;
+    c.innerHTML="";
+    S.cols.forEach(x=>{const o=document.createElement('option');o.value=o.textContent=x;c.appendChild(o)});
+    if(S.cols.includes(v))c.value=v;
+    c.dispatchEvent(new Event('change'));
+  });
+}
+function getF(){
+  const out=[];
+  E.fs.querySelectorAll('.frow').forEach(r=>{
+    const c=r.querySelector('.fc').value,op=r.querySelector('.fo').value,v1=r.querySelector('.f1').value,v2=r.querySelector('.f2').value;
+    if(!c)return;
+    if(op==='bt'?!v1&&!v2:!v1)return;
+    out.push({c,o:op,v1,v2});
+  });
+  return out;
+}
+function okRow(i,s,fs){
+  const r=S.rows[i];
+  if(s){
+    let h=false;
+    for(let c=0;c<S.cols.length;c++){if(String(r[c]??"").toLowerCase().includes(s)){h=true;break}}
+    if(!h)return false;
+  }
+  for(const f of fs){
+    const ci=S.cols.indexOf(f.c),t=S.types[ci],v=r[ci];
+    if(t==="number"){
+      const n=S.num[ci]?.[i],a=num(f.v1),b=num(f.v2);
+      if(isNaN(n))return false;
+      if(f.o==="eq"&&(a==null||n!==a))return false;
+      if(f.o==="gt"&&(a==null||n<=a))return false;
+      if(f.o==="lt"&&(a==null||n>=a))return false;
+      if(f.o==="bt"){if(a!=null&&n<a)return false;if(b!=null&&n>b)return false}
+    }else if(t==="date"){
+      const ts=S.dat[ci]?.[i],a=dt(f.v1),b=dt(f.v2),t1=a?+hd(a):null,t2=b?+pd(b):null;
+      if(isNaN(ts))return false;
+      if(f.o==="eq"&&(t1==null||ts<t1||ts>+pd(a)))return false;
+      if(f.o==="gt"&&(t1==null||ts<=t1))return false;
+      if(f.o==="lt"&&(t1==null||ts>=t1))return false;
+      if(f.o==="bt"){if(t1!=null&&ts<t1)return false;if(t2!=null&&ts>t2)return false}
+    }else{
+      const x=String(v??"").toLowerCase(),q=String(f.v1||"").toLowerCase();
+      if(f.o==="ct"&&!x.includes(q))return false;
+      if(f.o==="eq"&&x!==q)return false;
+    }
+  }
+  return true;
+}
+function selectionOk(i){
+  const i1=S.cols.indexOf(S.auto.dim1),i2=S.cols.indexOf(S.auto.dim2);
+  if(S.sel.d1.size&&i1>=0){const v=(S.rows[i][i1]??"").toString().trim()||"(Vide)";if(!S.sel.d1.has(v))return false}
+  if(S.sel.d2.size&&i2>=0){const v=(S.rows[i][i2]??"").toString().trim()||"(Vide)";if(!S.sel.d2.has(v))return false}
+  return true;
+}
+async function rebuildFiltered(reason){
+  if(S.locks.applying)return;
+  S.locks.applying=true;
+  try{
+    if(!S.rows.length){S.fidx=[];renderAfterFilter();return}
+    const s=(E.search.value||"").toLowerCase();
+    const fs=S.fil;
+    const out=[];
+    await chunk(S.rows.length,"Filtres",i=>{if(okRow(i,s,fs)&&selectionOk(i))out.push(i)});
+    S.fidx=out;
+    S.page=1;
+    renderAfterFilter();
+    if(reason)lg(reason,{rows:out.length,filters:fs.length,search:s.length,sel1:S.sel.d1.size,sel2:S.sel.d2.size});
+  }finally{S.locks.applying=false;}
+}
+function emeta(){const tp=Math.max(1,Math.ceil((S.fidx.length||0)/S.rpp));E.tot.textContent=S.rows.length;E.flt.textContent=S.fidx.length;E.tpg.textContent=tp}
+function et(){
+  if(!S.cols.length){E.et.innerHTML="";E.epi.textContent="Page 0/0";return}
+  const tp=Math.max(1,Math.ceil((S.fidx.length||0)/S.rpp));
+  S.page=Math.min(Math.max(1,S.page),tp);
+  const a=(S.page-1)*S.rpp,b=Math.min(a+S.rpp,S.fidx.length),rows=[];
+  for(let i=a;i<b;i++)rows.push(S.rows[S.fidx[i]]);
+  mkTable(E.et,S.cols,rows);
+  E.epi.textContent=`Page ${S.page}/${tp}`;
+  emeta();
+}
+async function stcol(){
+  E.sb.innerHTML="";
+  if(!S.cols.length||!S.fidx.length)return;
+  const c=E.sc.value||S.cols[0],i=S.cols.indexOf(c),t=S.types[i];
+  let emp=0,min=Infinity,max=-Infinity,sum=0,cnt=0;
+  const u=new Set;
+  await chunk(S.fidx.length,"Stats",k=>{
+    const ri=S.fidx[k],v=S.rows[ri][i];
+    if(v==null||String(v).trim()===""){emp++;return}
+    if(u.size<200000)u.add(String(v));
+    if(t==="number"){
+      const n=S.num[i]?.[ri];
+      if(!isNaN(n)){if(n<min)min=n;if(n>max)max=n;sum+=n;cnt++}
+    }
+  });
+  [["Colonne",c],["Type",t],["Vides",emp],["Uniques",u.size],["Min",t==="number"&&cnt?fmt(min):"-"],["Max",t==="number"&&cnt?fmt(max):"-"],["Moyenne",t==="number"&&cnt?fmt(sum/cnt):"-"]].forEach(x=>{const d=document.createElement("div");d.className="kc";d.innerHTML=`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`;E.sb.appendChild(d)});
+}
+function kpi(){return{tot:S.rows.length,flt:S.fidx.length,col:S.cols.length,num:S.types.filter(t=>t==="number").length,pv:S.piv.length}}
+function kexp(){
+  const k=kpi();E.ek.innerHTML="";
+  [["Lignes source",k.tot],["Lignes filtrées",k.flt],["Colonnes",k.col],["Colonnes numériques",k.num],["Taux filtre",k.tot?fmt(k.flt*100/k.tot)+"%":"-"],["Pivot lignes",k.pv]].forEach(x=>{const d=document.createElement("div");d.className="kc";d.innerHTML=`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`;E.ek.appendChild(d)});
+}
+function month(d){const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;return{key:k,lab:k,ts:+new Date(d.getFullYear(),d.getMonth(),1)}}
+function wnum(d){const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));t.setUTCDate(t.getUTCDate()+4-(t.getUTCDay()||7));const y0=new Date(Date.UTC(t.getUTCFullYear(),0,1));const w=Math.ceil((((t-y0)/86400000)+1)/7);return{y:t.getUTCFullYear(),w}}
+function week(d){const x=wnum(d),k=`${x.y}-W${String(x.w).padStart(2,"0")}`;const ts=+new Date(x.y,0,1+(x.w-1)*7);return{key:k,lab:k,ts}}
+function sumMap(i1,im){
+  const m=new Map;let tot=0;
+  for(const ri of S.fidx){
+    const l=(S.rows[ri][i1]??"").toString().trim()||"(Vide)";
+    const n=im>=0?S.num[im]?.[ri]:1;
+    const v=im>=0?(isNaN(n)?0:n):1;
+    if(v===0)continue;
+    m.set(l,(m.get(l)||0)+v);tot+=v;
+  }
+  return{tot,rows:[...m.entries()].map(([l,v])=>({l,v})).sort((a,b)=>b.v-a.v)};
+}
+function pareto(rows){let c=0,t=rows.reduce((p,x)=>p+x.v,0)||1;return{rows:rows.map(x=>{c+=x.v;return{...x,p:c/t}})} }
+function distr(im){
+  const v=[];
+  for(const ri of S.fidx){const n=S.num[im]?.[ri];if(!isNaN(n))v.push(n)}
+  if(!v.length)return{mode:"distribution",lab:[],val:[]};
+  const mn=Math.min(...v),mx=Math.max(...v),b=10,w=(mx-mn)/b||1;
+  const A=Array.from({length:b},(_,i)=>({a:mn+i*w,b:mn+(i+1)*w,c:0}));
+  v.forEach(x=>A[Math.min(b-1,Math.floor((x-mn)/w))].c++);
+  return{mode:"distribution",lab:A.map(x=>fmt(x.a)+" - "+fmt(x.b)),val:A.map(x=>x.c)};
+}
+function trend(id,im,g){
+  if(id<0||!S.dat[id])return distr(im);
+  const m=new Map;
+  for(const ri of S.fidx){
+    const ts=S.dat[id][ri]; if(isNaN(ts))continue;
+    const b=g==="week"?week(new Date(ts)):month(new Date(ts));
+    let e=m.get(b.key); if(!e){e={lab:b.lab,ts:b.ts,s:0,c:0};m.set(b.key,e)}
+    const n=S.num[im]?.[ri];
+    if(!isNaN(n)){e.s+=n;e.c++}
+  }
+  const a=[...m.values()].sort((x,y)=>x.ts-y.ts).slice(-160);
+  const lab=a.map(x=>x.lab),val=a.map(x=>x.s),mom=[];
+  for(let i=1;i<val.length;i++){const p=val[i-1],c=val[i];mom.push({lab:lab[i],d:p===0?null:(c-p)/Math.abs(p)})}
+  return{mode:"trend",lab,val,mom};
+}
+function seg(i1,i2,im,N){
+  if(i2<0)return{mode:"none",r:[],c:[],m:[],t:[]};
+  const mp=new Map,rt=new Map,ct=new Map;
+  for(const ri of S.fidx){
+    const a=(S.rows[ri][i1]??"").toString().trim()||"(Vide)",b=(S.rows[ri][i2]??"").toString().trim()||"(Vide)",n=S.num[im]?.[ri];
+    if(isNaN(n))continue;
+    mp.set(a+"\u241f"+b,(mp.get(a+"\u241f"+b)||0)+n);rt.set(a,(rt.get(a)||0)+n);ct.set(b,(ct.get(b)||0)+n);
+  }
+  const rr=[...rt.entries()].sort((x,y)=>y[1]-x[1]).slice(0,Math.min(N,10)).map(x=>x[0]);
+  const cc=[...ct.entries()].sort((x,y)=>y[1]-x[1]).slice(0,Math.min(N,10)).map(x=>x[0]);
+  const mm=rr.map(r=>cc.map(c=>mp.get(r+"\u241f"+c)||0));
+  let tt=[];for(let i=0;i<rr.length;i++)for(let j=0;j<cc.length;j++)tt.push({d1:rr[i],d2:cc[j],v:mm[i][j]});
+  tt.sort((a,b)=>b.v-a.v);
+  return{mode:"matrix",r:rr,c:cc,m:mm,t:tt.slice(0,40)};
+}
+function brk(id,i1,im1,im2,g){
+  if(id>=0&&S.dat[id]){
+    const tt=new Map;
+    for(const ri of S.fidx){const s=(S.rows[ri][i1]??"").toString().trim()||"(Vide)",n=S.num[im1]?.[ri];if(!isNaN(n))tt.set(s,(tt.get(s)||0)+n)}
+    const top=[...tt.entries()].sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
+    const mp=new Map,bs=new Set;
+    for(const ri of S.fidx){
+      const s=(S.rows[ri][i1]??"").toString().trim()||"(Vide)"; if(!top.includes(s))continue;
+      const ts=S.dat[id][ri]; if(isNaN(ts))continue;
+      const b=g==="week"?week(new Date(ts)):month(new Date(ts));
+      const n=S.num[im1]?.[ri]; if(isNaN(n))continue;
+      mp.set(s+"\u241f"+b.key,(mp.get(s+"\u241f"+b.key)||0)+n);
+      bs.add(b.key+"\u241e"+b.lab+"\u241e"+b.ts);
+    }
+    const B=[...bs].map(x=>{const p=x.split("\u241e");return{k:p[0],l:p[1],t:+p[2]}}).sort((a,b)=>a.t-b.t).slice(-160);
+    const lab=B.map(x=>x.l),ser=top.map(n=>({n,v:B.map(b=>mp.get(n+"\u241f"+b.k)||0)}));
+    return{mode:"timeline",lab,ser};
+  }
+  if(im2>=0){
+    const m=new Map;
+    for(const ri of S.fidx){
+      const k=(S.rows[ri][i1]??"").toString().trim()||"(Vide)",a=S.num[im1]?.[ri],b=S.num[im2]?.[ri];
+      if(isNaN(a)||isNaN(b))continue;
+      let e=m.get(k); if(!e){e={x:0,y:0,c:0,l:k};m.set(k,e)}
+      e.x+=a;e.y+=b;e.c++;
+    }
+    return{mode:"scatter",p:[...m.values()].slice(0,80).map(e=>({l:e.l,x:e.x/e.c,y:e.y/e.c}))};
+  }
+  return{mode:"none"};
+}
+function out(im,i1){
+  let c=0,m=0,m2=0;
+  for(const ri of S.fidx){const x=S.num[im]?.[ri];if(isNaN(x))continue;c++;const d=x-m;m+=d/c;m2+=d*(x-m)}
+  const sd=Math.sqrt(c>1?m2/(c-1):0);
+  let rows=[],met="z-score";
+  if(sd>0&&c>10){
+    for(const ri of S.fidx){const x=S.num[im]?.[ri];if(isNaN(x))continue;const z=(x-m)/sd;if(Math.abs(z)>=3)rows.push({r:ri+1,d:(S.rows[ri][i1]??"").toString().trim()||"(Vide)",v:x,s:z})}
+    rows.sort((a,b)=>Math.abs(b.s)-Math.abs(a.s));rows=rows.slice(0,20);
+  }else{
+    met="IQR";
+    const v=[];for(const ri of S.fidx){const x=S.num[im]?.[ri];if(!isNaN(x))v.push(x)}
+    v.sort((a,b)=>a-b);
+    if(v.length>=4){
+      const q=p=>{const z=(v.length-1)*p,b=Math.floor(z),r=z-b;return v[b+1]!==undefined?v[b]+r*(v[b+1]-v[b]):v[b]};
+      const q1=q(.25),q3=q(.75),iq=q3-q1,lo=q1-1.5*iq,hi=q3+1.5*iq;
+      for(const ri of S.fidx){const x=S.num[im]?.[ri];if(!isNaN(x)&&(x<lo||x>hi))rows.push({r:ri+1,d:(S.rows[ri][i1]??"").toString().trim()||"(Vide)",v:x,s:x<lo?lo-x:x-hi})}
+      rows.sort((a,b)=>b.s-a.s);rows=rows.slice(0,20);
+    }
+  }
+  return{met,mean:m,sd,rows};
+}
+function qst(){
+  const n=S.fidx.length,cs=[];
+  for(let c=0;c<S.cols.length;c++){
+    let e=0,u=new Set,inv=0;
+    for(const ri of S.fidx){
+      const v=S.rows[ri][c];
+      if(v==null||String(v).trim()===""){e++;continue}
+      if(u.size<200000)u.add(String(v));
+      if(S.types[c]==="number"&&num(v)==null)inv++;
+      if(S.types[c]==="date"&&!dt(v))inv++;
+    }
+    const ep=n?e/n:0;
+    cs.push({n:S.cols[c],t:S.types[c],e,ep,u:u.size,inv});
+  }
+  const flags=[];
+  cs.forEach(c=>{if(c.ep>.3)flags.push(`>30% vides: ${c.n}`);if(c.inv>0)flags.push(`Invalides(${c.inv}): ${c.n}`)});
+  const te=cs.slice().sort((a,b)=>b.ep-a.ep).slice(0,10);
+  const rec=te.map(c=>c.ep>.5?`Colonne ${c.n}: >50% vides, exclure/enrichir.`:c.ep>.2?`Colonne ${c.n}: compléter manquants.`:`Colonne ${c.n}: OK.`);
+  return{cs,flags,dict:cs.slice(0,15),te,rec};
+}
+function pdet(i1,i2,im,N=30){
+  const m=new Map;
+  for(const ri of S.fidx){
+    const a=(S.rows[ri][i1]??"").toString().trim()||"(Vide)",b=i2>=0?((S.rows[ri][i2]??"").toString().trim()||"(Vide)"):"",n=S.num[im]?.[ri];
+    if(isNaN(n))continue;
+    m.set(a+"\u241f"+b,(m.get(a+"\u241f"+b)||0)+n);
+  }
+  let rows=[...m.entries()].map(e=>{const p=e[0].split("\u241f");return{a:p[0],b:p[1]||"",v:e[1]}}).sort((x,y)=>y.v-x.v);
+  if(rows.length>N){const t=rows.slice(0,N),o=rows.slice(N).reduce((p,r)=>p+r.v,0);t.push({a:"Autres",b:i2>=0?"Autres":"",v:o});rows=t}
+  return{i2,h:i2>=0?["Dim1","Dim2","Valeur"]:["Dim1","Valeur"],r:rows.map(x=>i2>=0?[x.a,x.b,fmt(x.v)]:[x.a,fmt(x.v)])};
+}
+function mkCan(w,h){const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,w,h);return[c,x]}
+function axes(x,w,h,m){x.strokeStyle="#365a69";x.lineWidth=2;x.beginPath();x.moveTo(m.l,m.t);x.lineTo(m.l,h-m.b);x.lineTo(w-m.r,h-m.b);x.stroke()}
+function pngBar(l,v,t,w=1280,h=720){
+  const[c,x]=mkCan(w,h),m={l:90,r:40,t:70,b:100};
+  axes(x,w,h,m);
+  const mx=Math.max(...v,0),pw=w-m.l-m.r,ph=h-m.t-m.b,n=Math.max(1,v.length),sl=pw/n,bw=Math.max(4,sl*.72);
+  x.fillStyle="#0a7b94";
+  for(let i=0;i<v.length;i++){const bh=mx<=0?0:v[i]/mx*ph,y=h-m.b-bh;x.fillRect(m.l+i*sl+(sl-bw)/2,y,bw,bh)}
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText(t,m.l,38);
+  x.font="12px Segoe UI";x.fillStyle="#3e5e6d";
+  for(let i=0;i<Math.min(10,l.length);i++){const k=Math.round(i*Math.max(1,l.length-1)/Math.max(1,Math.min(10,l.length)-1));x.save();x.translate(m.l+k*sl+sl/2,h-m.b+15);x.rotate(-Math.PI/8);x.fillText(String(l[k]).slice(0,18),0,0);x.restore()}
+  return c.toDataURL("image/png");
+}
+function pngLine(l,v,t,w=1280,h=720){
+  const[c,x]=mkCan(w,h),m={l:90,r:40,t:70,b:90};
+  axes(x,w,h,m);
+  const mx=Math.max(...v,0),mn=Math.min(...v,0),pw=w-m.l-m.r,ph=h-m.t-m.b,n=Math.max(1,v.length),y=vv=>mx===mn?m.t+ph/2:h-m.b-((vv-mn)/(mx-mn))*ph;
+  x.strokeStyle="#0a7b94";x.lineWidth=3;x.beginPath();for(let i=0;i<v.length;i++){const xx=m.l+i*pw/Math.max(1,n-1),yy=y(v[i]||0);i?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke();
+  x.fillStyle="#ef7d00";for(let i=0;i<v.length;i++){const xx=m.l+i*pw/Math.max(1,n-1),yy=y(v[i]||0);x.beginPath();x.arc(xx,yy,3.5,0,7);x.fill()}
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText(t,m.l,38);
+  return c.toDataURL("image/png");
+}
+function pngPareto(l,v,p,w=1280,h=720){
+  const[c,x]=mkCan(w,h),m={l:90,r:80,t:70,b:100};
+  axes(x,w,h,m);
+  const pw=w-m.l-m.r,ph=h-m.t-m.b,n=Math.max(1,v.length),mx=Math.max(...v,0),sl=pw/n,bw=Math.max(4,sl*.66);
+  x.fillStyle="#0a7b94";
+  for(let i=0;i<v.length;i++){const bh=mx<=0?0:v[i]/mx*ph,y=h-m.b-bh;x.fillRect(m.l+i*sl+(sl-bw)/2,y,bw,bh)}
+  x.strokeStyle="#ef7d00";x.lineWidth=3;x.beginPath();for(let i=0;i<p.length;i++){const xx=m.l+i*sl+sl/2,yy=h-m.b-(p[i]||0)*ph;i?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke();
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText("Pareto / Cumulé",m.l,38);
+  return c.toDataURL("image/png");
+}
+function pngHeat(r,c,m,w=1280,h=720){
+  const[cv,x]=mkCan(w,h),M={l:190,r:50,t:90,b:80},pw=w-M.l-M.r,ph=h-M.t-M.b,cw=Math.max(20,pw/Math.max(1,c.length)),ch=Math.max(20,ph/Math.max(1,r.length));
+  let mx=0;for(let i=0;i<r.length;i++)for(let j=0;j<c.length;j++)mx=Math.max(mx,m[i][j]||0);
+  for(let i=0;i<r.length;i++)for(let j=0;j<c.length;j++){const p=mx?(m[i][j]||0)/mx:0;x.fillStyle=`rgba(10,123,148,${(0.1+0.8*p).toFixed(3)})`;x.fillRect(M.l+j*cw,M.t+i*ch,cw-1,ch-1)}
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText("Segmentation croisée",60,42);
+  x.font="12px Segoe UI";x.fillStyle="#2f4e5c";for(let i=0;i<r.length;i++)x.fillText(String(r[i]).slice(0,20),10,M.t+i*ch+14);
+  for(let j=0;j<c.length;j++){x.save();x.translate(M.l+j*cw+8,M.t-8);x.rotate(-Math.PI/5);x.fillText(String(c[j]).slice(0,16),0,0);x.restore()}
+  return cv.toDataURL("image/png");
+}
+function pngMul(l,s,w=1280,h=720){
+  const[c,x]=mkCan(w,h),m={l:90,r:40,t:70,b:90};axes(x,w,h,m);
+  const pw=w-m.l-m.r,ph=h-m.t-m.b,n=Math.max(1,l.length);let mx=0;s.forEach(z=>z.v.forEach(v=>mx=Math.max(mx,v||0)));
+  const col=["#0a7b94","#ef7d00","#2f8f4e","#7a4aa8","#bd3b2e"];
+  s.forEach((z,i)=>{x.strokeStyle=col[i%col.length];x.lineWidth=2.4;x.beginPath();for(let k=0;k<z.v.length;k++){const xx=m.l+k*pw/Math.max(1,n-1),yy=h-m.b-(z.v[k]||0)/Math.max(1,mx)*ph;k?x.lineTo(xx,yy):x.moveTo(xx,yy)}x.stroke();x.fillStyle=col[i%col.length];x.fillRect(w-m.r-180,m.t+i*20,10,10);x.fillStyle="#264450";x.font="12px Segoe UI";x.fillText(String(z.n).slice(0,22),w-m.r-165,m.t+i*20+10)});
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText("Breakdown temporel par segment",m.l,38);
+  return c.toDataURL("image/png");
+}
+function pngSc(p,w=1280,h=720){
+  const[c,x]=mkCan(w,h),m={l:90,r:40,t:70,b:80};axes(x,w,h,m);
+  let mx=0,my=0;p.forEach(z=>{mx=Math.max(mx,z.x||0);my=Math.max(my,z.y||0)});
+  const pw=w-m.l-m.r,ph=h-m.t-m.b;x.fillStyle="rgba(10,123,148,.7)";
+  p.forEach(z=>{const xx=m.l+(z.x||0)/Math.max(1,mx)*pw,yy=h-m.b-(z.y||0)/Math.max(1,my)*ph;x.beginPath();x.arc(xx,yy,4,0,7);x.fill()});
+  x.fillStyle="#233742";x.font="bold 28px Segoe UI";x.fillText("Scatter Dim1 vs Mesure2",m.l,38);
+  return c.toDataURL("image/png");
+}
+function svgChart(t,lab,val,w,h){
+  const l=54,r=w-15,tp=20,b=h-42,pw=r-l,ph=b-tp,n=Math.max(1,val.length),mx=Math.max(...val,0),mn=Math.min(...val,0),xp=i=>l+i*pw/Math.max(1,n-1),yp=v=>mx===mn?tp+ph/2:b-((v-mn)/(mx-mn))*ph;
+  let s=`<svg viewBox='0 0 ${w} ${h}'><rect width='${w}' height='${h}' fill='#fff'/><line x1='${l}' y1='${b}' x2='${r}' y2='${b}' stroke='#365a69'/><line x1='${l}' y1='${tp}' x2='${l}' y2='${b}' stroke='#365a69'/>`;
+  if(t==='bar'){
+    const bw=Math.max(2,pw/(n*1.6));
+    for(let i=0;i<n;i++){const x=l+i*pw/n+(pw/n-bw)/2,y=yp(val[i]),hh=b-y;s+=`<rect x='${x.toFixed(2)}' y='${y.toFixed(2)}' width='${bw.toFixed(2)}' height='${Math.max(0,hh).toFixed(2)}' fill='#0a7b94'/>`}
+  }else{
+    let p='';for(let i=0;i<n;i++)p+=(i?'L':'M')+xp(i).toFixed(2)+' '+yp(val[i]).toFixed(2)+' ';s+=`<path d='${p}' fill='none' stroke='#0a7b94' stroke-width='2'/>`;
+    for(let i=0;i<n;i++)s+=`<circle cx='${xp(i).toFixed(2)}' cy='${yp(val[i]).toFixed(2)}' r='2.4' fill='#ef7d00'/>`;
+  }
+  for(let i=0;i<Math.min(8,n);i++){const k=Math.round(i*Math.max(1,n-1)/Math.max(1,Math.min(8,n)-1)),x=t==='bar'?l+k*pw/n+pw/n/2:xp(k);s+=`<text x='${x.toFixed(2)}' y='${b+14}' font-size='10' text-anchor='middle' fill='#3c5f6d'>${esc((lab[k]||'').slice(0,16))}</text>`}
+  return s+'</svg>';
+}
+function dashSvgBarInteractive(labels,values,key,w=760,h=320){
+  const l=58,r=w-22,tp=20,b=h-44,pw=r-l,ph=b-tp,n=Math.max(1,values.length),mx=Math.max(...values,0),slot=pw/n,bw=Math.max(3,slot*0.72);
+  let s=`<svg viewBox='0 0 ${w} ${h}'><rect width='${w}' height='${h}' fill='#fff'/><line x1='${l}' y1='${b}' x2='${r}' y2='${b}' stroke='#365a69'/><line x1='${l}' y1='${tp}' x2='${l}' y2='${b}' stroke='#365a69'/>`;
+  for(let i=0;i<n;i++){
+    const bh=mx<=0?0:values[i]/mx*ph,yy=b-bh,xx=l+i*slot+(slot-bw)/2,label=labels[i]??"";
+    const active=(key==='d1'&&S.sel.d1.has(label))||(key==='d2'&&S.sel.d2.has(label));
+    s+=`<rect class='dz-int' data-k='${escAttr(key)}' data-v='${escAttr(label)}' x='${xx.toFixed(2)}' y='${yy.toFixed(2)}' width='${bw.toFixed(2)}' height='${Math.max(0,bh).toFixed(2)}' fill='${active?"#ef7d00":"#0a7b94"}' opacity='0.9'/>`;
+  }
+  for(let i=0;i<Math.min(10,n);i++){const k=Math.round(i*Math.max(1,n-1)/Math.max(1,Math.min(10,n)-1)),x=l+k*slot+slot/2;const tx=String(labels[k]||"").slice(0,16);s+=`<text x='${x.toFixed(2)}' y='${b+13}' font-size='10' text-anchor='middle' fill='#345866'>${esc(tx)}</text>`}
+  s+="</svg>";
+  return s;
+}
+function dashSvgPareto(rows,w=760,h=320){
+  const labels=rows.map(x=>x.l),bars=rows.map(x=>x.v),cum=rows.map(x=>x.p);
+  const l=58,r=w-22,tp=20,b=h-44,pw=r-l,ph=b-tp,n=Math.max(1,bars.length),mx=Math.max(...bars,0),slot=pw/n,bw=Math.max(3,slot*0.62);
+  let s=`<svg viewBox='0 0 ${w} ${h}'><rect width='${w}' height='${h}' fill='#fff'/><line x1='${l}' y1='${b}' x2='${r}' y2='${b}' stroke='#365a69'/><line x1='${l}' y1='${tp}' x2='${l}' y2='${b}' stroke='#365a69'/>`;
+  for(let i=0;i<n;i++){
+    const bh=mx<=0?0:bars[i]/mx*ph,yy=b-bh,xx=l+i*slot+(slot-bw)/2,label=labels[i]??"";
+    const active=S.sel.d1.has(label);
+    s+=`<rect class='dz-int' data-k='d1' data-v='${escAttr(label)}' x='${xx.toFixed(2)}' y='${yy.toFixed(2)}' width='${bw.toFixed(2)}' height='${Math.max(0,bh).toFixed(2)}' fill='${active?"#ef7d00":"#0a7b94"}' opacity='0.85'/>`;
+  }
+  let p='';for(let i=0;i<n;i++){const xx=l+i*slot+slot/2,yy=b-(cum[i]||0)*ph;p+=(i?'L':'M')+xx.toFixed(2)+' '+yy.toFixed(2)+' ';}
+  s+=`<path d='${p}' fill='none' stroke='#e08109' stroke-width='2.5'/>`;
+  for(let i=0;i<Math.min(10,n);i++){const k=Math.round(i*Math.max(1,n-1)/Math.max(1,Math.min(10,n)-1)),x=l+k*slot+slot/2;const tx=String(labels[k]||"").slice(0,16);s+=`<text x='${x.toFixed(2)}' y='${b+13}' font-size='10' text-anchor='middle' fill='#345866'>${esc(tx)}</text>`}
+  return s+"</svg>";
+}
+function dashSvgHeat(segd,w=760,h=320){
+  const r=segd.r,c=segd.c,m=segd.m;
+  if(!r.length||!c.length)return "<div class='hint'>Segmentation non disponible.</div>";
+  const L=160,R=18,T=34,B=30,pw=w-L-R,ph=h-T-B,cw=Math.max(18,pw/Math.max(1,c.length)),ch=Math.max(18,ph/Math.max(1,r.length));
+  let mx=0;for(let i=0;i<r.length;i++)for(let j=0;j<c.length;j++)mx=Math.max(mx,m[i][j]||0);
+  let s=`<svg viewBox='0 0 ${w} ${h}'><rect width='${w}' height='${h}' fill='#fff'/>`;
+  for(let i=0;i<r.length;i++)for(let j=0;j<c.length;j++){
+    const v=m[i][j]||0,p=mx?v/mx:0,op=(0.12+0.82*p).toFixed(3),x=L+j*cw,y=T+i*ch;
+    const active=(S.sel.d1.size?S.sel.d1.has(r[i]):false)||(S.sel.d2.size?S.sel.d2.has(c[j]):false);
+    s+=`<rect class='dz-int' data-k='cell' data-v1='${escAttr(r[i])}' data-v2='${escAttr(c[j])}' x='${x.toFixed(2)}' y='${y.toFixed(2)}' width='${(cw-1).toFixed(2)}' height='${(ch-1).toFixed(2)}' fill='rgba(10,123,148,${op})' stroke='${active?"#ef7d00":"none"}'/>`;
+  }
+  for(let i=0;i<r.length;i++)s+=`<text x='8' y='${(T+i*ch+13).toFixed(2)}' font-size='11' fill='#2e5463'>${esc(String(r[i]).slice(0,20))}</text>`;
+  for(let j=0;j<c.length;j++){const tx=String(c[j]).slice(0,16),x=L+j*cw+8,y=T-8;s+=`<g transform='translate(${x.toFixed(2)},${y.toFixed(2)}) rotate(-25)'><text font-size='10' fill='#2e5463'>${esc(tx)}</text></g>`}
+  return s+"</svg>";
+}
+function dashSvgQuality(q,w=760,h=320){
+  const rows=q.te.slice(0,10),lab=rows.map(x=>x.n),val=rows.map(x=>Math.round(x.ep*100));
+  return svgChart('bar',lab,val,w,h);
+}
+function renderDashVisual(el,html){if(!el)return;el.innerHTML=html}
+function bindDashInteractive(container){
+  if(!container)return;
+  container.querySelectorAll('.dz-int').forEach(node=>{
+    node.addEventListener('click',()=>{
+      const k=node.getAttribute('data-k');
+      if(k==='cell'){
+        const v1=node.getAttribute('data-v1')||"",v2=node.getAttribute('data-v2')||"";
+        toggleSel('d1',v1);toggleSel('d2',v2);
+      }else{
+        const v=node.getAttribute('data-v')||"";
+        toggleSel(k,v);
+      }
+    });
+  });
+}
+function toggleSel(k,v){
+  if(!v)return;
+  const set=k==='d2'?S.sel.d2:S.sel.d1;
+  if(set.has(v))set.delete(v);else set.add(v);
+  renderChips();
+  rebuildFiltered('Sélection dashboard');
+}
+function clearSel(){S.sel.d1.clear();S.sel.d2.clear();renderChips();rebuildFiltered('Sélections réinitialisées')}
+function renderChips(){
+  E.dchips.innerHTML="";
+  const add=(k,v)=>{const b=document.createElement('button');b.className='chip';b.textContent=`${k}: ${v} ×`;b.onclick=()=>{(k==='Dim1'?S.sel.d1:S.sel.d2).delete(v);renderChips();rebuildFiltered('Sélection supprimée')};E.dchips.appendChild(b)};
+  [...S.sel.d1].forEach(v=>add('Dim1',v));
+  [...S.sel.d2].forEach(v=>add('Dim2',v));
+  if(!S.sel.d1.size&&!S.sel.d2.size)E.dchips.innerHTML="<span class='hint'>Aucune sélection active.</span>";
+}
+async function dashboard(){
+  if(!S.cols.length||!S.fidx.length){
+    E.dempty.style.display='block';
+    E.dkpi.innerHTML='';E.dfields.innerHTML='';E.dout.innerHTML='';
+    [E.dtrend,E.dtop,E.dpar,E.ddist,E.dheat,E.dqual].forEach(x=>{if(x)x.innerHTML="<div class='hint'>Importer un fichier pour lancer l'analyse.</div>"});
+    return;
+  }
+  E.dempty.style.display='none';
+  const iDate=S.cols.indexOf(E.dcol.value||S.auto.date),i1=S.cols.indexOf(E.d1.value||S.auto.dim1),i2=S.cols.indexOf(E.d2.value||S.auto.dim2),im1=S.cols.indexOf(E.m1.value||S.auto.measure1),im2=S.cols.indexOf(E.m2.value||S.auto.measure2);
+  const gran=E.gr.value||S.auto.granularity||'month';
+  let sum=0,cnt=0,mn=Infinity,mx=-Infinity,filled=0,total=S.fidx.length*S.cols.length;
+  await chunk(S.fidx.length,"Dashboard KPIs",k=>{
+    const ri=S.fidx[k],r=S.rows[ri];
+    for(let c=0;c<S.cols.length;c++)if((r[c]??"").toString().trim()!=="")filled++;
+    if(im1>=0){const n=S.num[im1]?.[ri];if(!isNaN(n)){sum+=n;cnt++;if(n<mn)mn=n;if(n>mx)mx=n}}
+  });
+  const comp=total?filled/total:0;
+  const q=qst();
+  const topData=sumMap(i1,im1>=0?im1:-1);
+  let topRows=topData.rows.slice().sort((a,b)=>b.v-a.v);
+  const topN=Math.max(5,parseInt(E.tn.value)||20);
+  if(topRows.length>topN){const t=topRows.slice(0,topN),o=topRows.slice(topN).reduce((p,x)=>p+x.v,0);t.push({l:'Autres',v:o});topRows=t}
+  topRows.forEach(x=>x.p=topData.tot?x.v/topData.tot:0);
+  const pr=pareto(topRows);
+  const tr=trend(iDate,im1>=0?im1:-1,gran);
+  const ds=distr(im1>=0?im1:-1);
+  const sg=seg(i1,i2,im1>=0?im1:-1,10);
+  const br=brk(iDate,i1,im1>=0?im1:-1,im2>=0?im2:-1,gran);
+  const ot=out(im1>=0?im1:-1,i1>=0?i1:0);
+  S.dash={
+    k:{rows:S.fidx.length,cols:S.cols.length,sum,avg:cnt?sum/cnt:NaN,min:mn,max:mx,comp,filled,total},
+    q,tr,topRows,pr,ds,sg,br,ot,
+    i:{iDate,i1,i2,im1,im2,gran}
+  };
+  renderDashboard();
+}
+function renderDashboard(){
+  const D=S.dash;if(!D)return;
+  const uniqDim1=(()=>{const i=S.cols.indexOf(E.d1.value||S.auto.dim1);if(i<0)return 0;const u=new Set;for(const ri of S.fidx){const v=(S.rows[ri][i]??"").toString().trim();if(v&&u.size<200000)u.add(v)}return u.size})();
+  E.dkpi.innerHTML='';
+  [["Lignes filtrées",D.k.rows],["Colonnes",D.k.cols],["% vides",fmt((1-D.k.comp)*100)+"%"],["Complétude",fmt(D.k.comp*100)+"%"],["Somme mesure",fmt(D.k.sum)],["Moyenne",fmt(D.k.avg)],["Min / Max",fmt(D.k.min)+" / "+fmt(D.k.max)],["Uniques Dim1",uniqDim1]].forEach(x=>{const d=document.createElement('div');d.className='kc';d.innerHTML=`<b>${esc(x[0])}</b><span>${esc(x[1])}</span>`;E.dkpi.appendChild(d)});
+  const fields=["<thead><tr><th>Champ</th><th>Type</th><th>% vides</th><th>Invalides</th></tr></thead><tbody>"];
+  D.q.cs.forEach(c=>{fields.push(`<tr><td>${esc(c.n)}</td><td><span class='badge b-${esc(c.t)}'>${esc(c.t)}</span></td><td>${fmt(c.ep*100)}%</td><td>${esc(c.inv)}</td></tr>`)})
+  fields.push("</tbody>");
+  E.dfields.innerHTML=fields.join("");
+  renderChips();
+  // trend/distribution
+  if(S.deps.c&&D.tr.mode==='trend'&&D.tr.lab.length){
+    E.dtrend.innerHTML="<canvas id='dtrendc' width='760' height='300'></canvas>";
+    const ctx=qs('dtrendc').getContext('2d');
+    new window.Chart(ctx,{type:'line',data:{labels:D.tr.lab,datasets:[{label:'Trend',data:D.tr.val,borderColor:'#0a7b94',backgroundColor:'rgba(10,123,148,.12)',fill:true}]},options:{responsive:false,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+  }else{
+    const mode=D.tr.mode==='trend'?'line':'bar';
+    renderDashVisual(E.dtrend,svgChart(mode,D.tr.lab,D.tr.val,760,320));
+  }
+  renderDashVisual(E.dtop,dashSvgBarInteractive(D.topRows.map(x=>x.l),D.topRows.map(x=>x.v),'d1',760,320));
+  bindDashInteractive(E.dtop);
+  renderDashVisual(E.dpar,dashSvgPareto(D.pr.rows.slice(0,Math.min(40,D.pr.rows.length)),760,320));
+  bindDashInteractive(E.dpar);
+  renderDashVisual(E.ddist,svgChart('bar',D.ds.lab,D.ds.val,760,320));
+  renderDashVisual(E.dheat,D.sg.mode==='matrix'?dashSvgHeat(D.sg,760,320):"<div class='hint'>Dim2 non disponible pour heatmap.</div>");
+  bindDashInteractive(E.dheat);
+  renderDashVisual(E.dqual,dashSvgQuality(D.q,760,320));
+  const outRows=D.ot.rows.length?D.ot.rows:[{r:'-',d:'Aucune anomalie forte détectée',v:'-',s:'-'}];
+  mkTable(E.dout,["Ligne","Dimension","Valeur","Score"],outRows.map(r=>[String(r.r),r.d,fmt(r.v),fmt(r.s)]));
+}
+function renderAfterFilter(){emeta();et();stcol();kexp();pt();dashboard();updateActionState();save();}
+async function apF(){if(!S.rows.length)return alert("Importer des données");S.fil=getF();await rebuildFiltered('Filtres appliqués')}
+function rsF(){E.search.value='';E.fs.innerHTML='';S.fil=[];S.sel.d1.clear();S.sel.d2.clear();renderChips();rebuildFiltered('Filtres réinitialisés')}
+async function piv(){
+  if(!S.fidx.length)return alert("Pas de données filtrées");
+  const d1=E.pd1.value;if(!d1)return alert("Dimension1 obligatoire");
+  const d2=E.pd2.value,m=E.pm.value,a=E.pa.value,N=Math.max(1,parseInt(E.pn.value)||20),i1=S.cols.indexOf(d1),i2=d2?S.cols.indexOf(d2):-1,im=m?S.cols.indexOf(m):-1;
+  if((a==='SUM'||a==='AVG')&&im<0)return alert("Mesure obligatoire pour SUM/AVG");
+  const mp=new Map;
+  await chunk(S.fidx.length,'Pivot',k=>{
+    const ri=S.fidx[k],r=S.rows[ri],x=(r[i1]??'').toString().trim()||'(Vide)',y=i2>=0?((r[i2]??'').toString().trim()||'(Vide)'):'',key=x+'\u241f'+y;
+    let e=mp.get(key);if(!e){e={x,y,s:0,c:0};mp.set(key,e)}
+    if(a==='COUNT')e.c++;else{const n=S.num[im]?.[ri];if(!isNaN(n)){e.s+=n;e.c++}}
+  });
+  let rows=[...mp.values()].map(e=>({d1:e.x,d2:e.y,v:a==='COUNT'?e.c:a==='AVG'?(e.c?e.s/e.c:NaN):e.s,s:e.s,c:e.c})).sort((A,B)=>(Number.isFinite(B.v)?B.v:-1e99)-(Number.isFinite(A.v)?A.v:-1e99));
+  if(rows.length>N){const t=rows.slice(0,N),o=rows.slice(N).reduce((p,r)=>(p.s+=r.s,p.c+=r.c,p),{s:0,c:0});t.push({d1:'Autres',d2:d2?'Autres':'',v:a==='COUNT'?o.c:a==='AVG'?(o.c?o.s/o.c:NaN):o.s,s:o.s,c:o.c});rows=t}
+  S.piv=rows;S.ppage=1;S.pc={d1,d2,m,a,N};pt();kexp();E.ps.textContent=`Pivot ${rows.length} lignes`;lg('Pivot',{rows:rows.length,agg:a});updateActionState();save();
+}
+function pt(){
+  if(!S.piv.length){E.pt.innerHTML='';E.ppi.textContent='Page 0/0';return}
+  const h=S.pc.d2?[S.pc.d1,S.pc.d2,S.pc.a]:[S.pc.d1,S.pc.a],tp=Math.max(1,Math.ceil(S.piv.length/S.rpp));
+  S.ppage=Math.min(Math.max(1,S.ppage),tp);
+  const a=(S.ppage-1)*S.rpp,b=Math.min(a+S.rpp,S.piv.length),rows=[];
+  for(let i=a;i<b;i++){const r=S.piv[i];rows.push(S.pc.d2?[r.d1,r.d2,fmt(r.v)]:[r.d1,fmt(r.v)])}
+  mkTable(E.pt,h,rows);
+  E.ppi.textContent=`Page ${S.ppage}/${tp}`;
+}
+function xpcsv(){
+  if(!S.piv.length)return alert('Calculer pivot');
+  let l=[];
+  if(S.pc.d2){l.push([S.pc.d1,S.pc.d2,S.pc.a].join(';'));S.piv.forEach(r=>l.push([r.d1,r.d2,r.v].map(csvCell).join(';')))}
+  else {l.push([S.pc.d1,S.pc.a].join(';'));S.piv.forEach(r=>l.push([r.d1,r.v].map(csvCell).join(';')))}
+  dl(l.join('\n'),'text/csv;charset=utf-8','pivot.csv');
+}
+function chart(){
+  if(!S.piv.length)return alert('Calculer pivot d\'abord');
+  const t=E.ct.value,mx=Math.max(5,parseInt(E.cm.value)||40),d=S.piv.slice(0,mx),lab=d.map(r=>S.pc?.d2?`${r.d1} | ${r.d2}`:r.d1),val=d.map(r=>Number.isFinite(r.v)?r.v:0);
+  if(S.deps.c){
+    if(S.ch.inst&&S.ch.inst.destroy)S.ch.inst.destroy();
+    E.cv.style.display='block';E.svg.style.display='none';
+    S.ch.inst=new window.Chart(E.cv.getContext('2d'),{type:t,data:{labels:lab,datasets:[{label:S.pc?.a||'val',data:val,borderColor:'#007b94',backgroundColor:t==='line'?'rgba(0,123,148,.15)':'rgba(0,123,148,.75)',borderWidth:2,fill:t==='line'}]},options:{responsive:false,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+    S.ch.mode='canvas';S.ch.png=E.cv.toDataURL('image/png');E.chm.textContent='Mode: Chart.js';
+  }else{
+    E.cv.style.display='none';E.svg.style.display='block';
+    S.ch.svg=svgChart(t,lab,val,980,420);
+    E.svg.innerHTML=S.ch.svg;
+    S.ch.mode='svg';E.chm.textContent='Mode: SVG fallback';
+  }
+}
+function xchart(){
+  if(S.ch.mode==='canvas')dlurl(S.ch.png||E.cv.toDataURL('image/png'),'chart.png');
+  else if(S.ch.mode==='svg'&&S.ch.svg)dl(S.ch.svg,'image/svg+xml;charset=utf-8','chart.svg');
+  else alert('Aucun chart');
+}
+async function xcsv(){if(!S.cols.length)return alert('Pas de données');const l=[S.cols.map(csvCell).join(';')];await chunk(S.fidx.length,'Export CSV',i=>{l.push(S.rows[S.fidx[i]].map(csvCell).join(';'))});dl(l.join('\n'),'text/csv;charset=utf-8','filtered.csv')}
+function rowObj(r){const o={};S.cols.forEach((c,i)=>o[c]=r[i]);return o}
+function aiGlobalKpi(){
+  if(!S.fidx.length)return{rows:0,cols:S.cols.length,sum:0,avg:0,min:null,max:null,completeness:0};
+  const im=S.cols.indexOf(E.m1.value||S.auto.measure1);
+  let s=0,c=0,mn=Infinity,mx=-Infinity,ne=0,tot=S.fidx.length*S.cols.length;
+  for(const ri of S.fidx){
+    const r=S.rows[ri];
+    for(let i=0;i<S.cols.length;i++)if((r[i]??'').toString().trim()!=='')ne++;
+    if(im>=0){const n=S.num[im]?.[ri];if(!isNaN(n)){s+=n;c++;if(n<mn)mn=n;if(n>mx)mx=n}}
+  }
+  return{rows:S.fidx.length,cols:S.cols.length,sum:s,avg:c?s/c:0,min:c?mn:null,max:c?mx:null,completeness:tot?ne/tot:0};
+}
+function aiPickCols(max=12){
+  const idx=[];
+  const add=i=>{if(i>=0&&!idx.includes(i)&&idx.length<max)idx.push(i)};
+  add(S.cols.indexOf(E.dcol.value||S.auto.date));
+  add(S.cols.indexOf(E.d1.value||S.auto.dim1));
+  add(S.cols.indexOf(E.d2.value||S.auto.dim2));
+  add(S.cols.indexOf(E.m1.value||S.auto.measure1));
+  add(S.cols.indexOf(E.m2.value||S.auto.measure2));
+  for(let i=0;i<S.cols.length&&idx.length<max;i++)add(i);
+  return idx;
+}
+function aiBuildPivot(maxRows=50){
+  if(S.piv.length&&S.pc){
+    let rows=S.piv.map(r=>({d1:r.d1,d2:r.d2||'',value:Number.isFinite(r.v)?r.v:0}));
+    if(rows.length>maxRows){const top=rows.slice(0,Math.max(1,maxRows-1)),others=rows.slice(Math.max(1,maxRows-1)).reduce((p,r)=>p+(Number.isFinite(r.value)?r.value:0),0);top.push({d1:'Autres',d2:'',value:others});rows=top}
+    return{config:{...S.pc,N:Math.min(maxRows,S.pc?.N||maxRows)},rows};
+  }
+  const d1=E.d1.value||S.auto.dim1||S.cols[0]||'',m=E.m1.value||S.auto.measure1||'',a='SUM',i1=S.cols.indexOf(d1),im=S.cols.indexOf(m);
+  if(i1<0)return{config:null,rows:[]};
+  const mp=new Map;
+  for(const ri of S.fidx){const key=(S.rows[ri][i1]??'').toString().trim()||'(Vide)';let e=mp.get(key);if(!e){e={s:0,c:0};mp.set(key,e)}if(im<0)e.c++;else{const n=S.num[im]?.[ri];if(!isNaN(n)){e.s+=n;e.c++}}}
+  let rows=[...mp.entries()].map(x=>({d1:x[0],d2:'',value:im<0?x[1].c:x[1].s})).sort((u,v)=>v.value-u.value);
+  if(rows.length>maxRows){const t=rows.slice(0,Math.max(1,maxRows-1)),o=rows.slice(Math.max(1,maxRows-1)).reduce((p,r)=>p+r.value,0);t.push({d1:'Autres',d2:'',value:o});rows=t}
+  return{config:{d1,d2:'',m,a,N:maxRows},rows};
+}
+function aiBuildPromptPack(){
+  const cols=aiPickCols(12);
+  const sample=S.fidx.slice(0,30).map(ri=>{const o={};cols.forEach(ci=>o[S.cols[ci]]=noHttp(S.rows[ri][ci]??''));return o});
+  const types=Object.fromEntries(S.cols.map((c,i)=>[c,S.types[i]]));
+  const pivot=aiBuildPivot(50);
+  const k=aiGlobalKpi();
+  const q=qst();
+  const D=S.dash||{};
+  return {
+    meta:{file:S.fi.name||null,sheet:S.fi.sheet||null,generatedAt:new Date().toISOString(),rows:S.rows.length,filteredRows:S.fidx.length,columns:S.cols.length},
+    config:{delimiter:E.del.value,filters:getF(),search:E.search.value||'',types,pivotConfig:pivot.config||S.pc||null,auto:{date:E.dcol.value||S.auto.date,dim1:E.d1.value||S.auto.dim1,dim2:E.d2.value||S.auto.dim2,measure1:E.m1.value||S.auto.measure1,measure2:E.m2.value||S.auto.measure2,granularity:E.gr.value||S.auto.granularity,topN:Math.max(5,parseInt(E.tn.value)||20)}},
+    kpi:k,
+    quality:{flags:q.flags.slice(0,30),topEmpty:q.te.slice(0,10).map(c=>({column:c.n,type:c.t,emptyPct:c.ep,invalid:c.inv})),invalid:q.cs.filter(c=>c.inv>0).slice(0,10).map(c=>({column:c.n,type:c.t,invalid:c.inv}))},
+    pivotMain:pivot.rows,
+    dashboard:{trend:(D.tr&&D.tr.lab)?{mode:D.tr.mode,points:D.tr.lab.slice(0,60).map((l,i)=>({label:l,value:D.tr.val[i]}))}:null,top:D.topRows?D.topRows.slice(0,20):[],pareto:D.pr?D.pr.rows.slice(0,20):[],outliers:D.ot?D.ot.rows.slice(0,20):[]},
+    filteredSample:{columns:cols.map(i=>S.cols[i]),rows:sample}
+  };
+}
+function aiPromptText(pack){
+  const schema=`{\n  "executiveSummary": "string (<=800 chars)",\n  "keyInsights": ["5-10 bullets"],\n  "risks": ["3-8 bullets"],\n  "recommendations": ["5-10 bullets"],\n  "slideNarratives": {"2":"...", "5":"..."},\n  "speakerNotes": {"4":"...", "5":"..."}\n}`;
+  return [
+    "Tu es un analyste BI senior. Réponds uniquement en JSON strict valide.",
+    "Aucune URL externe. Pas de markdown.",
+    "Utilise ce schéma JSON:",
+    schema,
+    "Règles: executiveSummary <=800 chars; bullets concrets, actionnables; cohérents avec les données.",
+    "DATA PACK:",
+    JSON.stringify(pack,null,2)
+  ].join("\n\n");
+}
+function aiStatus(){
+  const jv=!!S.ai.responseJson,b=S.ai.responseJson||{},bi=(b.keyInsights||[]).length,br=(b.risks||[]).length,bc=(b.recommendations||[]).length;
+  E.ais.textContent=["IA Statut","JSON strict: "+(S.ai.strict?"oui":"non"),"Réponse exploitable: "+(jv?"oui":"non"),"Mode import: "+(S.ai.mode||"none"),"Date import: "+(S.ai.importedAt||"-"),`Bullets insights/risks/reco: ${bi}/${br}/${bc}`].join("\n");
+}
+function aiGenerate(){
+  if(!S.cols.length)return alert('Importer des données avant de générer le prompt IA.');
+  const pack=aiBuildPromptPack(),txt=aiPromptText(pack);
+  S.ai.prompt=txt;E.aip.value=txt;save();aiStatus();
+  lg('Prompt IA généré',{chars:txt.length,sampleRows:pack.filteredSample.rows.length,pivotRows:pack.pivotMain.length});
+}
+async function aiCopy(){
+  const t=E.aip.value||S.ai.prompt||'';if(!t)return alert('Aucun prompt IA.');
+  try{if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(t);else{E.aip.focus();E.aip.select();document.execCommand('copy')}lg('Prompt IA copié',{chars:t.length})}catch{alert('Copie impossible sur ce navigateur.')}
+}
+function aiDownload(){
+  const t=E.aip.value||S.ai.prompt||'';if(!t)return alert('Aucun prompt IA.');
+  dl(t,'text/plain;charset=utf-8','ia_prompt_pack.txt');
+  if(E.aidj&&E.aidj.checked&&S.cols.length){const pack=aiBuildPromptPack();dl(JSON.stringify(pack,null,2),'application/json;charset=utf-8','ia_prompt_pack.json')}
+}
+function aiNorm(o){
+  if(!o||typeof o!=='object')return null;
+  return {
+    executiveSummary:cut(typeof o.executiveSummary==='string'?o.executiveSummary:String(o.executiveSummary??''),800),
+    keyInsights:arrStr(o.keyInsights,12,240),
+    risks:arrStr(o.risks,12,240),
+    recommendations:arrStr(o.recommendations,15,240),
+    slideNarratives:mapStr(o.slideNarratives,20,500),
+    speakerNotes:mapStr(o.speakerNotes,30,700)
+  };
+}
+function aiFromText(raw){
+  const txt=cut(raw||'',200000),ls=txt.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),bul=ls.filter(l=>/^[-*•]|^\d+[.)]/.test(l)).map(l=>l.replace(/^[-*•]\s*|^\d+[.)]\s*/,''));
+  const insights=bul.slice(0,12),risks=bul.filter(l=>/(risque|risk|alerte|anomal)/i.test(l)).slice(0,12),rec=bul.filter(l=>/(reco|action|doit|should|recommand)/i.test(l)).slice(0,15);
+  return aiNorm({executiveSummary:cut(ls.slice(0,6).join(' ').trim(),800),keyInsights:insights.length?insights:ls.slice(0,8),risks:risks.length?risks:ls.slice(0,5),recommendations:rec.length?rec:ls.slice(0,8),slideNarratives:{},speakerNotes:{}});
+}
+function aiParseJson(raw){
+  const t=String(raw||'').trim();if(!t)return null;
+  try{return JSON.parse(t)}catch{}
+  const a=t.indexOf('{'),b=t.lastIndexOf('}');
+  if(a>=0&&b>a){try{return JSON.parse(t.slice(a,b+1))}catch{}}
+  return null;
+}
+function aiImport(){
+  const raw=E.air.value.trim();if(!raw)return alert('Coller une réponse IA d\'abord.');
+  let parsed=null,strict=false,mode='text';
+  const obj=aiParseJson(raw);if(obj){parsed=aiNorm(obj);strict=true;mode='json'}
+  if(!parsed){parsed=aiFromText(raw);mode='text'}
+  S.ai.responseJson=parsed;S.ai.responseRaw=cut(raw,200000);S.ai.importedAt=new Date().toISOString();S.ai.valid=!!parsed;S.ai.mode=mode;S.ai.strict=strict;
+  save();aiStatus();lg('Réponse IA importée',{mode,strict,insights:(parsed.keyInsights||[]).length});
+}
+function aiClear(){S.ai={prompt:'',responseJson:null,responseRaw:'',importedAt:'',valid:false,mode:'none',strict:false};E.aip.value='';E.air.value='';save();aiStatus();lg('IA effacée')}
+function dl(c,m,n){let cc=c;if(typeof cc==='string'&&/(text|json|csv|svg|html)/i.test(String(m||'')))cc=noHttp(cc);const b=new Blob([cc],{type:m}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),2000)}
+function dlurl(u,n){const x=String(u||'');if(!/^(data:|blob:)/i.test(x)){lg('Export refusé URL externe',{url:x.slice(0,120)});alert('Export refusé: URL externe interdite (seuls data:/blob: sont autorisés).');return}const a=document.createElement('a');a.href=x;a.download=n;document.body.appendChild(a);a.click();a.remove()}
+function xjson(){
+  if(!S.cols.length)return alert('Pas de données');
+  const all=E.jall.checked,n=all?S.fidx.length:Math.min(SMP,S.fidx.length),sample=S.fidx.slice(0,n).map(i=>rowObj(S.rows[i]));
+  const q=qst();
+  const D=S.dash||{};
+  const o={
+    meta:{generatedAt:new Date().toISOString(),file:S.fi.name||null,sheet:S.fi.sheet||null,rows:S.rows.length,filteredRows:S.fidx.length,columns:S.cols.length},
+    config:{delimiter:E.del.value,search:E.search.value||'',filters:S.fil,types:Object.fromEntries(S.cols.map((c,i)=>[c,S.types[i]])),auto:{date:E.dcol.value||S.auto.date,dim1:E.d1.value||S.auto.dim1,dim2:E.d2.value||S.auto.dim2,measure1:E.m1.value||S.auto.measure1,measure2:E.m2.value||S.auto.measure2,topN:Math.max(5,parseInt(E.tn.value)||20),granularity:E.gr.value||S.auto.granularity},pivot:S.pc||null},
+    kpi:aiGlobalKpi(),
+    pivot:{config:S.pc||null,rows:S.piv.slice(0,200)},
+    quality:{flags:q.flags,topEmpty:q.te,invalid:q.cs.filter(c=>c.inv>0)},
+    dashboard:{trend:D.tr||null,top:D.topRows||[],pareto:D.pr||null,outliers:D.ot||null},
+    ai:S.ai.valid?S.ai.responseJson:null,
+    filteredDataSample:sample
+  };
+  if(all)o.filteredDataAll=S.fidx.map(i=>rowObj(S.rows[i]));
+  dl(JSON.stringify(o,null,2),'application/json;charset=utf-8','analytic_export.json');
+}
+function xreport(){
+  if(!S.cols.length)return alert('Pas de données');
+  const k=aiGlobalKpi(),rows=S.fidx.slice(0,120).map(i=>S.rows[i]),thead=S.cols.map(c=>`<th>${esc(c)}</th>`).join(''),tbody=rows.map(r=>'<tr>'+r.map(v=>`<td>${esc(v??'')}</td>`).join('')+'</tr>').join('');
+  const ph=S.piv.length?`<table border='1'><thead><tr>${(S.pc?.d2?[S.pc.d1,S.pc.d2,S.pc.a]:[S.pc?.d1||'dim',S.pc?.a||'agg']).map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>${S.piv.slice(0,200).map(r=>S.pc?.d2?`<tr><td>${esc(r.d1)}</td><td>${esc(r.d2)}</td><td>${fmt(r.v)}</td></tr>`:`<tr><td>${esc(r.d1)}</td><td>${fmt(r.v)}</td></tr>`).join('')}</tbody></table>`:'<p>No pivot</p>';
+  const D=S.dash||{};
+  const dtop= D.topRows&&D.topRows.length ? dashSvgBarInteractive(D.topRows.slice(0,20).map(x=>x.l),D.topRows.slice(0,20).map(x=>x.v),'d1',900,360) : '';
+  const dtrend= D.tr ? svgChart(D.tr.mode==='trend'?'line':'bar',D.tr.lab||[],D.tr.val||[],900,360) : '';
+  const h=`<!doctype html><html><meta charset='utf-8'><title>Rapport</title><h2>Rapport BI</h2><p>src:${k.rows} flt:${S.fidx.length} col:${k.cols}</p><h3>Dashboard Trend</h3>${dtrend}<h3>Dashboard Top</h3>${dtop}<h3>Pivot</h3>${ph}<h3>Sample</h3><table border='1'><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></html>`;
+  dl(h,'text/html;charset=utf-8','rapport_bi.html');
+}
+function pf(){if(typeof window.PptxGenJS==='function')return()=>new window.PptxGenJS;if(window.PptxGenJS&&typeof window.PptxGenJS.default==='function')return()=>new window.PptxGenJS.default;if(typeof window.pptxgen==='function')return()=>{try{return window.pptxgen()}catch{return new window.pptxgen}};if(window.pptxgen&&typeof window.pptxgen.PptxGenJS==='function')return()=>new window.pptxgen.PptxGenJS;return null}
+function pmsg(s){E.pp.textContent+=(E.pp.textContent?'\n':'')+`[${new Date().toLocaleTimeString('fr-FR')}] ${s}`}
+function pclear(){E.pp.textContent=''}
+async function ppt(){
+  if(!S.cols.length||!S.fidx.length)return alert('Importer des données');
+  const cfg={title:(E.ttl.value||'Rapport Analytique BI').trim(),period:(E.prd.value||'Période non spécifiée').trim(),source:(E.src.value||S.fi.name||'source').trim(),dcol:E.dcol.value,d1:E.d1.value,d2:E.d2.value,m1:E.m1.value,m2:E.m2.value,top:Math.max(5,parseInt(E.tn.value)||20),gr:E.gr.value,th:E.th.value};
+  if(!cfg.d1||!cfg.m1)return alert('Dim1 et Mesure1 obligatoires');
+  save();pclear();pmsg('Préparation agrégats...');
+  const i1=S.cols.indexOf(cfg.d1),i2=cfg.d2?S.cols.indexOf(cfg.d2):-1,im1=S.cols.indexOf(cfg.m1),im2=cfg.m2?S.cols.indexOf(cfg.m2):-1,id=cfg.dcol?S.cols.indexOf(cfg.dcol):-1,AI=S.ai.responseJson&&S.ai.valid?aiNorm(S.ai.responseJson):null;
+  const K=(()=>{let s=0,c=0,mn=Infinity,mx=-Infinity;for(const ri of S.fidx){const n=S.num[im1]?.[ri];if(!isNaN(n)){s+=n;c++;if(n<mn)mn=n;if(n>mx)mx=n}}let tot=S.fidx.length*S.cols.length,ne=0;for(const ri of S.fidx)for(let c=0;c<S.cols.length;c++)if((S.rows[ri][c]??'').toString().trim()!=='')ne++;return{rows:S.fidx.length,cols:S.cols.length,sum:s,avg:c?s/c:NaN,min:mn,max:mx,comp:tot?ne/tot:0}})();
+  const Q=qst(),T=trend(id,im1,cfg.gr),TOP=sumMap(i1,im1),topRows=(()=>{let r=TOP.rows.slice().sort((a,b)=>b.v-a.v);if(r.length>cfg.top){const t=r.slice(0,cfg.top),o=r.slice(cfg.top).reduce((p,x)=>p+x.v,0);t.push({l:'Autres',v:o});r=t}r.forEach(x=>x.p=TOP.tot?x.v/TOP.tot:0);return r})();
+  const PR=pareto(topRows),SG=seg(i1,i2,im1,cfg.top),BR=brk(id,i1,im1,im2,cfg.gr),OT=out(im1,i1),PD=pdet(i1,i2,im1,30);
+  pmsg('Rendu images...');
+  const img={trend:T.mode==='trend'?pngLine(T.lab,T.val,'Trend'):pngBar(T.lab,T.val,'Distribution'),top:pngBar(topRows.map(x=>x.l),topRows.map(x=>x.v),'Top N'),par:pngPareto(PR.rows.map(x=>x.l),PR.rows.map(x=>x.v),PR.rows.map(x=>x.p)),seg:SG.mode==='matrix'?pngHeat(SG.r,SG.c,SG.m):'',br:BR.mode==='timeline'?pngMul(BR.lab,BR.ser):BR.mode==='scatter'?pngSc(BR.p):''};
+  const f=pf();
+  if(!f){
+    pmsg('PptxGen indisponible -> outline');
+    const out=[cfg.title,`${cfg.period} | ${cfg.source}`,'1 Cover','2 Data Overview'+(AI&&AI.executiveSummary?' + Executive summary IA':''),AI?'3 Insights clés (IA)':'3 Dictionnaire',AI?'4 Risques & Recommandations (IA)':'4 Trend/Distribution',AI?'5 Dictionnaire':'5 TopN','6 Trend/Distribution','7 TopN','8 Pareto','9 Segmentation','10 Breakdown','11 Outliers','12 Quality','13 Pivot','14 Appendix',`KPI rows=${K.rows} cols=${K.cols} sum=${fmt(K.sum)} avg=${fmt(K.avg)} comp=${fmt(K.comp*100)}%`].join('\n');
+    const notes=AI&&AI.speakerNotes?Object.entries(AI.speakerNotes).map(([k,v])=>`Slide ${k}: ${v}`).join('\n'):'';
+    const h=`<!doctype html><html><meta charset='utf-8'><title>Outline</title><pre>${esc(noHttp(out))}</pre>${AI&&AI.executiveSummary?`<h3>Executive summary IA</h3><p>${esc(noHttp(AI.executiveSummary))}</p>`:''}${AI&&AI.keyInsights?.length?`<h3>Insights clés</h3><ul>${AI.keyInsights.map(x=>`<li>${esc(noHttp(x))}</li>`).join('')}</ul>`:''}${AI&&AI.risks?.length?`<h3>Risques</h3><ul>${AI.risks.map(x=>`<li>${esc(noHttp(x))}</li>`).join('')}</ul>`:''}${AI&&AI.recommendations?.length?`<h3>Recommandations</h3><ul>${AI.recommendations.map(x=>`<li>${esc(noHttp(x))}</li>`).join('')}</ul>`:''}${notes?`<h3>Speaker notes</h3><pre>${esc(noHttp(notes))}</pre>`:''}${img.trend?`<img src='${img.trend}'>`:''}${img.top?`<img src='${img.top}'>`:''}${img.par?`<img src='${img.par}'>`:''}${img.seg?`<img src='${img.seg}'>`:''}${img.br?`<img src='${img.br}'>`:''}${S.ch.svg||''}</html>`;
+    dl(h,'text/html;charset=utf-8','deck_outline.html');
+    pmsg('Outline exporté');
+    return;
+  }
+  const pptx=f(); if(!pptx)return alert('Erreur init PptxGen');
+  pptx.layout='LAYOUT_WIDE';pptx.author='BI to PPT Offline';pptx.title=cfg.title;
+  const th=cfg.th==='s'?{bg:'F9F5EF',pr:'935C16',tx:'2A2A2A'}:{bg:'F3F8FA',pr:'0A7B94',tx:'17313B'},SHP=tp=>pptx.ShapeType&&pptx.ShapeType[tp]?pptx.ShapeType[tp]:tp;
+  const title=(s,t,st)=>{s.background={color:th.bg};s.addShape(SHP('rect'),{x:0,y:0,w:13.33,h:.64,fill:{color:th.pr},line:{color:th.pr}});s.addText(t,{x:.35,y:.12,w:9.7,h:.34,color:'FFFFFF',bold:true,fontSize:17,fontFace:'Segoe UI'});if(st)s.addText(st,{x:.35,y:.69,w:12.5,h:.28,color:th.tx,fontSize:11,fontFace:'Segoe UI'})};
+  const tab=(s,h,r,x=.5,y=1.2,w=12.2,hg=5.8)=>{const t=[h,...r];if(typeof s.addTable==='function')s.addTable(t,{x,y,w,h:hg,border:{type:'solid',color:'C9D8DE',pt:1},fontFace:'Segoe UI',fontSize:10,color:'20323A',fill:'FFFFFF',valign:'mid'});else{s.addText(h.join(' | '),{x,y,w,h:.3,bold:true,fontSize:10});s.addText(r.map(a=>a.join(' | ')).join('\n'),{x,y:y+.35,w,h:hg-.35,fontSize:9})}};
+  let slideNo=0,noteFallback=[];
+  const addN=(sl,no)=>{if(!AI)return;const sn=AI.speakerNotes&&AI.speakerNotes[String(no)]?noHttp(AI.speakerNotes[String(no)]):'';if(!sn)return;try{if(typeof sl.addNotes==='function'){sl.addNotes(sn);return}}catch{}noteFallback.push(`Slide ${no}: ${sn}`)};
+  const addNarr=(sl,no)=>{if(!AI)return;const nv=AI.slideNarratives&&AI.slideNarratives[String(no)]?noHttp(AI.slideNarratives[String(no)]):'';if(nv)sl.addText('Narrative IA:\n'+nv,{x:8.9,y:6.1,w:4.1,h:1.0,fontSize:9,color:th.tx,valign:'top'})};
+  const mk=(t,st)=>{const sl=pptx.addSlide();slideNo++;title(sl,t,st);addN(sl,slideNo);addNarr(sl,slideNo);return sl};
+  pmsg('Construction slides...');
+  let s=mk(cfg.title,`${cfg.period} | Source: ${cfg.source}`);
+  s.addText(`Date: ${new Date().toLocaleString('fr-FR')}\nFichier: ${S.fi.name||'-'}\nFeuille: ${S.fi.sheet||'-'}\nLignes: ${K.rows} | Colonnes: ${K.cols}`,{x:.6,y:1.4,w:8,h:1.5,fontSize:13,color:th.tx});
+  s.addText('Deck analytique (12+ slides)',{x:.8,y:3.8,w:11.6,h:1,fontSize:22,bold:true,color:th.tx,align:'center'});
+  s=mk('Data Overview','KPI globaux + flags qualité');
+  [["Lignes",K.rows],["Colonnes",K.cols],["Somme",fmt(K.sum)],["Moyenne",fmt(K.avg)],["Min/Max",fmt(K.min)+" / "+fmt(K.max)],["Complétude",fmt(K.comp*100)+"%"]].forEach((x,i)=>{const c=i%3,r=Math.floor(i/3),xx=.7+c*4.2,yy=1.2+r*1.55;s.addShape(SHP('roundRect'),{x:xx,y:yy,w:3.9,h:1.25,fill:{color:'FFFFFF'},line:{color:'C6DDE5'},radius:.06});s.addText(x[0],{x:xx+.14,y:yy+.2,w:3.5,h:.24,fontSize:13,bold:true,color:th.pr});s.addText(String(x[1]),{x:xx+.14,y:yy+.55,w:3.5,h:.5,fontSize:20,bold:true,color:th.tx})});
+  s.addText('Flags:\n'+(Q.flags.length?Q.flags.slice(0,8).map((f,i)=>`${i+1}. ${f}`).join('\n'):'Alerte majeure non détectée.'),{x:.8,y:4.5,w:12,h:1.5,fontSize:11,color:th.tx,valign:'top'});
+  if(AI&&AI.executiveSummary){s.addShape(SHP('roundRect'),{x:.8,y:6.0,w:12.0,h:1.0,fill:{color:'FFFFFF'},line:{color:'C6DDE5'},radius:.05});s.addText('Executive summary IA:\n'+noHttp(AI.executiveSummary),{x:1.0,y:6.1,w:11.6,h:.8,fontSize:10,color:th.tx,valign:'top'})}
+  if(AI){
+    s=mk('Insights clés','Synthèse IA');
+    s.addText((AI.keyInsights&&AI.keyInsights.length?AI.keyInsights:['Aucun insight IA.']).slice(0,10).map(x=>'• '+noHttp(x)).join('\n'),{x:.9,y:1.3,w:11.8,h:5.5,fontSize:16,color:th.tx,valign:'top'});
+    s=mk('Risques & Recommandations','Synthèse IA en deux colonnes');
+    s.addText('Risques',{x:.8,y:1.2,w:5.9,h:.3,fontSize:15,bold:true,color:th.pr});
+    s.addText((AI.risks&&AI.risks.length?AI.risks:['Aucun risque IA.']).slice(0,8).map(x=>'• '+noHttp(x)).join('\n'),{x:.8,y:1.6,w:5.9,h:5.8,fontSize:12,color:th.tx,valign:'top'});
+    s.addText('Recommandations',{x:7.0,y:1.2,w:5.5,h:.3,fontSize:15,bold:true,color:th.pr});
+    s.addText((AI.recommendations&&AI.recommendations.length?AI.recommendations:['Aucune recommandation IA.']).slice(0,10).map(x=>'• '+noHttp(x)).join('\n'),{x:7.0,y:1.6,w:5.5,h:5.8,fontSize:12,color:th.tx,valign:'top'});
+  }
+  s=mk('Dictionnaire / Typage','Nom colonne / type / % vides');tab(s,['Colonne','Type','% vides'],Q.dict.map(c=>[c.n,c.t,fmt(c.ep*100)+'%']).slice(0,TPR));
+  s=mk(T.mode==='trend'?'Trend temporel':'Distribution',T.mode==='trend'?`Agrégation ${cfg.gr==='week'?'hebdo':'mensuelle'}`:'Histogramme fallback');if(img.trend)s.addImage({data:img.trend,x:.5,y:1.1,w:8.2,h:4.6});s.addText(T.mode==='trend'?`Points: ${T.lab.length}\n`+T.mom.slice(-3).map(m=>`${m.lab}: ${m.d==null?'n/a':fmt(m.d*100)+'%'}`).join('\n'):`Bins: ${T.val.length}`,{x:8.9,y:1.3,w:4.1,h:4.5,fontSize:12,color:th.tx,valign:'top'});
+  s=mk('Top N '+cfg.d1,'Bar + tableau + part du total');if(img.top)s.addImage({data:img.top,x:.4,y:1.1,w:8.5,h:4.6});tab(s,[cfg.d1,cfg.m1,'% total'],topRows.slice(0,12).map(r=>[r.l,fmt(r.v),fmt(r.p*100)+'%']),9,1.3,3.9,4.2);
+  s=mk('Pareto / Cumulé','Courbe cumulée % + barres');if(img.par)s.addImage({data:img.par,x:.4,y:1.1,w:8.5,h:4.6});tab(s,['Classement','Valeur','Cumul %'],PR.rows.slice(0,12).map(r=>[r.l,fmt(r.v),fmt(r.p*100)+'%']),9,1.3,3.9,4.2);
+  s=mk('Segmentation croisée',cfg.d2?`${cfg.d1} x ${cfg.d2}`:'Dim2 non fournie');if(SG.mode==='matrix'){if(img.seg)s.addImage({data:img.seg,x:.4,y:1.1,w:8.5,h:4.6});tab(s,[cfg.d1,cfg.d2,cfg.m1],SG.t.slice(0,12).map(r=>[r.d1,r.d2,fmt(r.v)]),9,1.3,3.9,4.2)}else s.addText('Dim2 absente: fallback tableau mono-dimensionnel.',{x:.8,y:2.4,w:11.5,h:1,fontSize:16,color:th.tx});
+  s=mk(BR.mode==='timeline'?'Breakdown temporel par segment':BR.mode==='scatter'?'Scatter':'Breakdown',BR.mode==='timeline'?'Top 5 segments':BR.mode==='scatter'?`${cfg.d1} vs ${cfg.m2}`:'Données insuffisantes');if(img.br)s.addImage({data:img.br,x:.6,y:1.2,w:8.6,h:4.5});s.addText(`Mode: ${BR.mode}${BR.mode==='timeline'?'\nSegments: '+BR.ser.map(x=>x.n).join(', '):BR.mode==='scatter'?'\nPoints: '+BR.p.length:''}`,{x:9.3,y:1.5,w:3.6,h:4.5,fontSize:12,color:th.tx,valign:'top'});
+  s=mk('Outliers / Anomalies',`Méthode: ${OT.met} | top 20`);tab(s,['Ligne',cfg.d1,cfg.m1,'Score'],(OT.rows.length?OT.rows:[{r:'-',d:'Aucune anomalie forte détectée',v:'-',s:'-'}]).slice(0,TPR).map(r=>[String(r.r),r.d,fmt(r.v),fmt(r.s)]));
+  s=mk('Data Quality Deep Dive','Top colonnes % vides + recommandations');tab(s,['Colonne','Type','% vides','Invalides'],Q.te.map(c=>[c.n,c.t,fmt(c.ep*100)+'%',String(c.inv)]),.5,1.2,7.8,5.8);s.addText('Recommandations:\n'+Q.rec.slice(0,10).join('\n'),{x:8.5,y:1.2,w:4.2,h:5.8,fontSize:12,color:th.tx,valign:'top'});
+  const pages=[];for(let i=0;i<PD.r.length;i+=TPR)pages.push(PD.r.slice(i,i+TPR));if(!pages.length)pages.push([[]]);pages.forEach((pg,i)=>{const sl=mk(i?'Pivot détaillé (cont.)':'Pivot détaillé','Top 30 + Others, pagination auto');tab(sl,PD.h,pg.length?pg:[["-","-","-"]])});
+  s=mk('Appendix / Méthodologie','Filtres, agrégations, définitions KPI, limites');s.addText([`Date génération: ${new Date().toLocaleString('fr-FR')}`,`Filtres actifs: ${S.fil.length||0}`,`Recherche globale: ${E.search.value||'(aucune)'}`,`Agrégations: ${cfg.m1} / TopN=${cfg.top}`,`Granularité: ${cfg.gr}`,'Définitions KPI: sum/avg/min/max sur données filtrées.','Limites: typage auto, dates ambiguës, fallback SVG si Chart.js indisponible.'].join('\n'),{x:.8,y:1.2,w:11.8,h:4.5,fontSize:14,color:th.tx,valign:'top'});if(noteFallback.length)s.addText('Speaker notes (fallback):\n'+noteFallback.join('\n'),{x:.8,y:5.8,w:11.8,h:1.2,fontSize:9,color:th.tx,valign:'top'});
+  await pptx.writeFile({fileName:(cfg.title.replace(/[^a-zA-Z0-9._-]+/g,'_')||'deck')+'.pptx'});
+  pmsg('PPTX généré');
+}
+function save(){
+  localStorage.setItem(LSK,j({
+    del:E.del.value,rpp:E.rpp.value,
+    filters:getF(),search:E.search.value,
+    sel:{d1:[...S.sel.d1],d2:[...S.sel.d2]},
+    p:{d1:E.pd1.value,d2:E.pd2.value,m:E.pm.value,a:E.pa.value,n:E.pn.value},
+    ppt:{ttl:E.ttl.value,prd:E.prd.value,src:E.src.value,dcol:E.dcol.value,d1:E.d1.value,d2:E.d2.value,m1:E.m1.value,m2:E.m2.value,tn:E.tn.value,gr:E.gr.value,th:E.th.value},
+    ai:{prompt:E.aip.value||S.ai.prompt||'',responseJson:S.ai.responseJson,responseRaw:S.ai.responseRaw||'',importedAt:S.ai.importedAt||'',valid:!!S.ai.valid,mode:S.ai.mode||'none',strict:!!S.ai.strict,dlJson:!!(E.aidj&&E.aidj.checked)},
+    mask:E.mask.checked
+  }))
+}
+function load(){
+  try{
+    const p=JSON.parse(localStorage.getItem(LSK)||'{}');
+    if(p.del)E.del.value=p.del;
+    if(p.rpp){E.rpp.value=p.rpp;S.rpp=Math.max(10,parseInt(p.rpp)||100)}
+    if(p.p){E.pd1.value=p.p.d1||'';E.pd2.value=p.p.d2||'';E.pm.value=p.p.m||'';if(p.p.a)E.pa.value=p.p.a;if(p.p.n)E.pn.value=p.p.n}
+    if(p.ppt){E.ttl.value=p.ppt.ttl||'';E.prd.value=p.ppt.prd||'';E.src.value=p.ppt.src||'';E.dcol.value=p.ppt.dcol||'';E.d1.value=p.ppt.d1||'';E.d2.value=p.ppt.d2||'';E.m1.value=p.ppt.m1||'';E.m2.value=p.ppt.m2||'';E.tn.value=p.ppt.tn||E.tn.value;E.gr.value=p.ppt.gr||E.gr.value;E.th.value=p.ppt.th||E.th.value}
+    if(p.ai){S.ai.prompt=cut(p.ai.prompt||'',250000);S.ai.responseJson=p.ai.responseJson&&typeof p.ai.responseJson==='object'?aiNorm(p.ai.responseJson):null;S.ai.responseRaw=cut(p.ai.responseRaw||'',250000);S.ai.importedAt=p.ai.importedAt||'';S.ai.valid=!!p.ai.valid;S.ai.mode=p.ai.mode||'none';S.ai.strict=!!p.ai.strict;E.aip.value=S.ai.prompt;E.air.value=S.ai.responseRaw||(S.ai.responseJson?JSON.stringify(S.ai.responseJson,null,2):'');if(E.aidj)E.aidj.checked=!!p.ai.dlJson}
+    S.mask=p.mask!==false;E.mask.checked=S.mask;
+  }catch{S.mask=true;E.mask.checked=true}
+}
+function clearAll(){
+  localStorage.removeItem(LSK);
+  S.rows=[];S.cols=[];S.types=[];S.num={};S.dat={};S.fidx=[];S.fil=[];S.piv=[];S.pc=null;S.raw='';S.wb=null;S.fi={name:'',sheet:'',del:'',ext:''};
+  if(S.ch.inst&&S.ch.inst.destroy)S.ch.inst.destroy();
+  S.ch={mode:'none',inst:null,svg:'',png:''};
+  S.ai={prompt:'',responseJson:null,responseRaw:'',importedAt:'',valid:false,mode:'none',strict:false};
+  S.sel.d1.clear();S.sel.d2.clear();
+  E.file.value='';E.search.value='';E.fs.innerHTML='';E.sheet.innerHTML='';E.xopts.style.display='none';E.fN.textContent='-';E.rN.textContent='0';E.cN.textContent='0';E.sN.textContent='-';E.delh.textContent='Délimiteur détecté: -';E.svg.innerHTML='';E.log.textContent='';E.aip.value='';E.air.value='';if(E.aidj)E.aidj.checked=false;
+  pclear();upd();pv();et();pt();stcol();kexp();aiStatus();dashboard();renderChips();updateActionState();
+  lg('Données locales effacées');
+}
+function xls(){
+  const n=E.sheet.value;if(!S.wb||!n)return alert('Workbook/feuille manquante');
+  const h=Math.max(1,parseInt(E.hrow.value)||1)-1,ws=S.wb.Sheets[n],aoa=window.XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});
+  if(!aoa.length||h>=aoa.length)return alert('Ligne en-têtes invalide');
+  const c=heads(aoa[h]),r=aoa.slice(h+1).map(x=>{const z=x.slice(0,c.length);while(z.length<c.length)z.push('');return z});
+  S.fi.sheet=n;E.sN.textContent=n;setData(r,c,true);lg('Feuille XLSX',{sheet:n,rows:r.length,cols:c.length,hrow:h+1});
+}
+function xlsLoad(f){
+  ov('Lecture XLSX...');
+  f.arrayBuffer().then(b=>Promise.resolve(window.XLSX.read(b,{type:'array',cellDates:false,raw:false}))).then(wb=>{
+    S.wb=wb;E.sheet.innerHTML=S.wb.SheetNames.map(s=>`<option>${esc(s)}</option>`).join('');E.xopts.style.display='block';hov();lg('XLSX chargé',{sheets:S.wb.SheetNames.length});
+  }).catch(e=>{hov();alert('Erreur XLSX: '+(e?.message||'inconnue'))});
+}
+function cparse(){
+  try{
+    const p=csv(S.raw,E.del.value);
+    if(p.R.length<2)return alert('CSV/TXT doit contenir en-têtes + données');
+    const c=heads(p.R[0]),r=p.R.slice(1).map(x=>{const z=x.slice(0,c.length);while(z.length<c.length)z.push('');return z});
+    S.fi.del=p.d;S.fi.sheet='';E.delh.textContent='Délimiteur détecté: '+(p.d==='\t'?'tab':p.d);
+    setData(r,c,false);lg('CSV import',{rows:r.length,cols:c.length,del:p.d});
+  }catch(e){alert('Erreur parsing CSV: '+(e?.message||'inconnue'))}
+}
+function openFile(f){
+  if(!f)return;
+  if(f.size>MAXF)return alert('Fichier trop volumineux (>80MB)');
+  const ext=(f.name.split('.').pop()||'').toLowerCase();
+  S.fi.name=f.name;S.fi.ext=ext;S.fi.sheet='';
+  if(ext==='csv'||ext==='txt'){
+    S.wb=null;S.raw='';E.xopts.style.display='none';
+    const r=new FileReader;
+    r.onload=e=>{S.raw=String(e.target?.result||'');cparse()};
+    r.onerror=()=>alert('Erreur lecture texte');
+    r.readAsText(f);
+    return;
+  }
+  if((ext==='xlsx'||ext==='xls')&&S.deps.x){S.raw='';xlsLoad(f);return}
+  if(ext==='xlsx'||ext==='xls')return alert('XLSX indisponible: coller xlsx.full.min.js');
+  alert('Format non supporté');
+}
+function applyTypes(){
+  E.tt.querySelectorAll('select[data-i]').forEach(s=>{const i=+s.dataset.i;if(i>=0&&i<S.types.length)S.types[i]=s.value});
+  caches().then(()=>{upd();rebuildFiltered('Types override');lg('Types override',{cols:S.types.length})});
+}
+async function setData(rows,cols,showX){
+  S.rows=rows;S.cols=cols;S.fidx=rng(0,rows.length);S.page=1;S.ppage=1;S.piv=[];S.pc=null;S.sel.d1.clear();S.sel.d2.clear();
+  infer();ttable();await caches();guessAuto();
+  E.xopts.style.display=showX?'block':'none';
+  upd();
+  E.fN.textContent=S.fi.name||'-';E.rN.textContent=S.rows.length;E.cN.textContent=S.cols.length;E.sN.textContent=S.fi.sheet||'-';
+  if(!E.ttl.value)E.ttl.value='Revue BI - '+(S.fi.name||'Dataset');
+  if(!E.src.value)E.src.value=S.fi.name||'source';
+  if(!E.prd.value)E.prd.value=new Date().toLocaleDateString('fr-FR');
+  if(!S.fil.length&&E.fs.children.length===0){} else syncFilters();
+  pv();
+  await rebuildFiltered('Analyse auto');
+  sw('dashboard');
+  renderChips();
+  aiStatus();
+  updateActionState();
+  save();
+}
+function bindDrop(){
+  const dz=E.drop;
+  if(!dz)return;
+  const on=e=>{e.preventDefault();e.stopPropagation()};
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{on(e);dz.classList.add('on')}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{on(e);dz.classList.remove('on')}));
+  dz.addEventListener('drop',e=>{const f=e.dataTransfer?.files?.[0];if(f)openFile(f)});
+}
+function bind(){
+  makeTabs();dep();load();bindDrop();
+  E.mask.onchange=()=>{S.mask=!!E.mask.checked;save()};
+  E.clr.onclick=clearAll;
+  E.pick.onclick=()=>E.file.click();
+  E.file.onchange=e=>openFile(e.target.files?.[0]);
+  E.del.onchange=()=>{save();if(S.raw)cparse()};
+  E.apSheet.onclick=xls;
+  E.apTypes.onclick=applyTypes;
+  E.addF.onclick=()=>addF();
+  E.apF.onclick=apF;
+  E.rsF.onclick=rsF;
+  E.search.addEventListener('keydown',e=>{if(e.key==='Enter')apF()});
+  E.rpp.onchange=()=>{S.rpp=Math.max(10,parseInt(E.rpp.value)||100);S.page=1;et();save()};
+  E.epv.onclick=()=>{S.page=Math.max(1,S.page-1);et()};
+  E.enx.onclick=()=>{S.page=Math.min(Math.max(1,Math.ceil((S.fidx.length||0)/S.rpp)),S.page+1);et()};
+  E.sc.onchange=stcol;
+  E.cp.onclick=piv;
+  E.xp.onclick=xpcsv;
+  E.ppv.onclick=()=>{S.ppage=Math.max(1,S.ppage-1);pt()};
+  E.pnx.onclick=()=>{S.ppage=Math.min(Math.max(1,Math.ceil(S.piv.length/S.rpp)),S.ppage+1);pt()};
+  E.rc.onclick=chart;
+  E.xc.onclick=xchart;
+  E.xcf.onclick=xcsv;
+  E.xj.onclick=xjson;
+  E.xrh.onclick=xreport;
+  E.aig.onclick=aiGenerate;
+  E.aic.onclick=aiCopy;
+  E.aidl.onclick=aiDownload;
+  E.aii.onclick=aiImport;
+  E.aix.onclick=aiClear;
+  E.aip.oninput=()=>{S.ai.prompt=E.aip.value;save()};
+  if(E.aidj)E.aidj.onchange=save;
+  E.gp.onclick=ppt;
+  E.an.onclick=()=>dashboard();
+  E.dan.onclick=()=>dashboard();
+  E.dreset.onclick=clearSel;
+  E.dgoPpt.onclick=()=>{sw('ppt')};
+  E.dgoAi.onclick=()=>{sw('ai');if(!E.aip.value&&S.cols.length)aiGenerate()};
+  [E.pd1,E.pd2,E.pm,E.pa,E.pn,E.ttl,E.prd,E.src,E.dcol,E.d1,E.d2,E.m1,E.m2,E.tn,E.gr,E.th].forEach(x=>{x.onchange=()=>{save();if(S.cols.length)dashboard()};x.oninput=save});
+  aiStatus();renderChips();dashboard();updateActionState();
+  lg('Application initialisée');
+}
+bind();
+})();
+</script>
+</body></html>

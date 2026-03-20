@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Consignes</h1>
+<form method="post">
+  <label for="text">Instructions utilisateur</label>
+  <textarea id="text" name="text" rows="8">{{ latest }}</textarea>
+  <button type="submit">Enregistrer</button>
+</form>
+
+<h2>Historique récent</h2>
+<ul class="list">
+  {% for item in history %}
+    <li>
+      <div class="meta">{{ item.created_at }}</div>
+      <pre>{{ item.text }}</pre>
+    </li>
+  {% else %}
+    <li>Aucune consigne enregistrée.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

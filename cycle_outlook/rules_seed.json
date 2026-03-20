@@ -1,0 +1,12 @@
+{
+  "rules": [
+    {"type": "sender_domain", "pattern": "vip.example.com", "category": "CRISES", "enabled": true},
+    {"type": "sender_exact", "pattern": "ceo@example.com", "category": "DECISIONS", "enabled": true},
+    {"type": "keyword_subject", "pattern": "pour validation", "category": "DECISIONS", "enabled": true},
+    {"type": "deadline", "pattern": "urgence", "category": "CRISES", "enabled": true},
+    {"type": "deadline", "pattern": "asap", "category": "CRISES", "enabled": true},
+    {"type": "deadline", "pattern": "eod", "category": "CRISES", "enabled": true},
+    {"type": "deadline", "pattern": "echeance", "category": "DECISIONS", "enabled": true},
+    {"type": "sensitive_sender", "pattern": "security@example.com", "category": "CRISES", "enabled": true}
+  ]
+}

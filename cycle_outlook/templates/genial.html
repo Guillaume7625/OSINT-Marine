@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>GENIAL - Configuration & Test</h1>
+<form method="post">
+  <label>
+    <input type="checkbox" name="enabled" {% if config.enabled %}checked{% endif %}>
+    Activer GENIAL
+  </label>
+
+  <label for="base_url">Base URL</label>
+  <input id="base_url" name="base_url" type="text" value="{{ config.base_url or '' }}">
+
+  <label for="path">Path</label>
+  <input id="path" name="path" type="text" value="{{ config.path or '' }}">
+
+  <label for="method">Méthode</label>
+  <input id="method" name="method" type="text" value="{{ config.method or 'POST' }}">
+
+  <label for="allowlist_hosts_ports">Allowlist host:port (JSON)</label>
+  <textarea id="allowlist_hosts_ports" name="allowlist_hosts_ports" rows="2">{{ config.allowlist_hosts_ports or '[]' }}</textarea>
+
+  <label for="headers_json">Headers (JSON)</label>
+  <textarea id="headers_json" name="headers_json" rows="3">{{ config.headers_json or '{}' }}</textarea>
+
+  <label for="timeout_seconds">Timeout (s)</label>
+  <input id="timeout_seconds" name="timeout_seconds" type="number" value="{{ config.timeout_seconds or 10 }}">
+
+  <label for="retries">Retries</label>
+  <input id="retries" name="retries" type="number" value="{{ config.retries or 1 }}">
+
+  <label for="request_template">Request template (Jinja2)</label>
+  <textarea id="request_template" name="request_template" rows="6">{{ config.request_template or '{}' }}</textarea>
+
+  <label for="response_mapping_json">Response mapping (JSON)</label>
+  <textarea id="response_mapping_json" name="response_mapping_json" rows="6">{{ config.response_mapping_json or '{}' }}</textarea>
+
+  <button type="submit" name="action" value="save">Enregistrer</button>
+  <button type="submit" name="action" value="test">Tester</button>
+</form>
+
+{% if test_result %}
+  <h2>Résultat test</h2>
+  <pre>{{ test_result }}</pre>
+{% endif %}
+{% endblock %}

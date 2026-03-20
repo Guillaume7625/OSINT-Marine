@@ -1,0 +1,98 @@
+:root {
+  --bg: #f7f7f5;
+  --text: #1f2a2e;
+  --accent: #2b6cb0;
+  --border: #d9dde1;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 600;
+}
+
+.nav a {
+  margin-right: 12px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.nav a:last-child {
+  margin-right: 0;
+}
+
+.content {
+  padding: 24px;
+}
+
+form {
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+}
+
+input, textarea, select {
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+button {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+pre {
+  background: #ffffff;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.markdown {
+  white-space: pre-wrap;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.hint {
+  color: #5a6670;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.list li {
+  margin-bottom: 12px;
+}

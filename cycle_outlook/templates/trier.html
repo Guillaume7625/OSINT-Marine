@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Trier</h1>
+<form method="post">
+  <label for="limit">Limite</label>
+  <input id="limit" name="limit" type="number" value="50" min="1">
+
+  <label for="days_window">Fenêtre (jours)</label>
+  <input id="days_window" name="days_window" type="number" value="7" min="1">
+
+  <label for="dry_run">Dry run</label>
+  <select id="dry_run" name="dry_run">
+    <option value="true">Oui</option>
+    <option value="false">Non</option>
+  </select>
+
+  <button type="submit">Lancer</button>
+</form>
+<p class="hint">La réponse renvoie un JSON avec les résultats et les explications.</p>
+{% endblock %}
