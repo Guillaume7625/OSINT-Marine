@@ -10,9 +10,10 @@ class Settings(BaseSettings):
 
     app_name: str = "Local Claude Assistant"
     app_env: Literal["dev", "test", "prod"] = "dev"
-    app_debug: bool = True
+    app_debug: bool = False
     app_host: str = "0.0.0.0"
     app_port: int = 8000
+    app_api_token: str = ""
     frontend_origin: str = "http://localhost:3000"
     auto_migrate_on_startup: bool = True
 

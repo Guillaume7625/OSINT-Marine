@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.domain.models import Conversation, Message, MessageRole, PromptProfile, RoutingMode
-from app.providers.base import ChatMessage, ChatRequest, UsageMetadata
+from app.providers.base import ChatMessage, ChatRequest, ChatResponse, UsageMetadata
 from app.providers.factory import get_provider
 from app.services.context_manager import ContextManager
 from app.services.prompt_builder import PromptBuilder, PromptLayers
@@ -121,56 +121,90 @@ class ChatOrchestrator:
             decision.routing_mode,
             decision.rationale,
         )
-        logger.debug("effective_prompt conv_id=%s prompt=%s", conversation.id, effective_prompt)
+        if self.settings.app_debug:
+            logger.debug("effective_prompt conv_id=%s prompt=%s", conversation.id, effective_prompt)
 
-        yield {
+        meta_event = {
             "type": "meta",
             "provider": decision.provider,
             "model": decision.model,
             "routing_mode": decision.routing_mode.value,
             "routing_rationale": decision.rationale,
             "prompt_profile": profile.name,
-            "effective_system_prompt": effective_prompt,
         }
+        if self.settings.app_debug:
+            meta_event["effective_system_prompt"] = effective_prompt
+        yield meta_event
 
         provider = get_provider(decision.provider, self.settings)
         citations = list(context.citations)
         working_messages = list(context.messages)
+        usage = UsageMetadata()
+        answer = ""
+        tool_iterations = 0
 
-        if options.require_tools:
-            await self._run_tool_loop(
-                db=db,
-                conversation=conversation,
-                provider=provider,
-                decision=decision,
-                effective_prompt=effective_prompt,
-                working_messages=working_messages,
-                citations=citations,
+        while True:
+            allow_tools = options.require_tools and tool_iterations < self.settings.max_tool_iterations
+            buffered_text: list[str] = []
+            response: ChatResponse | None = None
+            pass_usage = UsageMetadata()
+            streamed_tool_calls = []
+
+            stream_request = ChatRequest(
+                messages=working_messages,
+                model=decision.model,
+                system_prompt=effective_prompt,
+                max_tokens=self.settings.anthropic_max_tokens,
+                tools=self.tool_service.specs() if allow_tools else [],
             )
 
-        stream_request = ChatRequest(
-            messages=working_messages,
-            model=decision.model,
-            system_prompt=effective_prompt,
-            max_tokens=self.settings.anthropic_max_tokens,
-            tools=[],
-        )
+            async for event in provider.stream(stream_request):
+                if event.type == "text_delta":
+                    buffered_text.append(event.delta)
+                    if self.redis:
+                        self.redis.setex(stream_key, 300, "streaming")
+                    yield {"type": "token", "delta": event.delta}
+                elif event.type == "usage" and event.usage:
+                    pass_usage = event.usage
+                elif event.type == "tool_call" and event.tool_call:
+                    streamed_tool_calls.append(event.tool_call)
+                elif event.type == "done" and event.response:
+                    response = event.response
+                elif event.type == "error":
+                    yield {"type": "error", "error": "Provider request failed"}
+                    raise RuntimeError("Provider request failed")
 
-        full_text: list[str] = []
-        usage = UsageMetadata()
-        async for event in provider.stream(stream_request):
-            if event.type == "text_delta":
-                full_text.append(event.delta)
-                if self.redis:
-                    self.redis.setex(stream_key, 300, "streaming")
-                yield {"type": "token", "delta": event.delta}
-            elif event.type == "usage" and event.usage:
-                usage = event.usage
-            elif event.type == "error":
-                yield {"type": "error", "error": event.error}
-                raise RuntimeError(event.error)
+            usage.input_tokens += pass_usage.input_tokens
+            usage.output_tokens += pass_usage.output_tokens
 
-        answer = "".join(full_text).strip()
+            if response is None:
+                response = ChatResponse(
+                    message=ChatMessage(role="assistant", content="".join(buffered_text).strip()),
+                    stop_reason="end_turn",
+                    usage=pass_usage,
+                    model=decision.model,
+                    provider=decision.provider,
+                )
+
+            if streamed_tool_calls and not response.tool_calls:
+                response.tool_calls = streamed_tool_calls
+                response.message.tool_calls = streamed_tool_calls
+
+            if allow_tools and response.tool_calls:
+                tool_iterations += 1
+                await self._apply_tool_calls(
+                    db=db,
+                    conversation=conversation,
+                    decision=decision,
+                    response=response,
+                    working_messages=working_messages,
+                    citations=citations,
+                )
+                continue
+
+            answer = response.message.content.strip()
+            break
+
         latency_ms = (time.perf_counter() - started) * 1000
 
         assistant_message = self._persist_message(
@@ -211,78 +245,65 @@ class ChatOrchestrator:
             "latency_ms": round(latency_ms, 2),
         }
 
-    async def _run_tool_loop(
+    async def _apply_tool_calls(
         self,
         *,
         db: Session,
         conversation: Conversation,
-        provider,
         decision: RoutingDecision,
-        effective_prompt: str,
+        response: ChatResponse,
         working_messages: list[ChatMessage],
         citations: list[dict[str, Any]],
     ) -> None:
-        for _ in range(self.settings.max_tool_iterations):
-            request = ChatRequest(
-                messages=working_messages,
-                model=decision.model,
-                system_prompt=effective_prompt,
-                max_tokens=self.settings.anthropic_max_tokens,
-                tools=self.tool_service.specs(),
-            )
-            response = await provider.complete(request)
-            if not response.tool_calls:
-                return
+        assistant_tool_message = ChatMessage(
+            role="assistant",
+            content=response.message.content,
+            tool_calls=response.tool_calls,
+        )
+        working_messages.append(assistant_tool_message)
+        self._persist_message(
+            db=db,
+            conversation_id=conversation.id,
+            role=MessageRole.ASSISTANT,
+            content=response.message.content,
+            provider=decision.provider,
+            model=decision.model,
+            input_tokens=response.usage.input_tokens,
+            output_tokens=response.usage.output_tokens,
+            metadata_json={
+                "tool_calls": [
+                    {"id": c.id, "name": c.name, "arguments": c.arguments}
+                    for c in response.tool_calls
+                ]
+            },
+        )
 
-            assistant_tool_message = ChatMessage(
-                role="assistant",
-                content=response.message.content,
-                tool_calls=response.tool_calls,
+        for call in response.tool_calls:
+            tool_result = await self.tool_service.execute_call(
+                db=db,
+                conversation_id=str(conversation.id),
+                call=call,
             )
-            working_messages.append(assistant_tool_message)
+            citations.extend(tool_result.citations)
+            content = tool_result.as_message_content()
+            working_messages.append(
+                ChatMessage(
+                    role="tool",
+                    content=content,
+                    tool_call_id=call.id,
+                    tool_name=call.name,
+                )
+            )
             self._persist_message(
                 db=db,
                 conversation_id=conversation.id,
-                role=MessageRole.ASSISTANT,
-                content=response.message.content,
-                provider=decision.provider,
-                model=decision.model,
-                input_tokens=response.usage.input_tokens,
-                output_tokens=response.usage.output_tokens,
-                metadata_json={
-                    "tool_calls": [
-                        {"id": c.id, "name": c.name, "arguments": c.arguments}
-                        for c in response.tool_calls
-                    ]
-                },
+                role=MessageRole.TOOL,
+                content=content,
+                tool_name=call.name,
+                tool_call_id=call.id,
+                metadata_json={"tool_result": tool_result.result},
             )
-
-            for call in response.tool_calls:
-                tool_result = await self.tool_service.execute_call(
-                    db=db,
-                    conversation_id=str(conversation.id),
-                    call=call,
-                )
-                citations.extend(tool_result.citations)
-                content = tool_result.as_message_content()
-                working_messages.append(
-                    ChatMessage(
-                        role="tool",
-                        content=content,
-                        tool_call_id=call.id,
-                        tool_name=call.name,
-                    )
-                )
-                self._persist_message(
-                    db=db,
-                    conversation_id=conversation.id,
-                    role=MessageRole.TOOL,
-                    content=content,
-                    tool_name=call.name,
-                    tool_call_id=call.id,
-                    metadata_json={"tool_result": tool_result.result},
-                )
-            db.commit()
+        db.commit()
 
     def _get_prompt_profile(self, *, db: Session, conversation: Conversation) -> PromptProfile:
         if conversation.prompt_profile:

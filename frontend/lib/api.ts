@@ -54,12 +54,18 @@ export interface StreamEvent {
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_TOKEN = process.env.NEXT_PUBLIC_API_TOKEN;
+
+function authHeaders(): HeadersInit {
+  return API_TOKEN ? { Authorization: `Bearer ${API_TOKEN}` } : {};
+}
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders(),
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
@@ -95,6 +101,7 @@ export const api = {
     const response = await fetch(`${API_BASE}/api/conversations/${conversationId}/files`, {
       method: "POST",
       body: formData,
+      headers: authHeaders(),
     });
 
     if (!response.ok) {
@@ -127,6 +134,7 @@ export async function streamConversation(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders(),
     },
     body: JSON.stringify(payload),
   });

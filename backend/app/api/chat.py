@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,6 +15,7 @@ from app.domain.schemas import ChatTurnRequest
 from app.services.chat_orchestrator import ChatOrchestrator, ChatTurnOptions
 
 router = APIRouter(prefix="/api/conversations", tags=["chat"])
+logger = logging.getLogger(__name__)
 
 
 def _sse(data: dict) -> str:
@@ -53,7 +55,8 @@ async def stream_chat(
                 yield _sse(event)
         except Exception as exc:  # noqa: BLE001
             db.rollback()
-            yield _sse({"type": "error", "error": str(exc)})
+            logger.exception("Streaming chat failed for conversation_id=%s", conversation_id, exc_info=exc)
+            yield _sse({"type": "error", "error": "Streaming request failed"})
 
     return StreamingResponse(
         event_gen(),

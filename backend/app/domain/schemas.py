@@ -75,8 +75,8 @@ class ChatTurnRequest(BaseModel):
     temporary_system_prompt: str | None = None
     task_type: Literal["chat", "rag", "code", "strategy"] = "chat"
     latency_sensitive: bool = False
-    require_tools: bool = True
-    require_rag: bool = True
+    require_tools: bool = False
+    require_rag: bool = False
     user_model_preference: str | None = None
 
 

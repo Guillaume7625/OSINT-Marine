@@ -25,6 +25,13 @@ Production-minded modular monolith for a ChatGPT-like local assistant with:
 - Developer settings API for prompt/routing defaults
 - Alembic migrations and Docker Compose scaffolding
 
+## Security Notes
+
+- The API can be protected with a shared bearer token via `APP_API_TOKEN`.
+- `APP_API_TOKEN` is a deployment guardrail for a private environment, not a full multi-user authentication system.
+- When `APP_API_TOKEN` is set, clients must send `Authorization: Bearer <token>` on `/api/*` requests.
+- The health endpoint `/health` remains unauthenticated for simple liveness checks.
+
 ## Anthropic Model Defaults
 
 All model routing is environment-configurable. Current defaults:
@@ -48,6 +55,9 @@ Environment variables:
 - `EMBEDDING_MODEL_NAME=sentence-transformers/all-MiniLM-L6-v2`
 - `EMBEDDING_DIMENSION=384`
 - `EMBEDDING_BATCH_SIZE=32`
+
+Performance note:
+- RAG retrieval is now skipped when a conversation has no indexed document chunks, which avoids unnecessary query embedding work on normal chat turns.
 
 The first run downloads the model from Hugging Face.
 
@@ -107,6 +117,7 @@ PY
 1. `cp infra/.env.example infra/.env`
 2. Fill at least:
    - `ANTHROPIC_API_KEY`
+   - optionally `APP_API_TOKEN` to protect the API
 3. Start:
 
 ```bash
@@ -146,6 +157,12 @@ npm run dev
 4. Verify streamed response + citations
 5. Switch routing mode to `manual` and set a model override
 6. Update prompt layers in dev settings
+
+## Response Quality / Latency Defaults
+
+- Plain chat requests now default to the standard model tier instead of the fast tier unless the turn is explicitly marked latency-sensitive.
+- The frontend enables RAG and tools when the active conversation actually has uploaded files, so document-grounded turns keep the richer backend path without frontend keyword heuristics.
+- Tool-enabled turns now stay on the streaming path, emit deltas directly, and only loop when the model actually requests tools.
 
 ## Nominal RAG Path Validation (Real DB)
 

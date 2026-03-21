@@ -23,6 +23,9 @@ class FakeQuery:
         self.rows = self.rows[:top_k]
         return self
 
+    def first(self):
+        return self.rows[0] if self.rows else None
+
     def all(self):
         return self.rows
 
@@ -52,3 +55,27 @@ def test_rag_retrieve_formats_results(tmp_path):
     assert results[0]["filename"] == "contract.pdf"
     assert results[0]["page_number"] == 2
     assert results[0]["score"] > 0.8
+
+
+def test_rag_retrieve_skips_embedding_when_conversation_has_no_chunks(tmp_path):
+    class FailingEmbeddingModel:
+        def embed(self, texts):
+            raise AssertionError("embed should not be called when no chunks exist")
+
+    settings = Settings(embedding_dimension=8)
+    rag = RagService(
+        settings=settings,
+        storage=LocalFileStorage(tmp_path / "uploads"),
+        embedding_model=FailingEmbeddingModel(),
+    )
+
+    db = FakeDB(rows=[])
+
+    results = rag.retrieve(
+        db=db,
+        query="clause",
+        conversation_id="0d4f43ae-b8d1-473d-a8ab-641717d847f2",
+        top_k=3,
+    )
+
+    assert results == []

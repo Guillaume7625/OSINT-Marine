@@ -84,7 +84,7 @@ class RoutingPolicy:
         if routing_input.user_preference_model:
             reasons.append("user preference provided")
 
-        if score <= 0:
+        if score < 0:
             tier = "fast"
             model = self.settings.anthropic_model_fast
         elif score >= 4:

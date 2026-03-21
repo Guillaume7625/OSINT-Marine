@@ -78,6 +78,21 @@ class RagService:
         if top_k <= 0:
             return []
 
+        if conversation_id:
+            try:
+                conv_uuid = uuid.UUID(conversation_id)
+            except ValueError:
+                conv_uuid = None
+
+            if conv_uuid:
+                has_chunks = db.query(DocumentChunk.id).filter(DocumentChunk.conversation_id == conv_uuid).first()
+                if not has_chunks:
+                    return []
+            else:
+                conv_uuid = None
+        else:
+            conv_uuid = None
+
         query_embedding = self.embedding_model.embed([query])[0]
         distance_expr = DocumentChunk.embedding.cosine_distance(query_embedding).label("distance")
 
@@ -87,12 +102,8 @@ class RagService:
             distance_expr,
         ).join(UploadedFile, UploadedFile.id == DocumentChunk.file_id)
 
-        if conversation_id:
-            try:
-                conv_uuid = uuid.UUID(conversation_id)
-                qry = qry.filter(DocumentChunk.conversation_id == conv_uuid)
-            except ValueError:
-                pass
+        if conv_uuid:
+            qry = qry.filter(DocumentChunk.conversation_id == conv_uuid)
 
         rows = qry.order_by("distance").limit(top_k).all()
 

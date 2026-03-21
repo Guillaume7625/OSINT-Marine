@@ -1,5 +1,7 @@
 from functools import lru_cache
 
+from fastapi import Header, HTTPException, status
+
 from app.core.config import get_settings
 from app.services.chat_orchestrator import ChatOrchestrator
 from app.services.context_manager import ContextManager
@@ -50,3 +52,18 @@ def get_chat_orchestrator() -> ChatOrchestrator:
         context_manager=get_context_manager(),
         tool_service=get_tool_service(),
     )
+
+
+def require_api_token(authorization: str | None = Header(default=None)) -> None:
+    settings = get_settings()
+    expected_token = settings.app_api_token.strip()
+    if not expected_token:
+        return
+
+    expected_header = f"Bearer {expected_token}"
+    if authorization != expected_header:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Unauthorized",
+            headers={"WWW-Authenticate": "Bearer"},
+        )

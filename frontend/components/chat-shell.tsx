@@ -94,6 +94,7 @@ export function ChatShell() {
   async function sendMessage() {
     if (!activeConversationId || !input.trim() || loading) return;
     const userText = input.trim();
+    const hasKnowledgeBase = files.length > 0;
     setInput("");
     setLoading(true);
 
@@ -123,8 +124,8 @@ export function ChatShell() {
           route_mode: routeMode,
           manual_model: manualModel || undefined,
           temporary_system_prompt: temporaryPrompt || undefined,
-          require_tools: true,
-          require_rag: true,
+          require_tools: hasKnowledgeBase,
+          require_rag: hasKnowledgeBase,
         },
         (event) => {
           if (event.type === "meta") {

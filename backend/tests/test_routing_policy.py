@@ -30,6 +30,25 @@ def test_routing_policy_fast_for_simple_latency_sensitive():
     assert decision.model == "fast-model"
 
 
+def test_routing_policy_defaults_to_quality_model_for_simple_chat():
+    policy = RoutingPolicy(_settings())
+    decision = policy.decide(
+        RoutingInput(
+            route_mode=RoutingMode.POLICY,
+            task_type="chat",
+            require_tools=False,
+            require_rag=False,
+            retrieved_context_chars=0,
+            user_text="hello there",
+            latency_sensitive=False,
+            user_preference_model=None,
+            manual_model=None,
+            locked_model=None,
+        )
+    )
+    assert decision.model == "default-model"
+
+
 def test_routing_policy_complex_for_hard_context():
     policy = RoutingPolicy(_settings())
     decision = policy.decide(

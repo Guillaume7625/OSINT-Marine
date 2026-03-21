@@ -73,7 +73,7 @@ class AnthropicProvider(LLMProvider):
                 yield StreamEvent(type="done", response=normalized)
         except Exception as exc:  # noqa: BLE001
             logger.exception("Anthropic streaming error")
-            yield StreamEvent(type="error", error=str(exc))
+            yield StreamEvent(type="error", error="Provider request failed")
 
     def _to_anthropic_tools(self, tools: list[ToolSpec]) -> list[dict[str, Any]]:
         payload: list[dict[str, Any]] = []
