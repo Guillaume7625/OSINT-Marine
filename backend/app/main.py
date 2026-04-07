@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from contextlib import asynccontextmanager
+import asyncio
+from contextlib import asynccontextmanager, suppress
 import logging
 
 from fastapi import FastAPI
@@ -10,6 +11,7 @@ from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.core.migrations import run_migrations
+from app.core.dependencies import get_ingestion_queue
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,7 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     configure_logging(debug=settings.app_debug)
     settings.upload_root.mkdir(parents=True, exist_ok=True)
+    worker_task: asyncio.Task[None] | None = None
 
     if settings.app_env != "test":
         if settings.auto_migrate_on_startup:
@@ -30,7 +33,17 @@ async def lifespan(app: FastAPI):
                 "AUTO_MIGRATE_ON_STARTUP=false: run 'cd backend && alembic upgrade head' before starting the app"
             )
 
-    yield
+        queue = get_ingestion_queue()
+        queue.recover_in_progress_jobs()
+        worker_task = asyncio.create_task(queue.run_forever())
+
+    try:
+        yield
+    finally:
+        if worker_task:
+            worker_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await worker_task
 
 
 settings = get_settings()

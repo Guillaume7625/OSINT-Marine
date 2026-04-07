@@ -93,7 +93,9 @@ export const api = {
     }),
   getConversation: (conversationId: string) => http<ConversationDetail>(`/api/conversations/${conversationId}`),
   listFiles: (conversationId: string) =>
-    http<Array<{ id: string; filename: string; size_bytes: number }>>(`/api/conversations/${conversationId}/files`),
+    http<Array<{ id: string; filename: string; size_bytes: number; ingestion_status: string }>>(
+      `/api/conversations/${conversationId}/files`,
+    ),
   uploadFile: async (conversationId: string, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -124,6 +126,7 @@ export async function streamConversation(
     message: string;
     route_mode: RoutingMode;
     manual_model?: string | null;
+    user_model_preference?: string | null;
     temporary_system_prompt?: string | null;
     require_tools?: boolean;
     require_rag?: boolean;

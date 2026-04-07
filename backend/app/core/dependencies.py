@@ -5,6 +5,7 @@ from fastapi import Header, HTTPException, status
 from app.core.config import get_settings
 from app.services.chat_orchestrator import ChatOrchestrator
 from app.services.context_manager import ContextManager
+from app.services.ingestion_queue import IngestionQueueService
 from app.services.prompt_builder import PromptBuilder
 from app.services.rag_service import RagService
 from app.services.routing_policy import RoutingPolicy
@@ -41,6 +42,11 @@ def get_context_manager() -> ContextManager:
 @lru_cache
 def get_tool_service() -> ToolService:
     return ToolService(rag_service=get_rag_service())
+
+
+@lru_cache
+def get_ingestion_queue() -> IngestionQueueService:
+    return IngestionQueueService(rag_service=get_rag_service())
 
 
 @lru_cache

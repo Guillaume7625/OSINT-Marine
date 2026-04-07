@@ -10,7 +10,7 @@ export function ChatShell() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [messages, setMessages] = useState<UiMessage[]>([]);
-  const [files, setFiles] = useState<Array<{ id: string; filename: string; size_bytes: number }>>([]);
+  const [files, setFiles] = useState<Array<{ id: string; filename: string; size_bytes: number; ingestion_status: string }>>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +94,7 @@ export function ChatShell() {
   async function sendMessage() {
     if (!activeConversationId || !input.trim() || loading) return;
     const userText = input.trim();
-    const hasKnowledgeBase = files.length > 0;
+    const hasKnowledgeBase = files.some((file) => file.ingestion_status === "done");
     setInput("");
     setLoading(true);
 
@@ -122,7 +122,8 @@ export function ChatShell() {
         {
           message: userText,
           route_mode: routeMode,
-          manual_model: manualModel || undefined,
+          manual_model: routeMode === "policy" ? undefined : manualModel || undefined,
+          user_model_preference: routeMode === "policy" ? manualModel || undefined : undefined,
           temporary_system_prompt: temporaryPrompt || undefined,
           require_tools: hasKnowledgeBase,
           require_rag: hasKnowledgeBase,
@@ -255,16 +256,14 @@ export function ChatShell() {
               </select>
             </label>
 
-            {(routeMode === "manual" || routeMode === "locked") && (
-              <label>
-                Model override
-                <input
-                  value={manualModel}
-                  onChange={(e) => setManualModel(e.target.value)}
-                  placeholder="e.g. claude-sonnet-4-6"
-                />
-              </label>
-            )}
+            <label>
+              {routeMode === "policy" ? "Model preference" : "Model override"}
+              <input
+                value={manualModel}
+                onChange={(e) => setManualModel(e.target.value)}
+                placeholder="e.g. claude-sonnet-4-6"
+              />
+            </label>
 
             <label className="grow">
               Temporary system override
@@ -294,12 +293,14 @@ export function ChatShell() {
 
         <section className="files-panel">
           <label className="upload-label">
-            Upload txt/md/pdf
-            <input type="file" accept=".txt,.md,.pdf" onChange={uploadSelectedFile} />
+            Upload txt/md/pdf/images
+            <input type="file" accept=".txt,.md,.pdf,.png,.jpg,.jpeg,.tif,.tiff,.webp,.bmp,.gif" onChange={uploadSelectedFile} />
           </label>
           <div className="file-list">
             {files.map((file) => (
-              <span key={file.id}>{file.filename}</span>
+              <span key={file.id}>
+                {file.filename} <em>({file.ingestion_status})</em>
+              </span>
             ))}
           </div>
         </section>

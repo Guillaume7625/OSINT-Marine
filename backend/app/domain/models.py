@@ -84,6 +84,28 @@ class UploadedFile(Base):
 
     conversation: Mapped[Conversation | None] = relationship(back_populates="uploaded_files")
     chunks: Mapped[list["DocumentChunk"]] = relationship(back_populates="uploaded_file", cascade="all, delete-orphan")
+    ingestion_job: Mapped["FileIngestionJob | None"] = relationship(
+        back_populates="uploaded_file",
+        uselist=False,
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    @property
+    def ingestion_status(self) -> str:
+        return str((self.metadata_json or {}).get("ingestion_status", "done"))
+
+    @property
+    def ingestion_error(self) -> str | None:
+        error = (self.metadata_json or {}).get("ingestion_error")
+        return str(error) if error else None
+
+    @property
+    def chunks_created(self) -> int:
+        try:
+            return int((self.metadata_json or {}).get("chunks_created", 0))
+        except (TypeError, ValueError):
+            return 0
 
 
 class DocumentChunk(Base):
@@ -104,6 +126,27 @@ class DocumentChunk(Base):
     __table_args__ = (
         UniqueConstraint("file_id", "chunk_index", name="uq_file_chunk"),
     )
+
+
+class FileIngestionJob(Base):
+    __tablename__ = "file_ingestion_jobs"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    uploaded_file_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("uploaded_files.id"),
+        unique=True,
+        index=True,
+    )
+    status: Mapped[str] = mapped_column(String(32), default="queued", index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    queued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), index=True)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    uploaded_file: Mapped[UploadedFile] = relationship(back_populates="ingestion_job")
 
 
 class ConversationSummary(Base):

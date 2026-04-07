@@ -85,3 +85,23 @@ def test_routing_manual_mode_respects_manual_model():
         )
     )
     assert decision.model == "manual-choice"
+
+
+def test_routing_policy_honors_lightweight_user_preference():
+    policy = RoutingPolicy(_settings())
+    decision = policy.decide(
+        RoutingInput(
+            route_mode=RoutingMode.POLICY,
+            task_type="chat",
+            require_tools=False,
+            require_rag=False,
+            retrieved_context_chars=0,
+            user_text="hello",
+            latency_sensitive=False,
+            user_preference_model="preferred-model",
+            manual_model=None,
+            locked_model=None,
+        )
+    )
+    assert decision.model == "preferred-model"
+    assert decision.tier == "preferred"

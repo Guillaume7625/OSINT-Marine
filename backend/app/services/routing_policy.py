@@ -35,6 +35,7 @@ class RoutingPolicy:
 
     def decide(self, routing_input: RoutingInput) -> RoutingDecision:
         reasons: list[str] = []
+        preferred_model = routing_input.user_preference_model.strip() if routing_input.user_preference_model else None
 
         if routing_input.route_mode == RoutingMode.LOCKED and routing_input.locked_model:
             reasons.append("conversation is route-locked")
@@ -73,7 +74,7 @@ class RoutingPolicy:
             score += 1
             reasons.append("RAG retrieval requested")
 
-        if routing_input.retrieved_context_chars > 4000:
+        if routing_input.retrieved_context_chars > 2000:
             score += 1
             reasons.append("large retrieved context")
 
@@ -81,13 +82,22 @@ class RoutingPolicy:
             score -= 2
             reasons.append("latency sensitive")
 
-        if routing_input.user_preference_model:
+        if preferred_model:
             reasons.append("user preference provided")
+            if score <= 2:
+                reasons.append("preference selected for light-weight turn")
+                return RoutingDecision(
+                    provider=self.settings.default_provider,
+                    model=preferred_model,
+                    routing_mode=RoutingMode.POLICY,
+                    tier="preferred",
+                    rationale="; ".join(reasons),
+                )
 
         if score < 0:
             tier = "fast"
             model = self.settings.anthropic_model_fast
-        elif score >= 4:
+        elif score >= 3:
             tier = "complex"
             model = self.settings.anthropic_model_complex
         else:

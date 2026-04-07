@@ -32,17 +32,20 @@ class ContextManager:
         user_query: str,
         require_rag: bool,
     ) -> ContextBundle:
-        db_messages = (
-            db.query(Message)
-            .filter(Message.conversation_id == conversation_id)
-            .order_by(Message.created_at.asc())
-            .all()
+        summary_memory = self._get_existing_summary(db=db, conversation_id=conversation_id)
+        recent_messages = self._load_recent_messages(
+            db=db,
+            conversation_id=conversation_id,
+            limit=self.settings.default_context_window_messages,
         )
 
-        summary_memory = self._ensure_summary(db=db, conversation_id=conversation_id, messages=db_messages)
-
-        window = self.settings.default_context_window_messages
-        recent_messages = db_messages[-window:]
+        if len(recent_messages) >= self.settings.default_context_window_messages:
+            rebuilt_summary = self._build_summary_from_recent_history(
+                db=db,
+                conversation_id=conversation_id,
+            )
+            if rebuilt_summary is not None:
+                summary_memory = rebuilt_summary
 
         normalized_messages: list[ChatMessage] = []
         for item in recent_messages:
@@ -88,19 +91,44 @@ class ContextManager:
             citations=citations,
         )
 
-    def _ensure_summary(self, *, db: Session, conversation_id: uuid.UUID, messages: list[Message]) -> str | None:
+    def _load_recent_messages(
+        self,
+        *,
+        db: Session,
+        conversation_id: uuid.UUID,
+        limit: int,
+    ) -> list[Message]:
+        rows = (
+            db.query(Message)
+            .filter(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+        rows.reverse()
+        return rows
+
+    def _get_existing_summary(self, *, db: Session, conversation_id: uuid.UUID) -> str | None:
         existing = (
             db.query(ConversationSummary)
             .filter(ConversationSummary.conversation_id == conversation_id)
             .one_or_none()
         )
+        return existing.summary_text if existing else None
 
-        if len(messages) < self.settings.default_context_window_messages + 6:
-            return existing.summary_text if existing else None
+    def _build_summary_from_recent_history(self, *, db: Session, conversation_id: uuid.UUID) -> str | None:
+        summary_window = self.settings.default_context_window_messages + 20
+        recent_candidates = self._load_recent_messages(
+            db=db,
+            conversation_id=conversation_id,
+            limit=summary_window,
+        )
+        if len(recent_candidates) <= self.settings.default_context_window_messages + 6:
+            return None
 
-        older = messages[: -self.settings.default_context_window_messages]
+        older = recent_candidates[: -self.settings.default_context_window_messages]
         if not older:
-            return existing.summary_text if existing else None
+            return None
 
         summary_lines: list[str] = []
         for msg in older[-20:]:
@@ -110,16 +138,22 @@ class ContextManager:
 
         summary_text = "\n".join(summary_lines)
 
+        existing = (
+            db.query(ConversationSummary)
+            .filter(ConversationSummary.conversation_id == conversation_id)
+            .one_or_none()
+        )
         if existing:
             existing.summary_text = summary_text
             existing.token_estimate = max(1, len(summary_text) // 4)
         else:
-            existing = ConversationSummary(
-                conversation_id=conversation_id,
-                summary_text=summary_text,
-                token_estimate=max(1, len(summary_text) // 4),
+            db.add(
+                ConversationSummary(
+                    conversation_id=conversation_id,
+                    summary_text=summary_text,
+                    token_estimate=max(1, len(summary_text) // 4),
+                )
             )
-            db.add(existing)
 
         db.flush()
         return summary_text

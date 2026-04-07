@@ -83,7 +83,10 @@ class ChatTurnRequest(BaseModel):
 class UploadResponse(BaseModel):
     file_id: uuid.UUID
     filename: str
-    chunks_created: int
+    chunks_created: int = 0
+    ingestion_status: str = "queued"
+    ingestion_error: str | None = None
+    ingestion_job_id: uuid.UUID | None = None
 
 
 class UploadedFileRead(BaseModel):
@@ -94,6 +97,9 @@ class UploadedFileRead(BaseModel):
     filename: str
     content_type: str
     size_bytes: int
+    ingestion_status: str
+    ingestion_error: str | None = None
+    chunks_created: int = 0
     created_at: datetime
 
 

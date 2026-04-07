@@ -79,3 +79,37 @@ def test_rag_retrieve_skips_embedding_when_conversation_has_no_chunks(tmp_path):
     )
 
     assert results == []
+
+
+def test_rag_ingest_uses_ocr_for_image_uploads(tmp_path):
+    settings = Settings(embedding_dimension=8)
+    rag = RagService(
+        settings=settings,
+        storage=LocalFileStorage(tmp_path / "uploads"),
+        embedding_model=DeterministicTestEmbeddingModel(dimension=8),
+    )
+    rag._ocr_image_file = lambda path: "Invoice total due 123.45"  # type: ignore[method-assign]
+
+    class FakeDB:
+        def __init__(self):
+            self.added = []
+
+        def add(self, item):
+            self.added.append(item)
+
+        def flush(self):
+            return None
+
+    db = FakeDB()
+
+    uploaded, chunks = rag.ingest_upload(
+        db=db,
+        filename="scan.png",
+        content_type="image/png",
+        content=b"fake-image-bytes",
+        conversation_id=None,
+    )
+
+    assert uploaded.filename == "scan.png"
+    assert chunks == 1
+    assert any(getattr(item, "content", "") == "Invoice total due 123.45" for item in db.added)
