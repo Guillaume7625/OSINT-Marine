@@ -1,0 +1,13 @@
+{
+  "version": "v1.0.0",
+  "markings": [
+    "confidentiel defense",
+    "secret defense",
+    "tres secret defense",
+    "diffusion restreinte",
+    "restreint",
+    "classified",
+    "for official use only",
+    "opsec"
+  ]
+}

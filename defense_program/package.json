@@ -1,0 +1,18 @@
+{
+  "name": "defense-program-v1",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Defense exposure vs capacity assessment program V1",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node api/server.js",
+    "test": "node --test",
+    "db:migrate": "node scripts/migrate-postgres.js"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

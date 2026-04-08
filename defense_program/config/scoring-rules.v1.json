@@ -1,0 +1,36 @@
+{
+  "version": "v1.0.0",
+  "attributionWeights": {
+    "institutionalLexiconScore": 0.2,
+    "domainTrustScore": 0.2,
+    "templateSignatureScore": 0.15,
+    "metadataConsistencyScore": 0.15,
+    "namingConventionScore": 0.1,
+    "corpusSimilarityScore": 0.2
+  },
+  "sensitivityWeights": {
+    "diffusionMarkingScore": 0.35,
+    "operationalDetailScore": 0.25,
+    "infrastructureExposureScore": 0.2,
+    "personalDataScore": 0.2
+  },
+  "exposureDetectionWeights": {
+    "attributionScore": 0.55,
+    "sensitivityScore": 0.45
+  },
+  "multisignal": {
+    "strongSignalThreshold": 60,
+    "minimumStrongSignals": 2,
+    "singleSignalCap": 49
+  },
+  "stopRules": {
+    "stopSensitivityThreshold": 75,
+    "stopIfSensitiveMarking": true
+  },
+  "capacityProfile": {
+    "exposureWeight": 0.65,
+    "capacityWeight": 0.35,
+    "stalePenaltyPer24h": 1.5,
+    "criticalThreshold": 80
+  }
+}

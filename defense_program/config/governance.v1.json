@@ -1,0 +1,31 @@
+{
+  "version": "v1.0.0",
+  "owners": {
+    "seeds": "governance_admin",
+    "taxonomies": "governance_admin",
+    "referenceCorpus": "governance_admin",
+    "sourceAllowlist": "governance_admin",
+    "scoringRules": "governance_admin"
+  },
+  "approvers": {
+    "falsePositiveArbitration": "reviewer",
+    "caseDecision": "reviewer",
+    "export": "exporter"
+  },
+  "accessControl": {
+    "proofsFullAccess": [
+      "reviewer",
+      "exporter"
+    ],
+    "rulesUpdate": [
+      "governance_admin"
+    ],
+    "apiRoleHeader": "x-role"
+  },
+  "guardrails": {
+    "personSearchEnabled": false,
+    "personDashboardEnabled": false,
+    "nominalAutocompleteEnabled": false,
+    "sensitiveStopEnabled": true
+  }
+}
