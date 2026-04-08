@@ -8,8 +8,7 @@ const {
   normalizeAssessmentInput,
   computeAttributionScore,
   computeDocumentExposureAssessment,
-  computeDefenseAssessment,
-  maskPersonalData
+  computeDefenseAssessment
 } = require('../scoring/engine');
 
 test('computes exposure, capacity and residual risk separately', () => {
@@ -185,9 +184,4 @@ test('keeps exposure detection and capacity analysis separate', () => {
 
   assert.equal(withCapacity.capacity.status, 'provided');
   assert.ok(typeof withCapacity.capacity.capacityScore === 'number');
-});
-
-test('masks personal data in excerpts by default', () => {
-  const masked = maskPersonalData('Contact principal: jd@example.org');
-  assert.match(masked, /jd\*\*\*@example\.org/);
 });

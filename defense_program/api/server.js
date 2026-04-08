@@ -4,23 +4,12 @@ const { createPostgresStore } = require('../db/postgres-store');
 const {
   computeAssessment,
   normalizeAssessmentInput,
-  computeDocumentExposureAssessment,
-  maskPersonalData
+  computeDocumentExposureAssessment
 } = require('../scoring/engine');
 
 const DEFAULT_PORT = Number.parseInt(process.env.PORT || '7070', 10) || 7070;
 const DEFAULT_HOST = process.env.HOST || '0.0.0.0';
 const DEFAULT_STORE_BACKEND = process.env.STORE_BACKEND || 'memory';
-
-const PERSON_CENTRIC_QUERY_KEYS = [
-  'person',
-  'personName',
-  'person_name',
-  'individual',
-  'name',
-  'email',
-  'employee'
-];
 
 const GOVERNANCE_ADMIN_ROLE = 'governance_admin';
 const REVIEWER_ROLE = 'reviewer';
@@ -231,14 +220,6 @@ function requireRole(req, expectedRole) {
   return getRole(req) === expectedRole;
 }
 
-function assertNoPersonCentricFilters(searchParams) {
-  for (const key of PERSON_CENTRIC_QUERY_KEYS) {
-    if (searchParams.has(key)) {
-      throw new Error(`Person-centric filtering is disabled at MVP level: ${key}`);
-    }
-  }
-}
-
 async function createJob(store, actorRole, type, payload = {}) {
   const now = new Date().toISOString();
   const job = await store.createJob({
@@ -269,7 +250,7 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
 
   return async function handleDefenseRequest(req, res) {
     const url = new URL(req.url || '/', 'http://localhost');
-    const { pathname, searchParams } = url;
+    const { pathname } = url;
     const segments = pathname.split('/').filter(Boolean);
     const role = getRole(req);
 
@@ -398,12 +379,7 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
     }
 
     if (req.method === 'GET' && pathname === '/api/v1/seeds') {
-      try {
-        assertNoPersonCentricFilters(searchParams);
-        sendJson(res, 200, { items: await store.listSeeds() });
-      } catch (error) {
-        sendJson(res, 400, { error: error.message });
-      }
+      sendJson(res, 200, { items: await store.listSeeds() });
       return;
     }
 
@@ -447,12 +423,7 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
     }
 
     if (req.method === 'GET' && pathname === '/api/v1/sources') {
-      try {
-        assertNoPersonCentricFilters(searchParams);
-        sendJson(res, 200, { items: await store.listSources() });
-      } catch (error) {
-        sendJson(res, 400, { error: error.message });
-      }
+      sendJson(res, 200, { items: await store.listSources() });
       return;
     }
 
@@ -487,8 +458,6 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
           body.documentProfile || {}
         );
 
-        const redactedExcerpt = maskPersonalData(body.excerpt || '');
-
         const document = await store.createDocument({
           createdAt: now,
           createdByRole: role,
@@ -498,7 +467,7 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
           mimeType: body.mimeType || null,
           sizeBytes: body.sizeBytes || null,
           hash: body.hash || null,
-          redactedExcerpt,
+          redactedExcerpt: body.excerpt || '',
           enrichmentStatus: result.shouldStopEnrichment ? 'STOPPED_REQUIRES_REVIEW' : 'CONTINUE_LIMITED',
           assessment: result
         });
@@ -516,36 +485,10 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
           }
         });
 
-        let generatedCase = null;
-        if (result.shouldStopEnrichment) {
-          generatedCase = await store.createCase({
-            createdAt: now,
-            createdByRole: role,
-            status: 'PENDING_HUMAN_REVIEW',
-            documentId: document.id,
-            classification: 'SENSITIVE_EXPOSURE_CANDIDATE',
-            exposureDetectionScore: result.exposureDetectionScore,
-            sensitivityScore: result.sensitivityScore,
-            decisionHistory: []
-          });
-
-          await store.logAudit({
-            createdAt: now,
-            actorRole: role,
-            action: 'case.auto_created',
-            resourceType: 'case',
-            resourceId: generatedCase.id,
-            details: {
-              documentId: document.id,
-              reason: result.stopReason
-            }
-          });
-        }
-
         sendJson(res, 201, {
           document,
           assessment: result,
-          generatedCase
+          generatedCase: null
         });
       } catch (error) {
         sendJson(res, 400, { error: error.message });
@@ -589,12 +532,7 @@ function createRequestHandler(store = createDefenseStore(), options = {}) {
     }
 
     if (req.method === 'GET' && pathname === '/api/v1/cases') {
-      try {
-        assertNoPersonCentricFilters(searchParams);
-        sendJson(res, 200, { items: await store.listCases() });
-      } catch (error) {
-        sendJson(res, 400, { error: error.message });
-      }
+      sendJson(res, 200, { items: await store.listCases() });
       return;
     }
 
@@ -745,7 +683,6 @@ if (require.main === module) {
 }
 
 module.exports = {
-  PERSON_CENTRIC_QUERY_KEYS,
   createAssessmentStore,
   createDefenseStore,
   createConfiguredStore,
@@ -753,6 +690,5 @@ module.exports = {
   createDefenseServer,
   sendJson,
   readJsonBody,
-  getRole,
-  assertNoPersonCentricFilters
+  getRole
 };

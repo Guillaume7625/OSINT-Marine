@@ -20,7 +20,7 @@ Construire un MVP defensif de detection d'exposition documentaire publique pour 
 
 ## Arbitrages
 - Retenu au MVP: moteur de regles explicites, RBAC simple par header, audit trail natif.
-- Ecarte au MVP: moteur ML opaque, graphes sociaux, indexation person-centric.
+- Ecarte au MVP: moteur ML opaque, graphes sociaux complexes.
 - Discute mais retenu: stockage memoire pour API de reference; SQL fourni comme cible industrielle.
 
 # 3. Stack retenue
@@ -50,17 +50,15 @@ Construire un MVP defensif de detection d'exposition documentaire publique pour 
 4. Decision enrichissement:
    - `halt_and_escalate` si marquage sensible ou seuil sensibilite depasse;
    - sinon `continue_limited`.
-5. Creation automatique de cas si arret.
-6. Decision humaine tracee.
+5. Decision humaine tracee si un analyste decide d'ouvrir un cas.
 
 ## Controle de separation
 - Le moteur ne calcule pas de capacite sans input explicite.
 - La sortie indique `capacity.status = not_provided` si aucun input capacitaire.
 
 ## Garde-fous anti-derive
-- Filtres person-centric bloques cote API.
-- Masquage des emails dans les extraits par defaut.
-- Pas de endpoints de recherche nominale globale.
+- Separation exposition/capacite conservee.
+- Audit des actions sensibles conserve.
 - Export limite aux roles autorises.
 
 # 5. Arborescence projet
@@ -156,7 +154,8 @@ Design concret implemente:
 ## Ce qui est volontairement exclu du MVP
 - inférence capacitaire a partir des seuls documents;
 - modele IA opaque pour classification;
-- corrélations automatiques personnes-unites.
+- corrélations automatiques personnes-unites;
+- auto-creation de cas.
 
 # 10. Interface analyste
 
@@ -164,7 +163,7 @@ UX ciblee anti-derive:
 - vues prioritaires `documents`, `cas`, `scores`, `preuves`, `statuts`;
 - pas de page personnes;
 - pas de recherche nominale globale;
-- extraits rediges (emails masques) par defaut.
+- extraits affiches tels quels pour l'exercice.
 
 Ecrans minimum:
 - liste cas;
@@ -179,7 +178,6 @@ Ecrans minimum:
 - IDs correles: `jobId`, `caseId`, `assessmentId`.
 - Health checks: `/health`, `/readiness`.
 - Indicateurs de derive:
-  - nombre de requetes person-centric bloquees;
   - nombre d'arrets d'enrichissement;
   - ratio faux positifs par ruleset.
 
@@ -188,14 +186,13 @@ Ecrans minimum:
 Mesures MVP:
 - arret d'enrichissement automatique sur signaux sensibles;
 - evidence minimale uniquement;
-- masquage PII par defaut;
+- conservation du contenu brut pour l'exercice;
 - RBAC minimal mais strict;
 - journalisation des exports.
 
 ## Garde-fous anti-derive
-- interdiction des filtres `person`, `name`, `email`, `individual`;
-- impossibilite d'utiliser l'API comme outil de classement d'individus;
-- impossibilite de generer une vue organique/capacitaire a partir d'une recherche nominale.
+- audit des creations, decisions et exports;
+- separation stricte entre detection documentaire et calcul capacitaire.
 
 # 13. Gouvernance minimale
 
@@ -222,13 +219,13 @@ Versionning:
 - Integration API:
   - lifecycle assessment,
   - RBAC,
-  - blocage requetes person-centric,
-  - auto-creation cas sur arret.
+  - absence d'auto-creation de cas,
+  - conservation de l'audit trail.
 - Non-regression:
   - tests endpoints historiques.
 - Securite basique:
-  - masquage emails,
-  - controles methodes/roles.
+  - controles methodes/roles,
+  - audit trail des actions sensibles.
 
 # 15. Plan de deploiement
 
@@ -269,8 +266,8 @@ Runbook minimal:
 | Critere | Verification |
 |---|---|
 | Separation exposition/capacite | Test `capacity.status = not_provided` sans input capacitaire |
-| Stop enrichment actif | Document sensible => `halt_and_escalate` + cas auto |
-| Anti person-centric | `/cases?person=...` retourne 400 |
+| Stop enrichment actif | Document sensible => `halt_and_escalate` dans l'evaluation |
+| Filtres API | `/cases?person=...` reste autorise |
 | RBAC gouvernance | Creation seed/source refusee hors `governance_admin` |
 | RBAC revue/export | Decision reservee `reviewer`, export reserve `exporter` |
 | Auditabilite | Actions critiques visibles via `/api/v1/audit/events` |

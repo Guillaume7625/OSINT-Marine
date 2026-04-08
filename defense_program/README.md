@@ -79,7 +79,6 @@ curl -X POST http://127.0.0.1:7070/api/v1/documents/assess \
 - L'API supporte maintenant `memory` et `postgres`.
 - Le schema SQL est applique via `npm run db:migrate` en mode postgres.
 - Les garde-fous MVP actifs:
-  - blocage des filtres person-centric;
-  - arret d'enrichissement sur sensibilite elevee/marquages sensibles;
+  - scoring explicite exposition/capacite;
   - RBAC minimal (`x-role`);
   - audit trail consultable.
