@@ -1,0 +1,21 @@
+seeds:
+  - source_name: officiel-defense-sitemap
+    seed_type: url
+    value: https://www.defense.gouv.fr/sitemap.xml
+    priority: 90
+    is_active: true
+    owner_team: protection_information
+
+  - source_name: partenaire-public-listing-example
+    seed_type: url
+    value: https://example.org/publications/
+    priority: 60
+    is_active: true
+    owner_team: protection_information
+
+  - source_name: partenaire-public-listing-example
+    seed_type: query
+    value: 'site:example.org/publications filetype:pdf "Marine nationale"'
+    priority: 50
+    is_active: false
+    owner_team: protection_information
