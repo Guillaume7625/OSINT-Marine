@@ -1,0 +1,38 @@
+kind: sensitivity
+name: sensitivity_rules
+version: 1.0.0
+
+gates:
+  stop_enrichment_threshold: 70
+
+rules:
+  - id: SENS_RESTRICTED_MARKING
+    family: marking
+    direction: positive
+    weight: 45
+    stop_on_match: true
+    match:
+      field: text
+      op: contains_any
+      values:
+        - diffusion restreinte
+        - interne
+        - ne pas diffuser
+
+  - id: SENS_INTERNAL_TEMPLATE_EXTERNAL_SOURCE
+    family: legitimacy
+    direction: positive
+    weight: 25
+    match:
+      field: derived.external_source_with_internal_markers
+      op: eq
+      value: true
+
+  - id: SENS_PUBLIC_LEGITIMATE_SOURCE
+    family: legitimacy
+    direction: negative
+    weight: 30
+    match:
+      field: derived.source_is_allowlisted_public_official
+      op: eq
+      value: true
