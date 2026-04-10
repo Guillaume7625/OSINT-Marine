@@ -1,0 +1,33 @@
+sources:
+  - name: officiel-defense-sitemap
+    source_type: sitemap
+    base_url: https://www.defense.gouv.fr/
+    status: active
+    rate_limit_per_min: 10
+    scope_json:
+      note: "Exemple de source officielle approuvée"
+    allow_rules_json:
+      allowed_domains:
+        - www.defense.gouv.fr
+    deny_rules_json:
+      denied_path_patterns:
+        - /login*
+        - /auth*
+        - /private*
+
+  - name: partenaire-public-listing-example
+    source_type: public_site
+    base_url: https://example.org/publications/
+    status: active
+    rate_limit_per_min: 5
+    scope_json:
+      note: "Exemple de partenaire public explicitement approuvé"
+    allow_rules_json:
+      allowed_domains:
+        - example.org
+      allowed_path_prefixes:
+        - /publications/
+    deny_rules_json:
+      denied_path_patterns:
+        - /private*
+        - /download/temp/*

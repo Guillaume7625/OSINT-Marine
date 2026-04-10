@@ -1,0 +1,49 @@
+kind: attribution
+name: attribution_rules
+version: 1.0.0
+
+gates:
+  min_signal_families_for_strong_score: 2
+  max_score_if_single_family: 39
+  max_score_if_only_personal_signal: 19
+
+rules:
+  - id: ATTR_OFFICIAL_DOMAIN
+    family: domain
+    direction: positive
+    weight: 30
+    match:
+      field: final_url
+      op: domain_suffix
+      value: defense.gouv.fr
+
+  - id: ATTR_METADATA_ORG
+    family: metadata
+    direction: positive
+    weight: 20
+    match:
+      field: metadata.company
+      op: regex
+      value: "(Marine nationale|Minist[eè]re des Arm[eé]es|DGA)"
+
+  - id: ATTR_TEMPLATE_MARK
+    family: template
+    direction: positive
+    weight: 15
+    match:
+      field: text
+      op: contains_any
+      values:
+        - Marine nationale
+        - Ministère des Armées
+
+  - id: ATTR_GENERIC_MILITARY_VOCAB
+    family: terminology
+    direction: negative
+    weight: 12
+    match:
+      field: text
+      op: contains_any
+      values:
+        - défense
+        - forces armées
